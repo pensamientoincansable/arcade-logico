@@ -4,14 +4,551 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arcade Lógico - 15 Minijuegos Completos</title>
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* [TODO EL CSS ANTERIOR SE MANTIENE IGUAL - NO LO COPIO PARA AHORRAR ESPACIO] */
-        /* Los estilos son exactamente los mismos que en la versión anterior */
+        :root {
+            --dark-bg: #0a0a1a;
+            --card-bg: rgba(16, 16, 32, 0.85);
+            --neon-blue: #0ff0fc;
+            --neon-pink: #ff00ff;
+            --neon-green: #00ff00;
+            --text-primary: #ffffff;
+            --text-secondary: #ccccff;
+            --grid-color: rgba(0, 255, 255, 0.1);
+            --shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+            --border-radius: 15px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Fondo con grid */
+        #gridLines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -2;
+        }
+
+        /* Puntos de neón animados */
+        #neonDots {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .neon-dot {
+            position: absolute;
+            border-radius: 50%;
+            animation: pulse 4s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.2; transform: scale(0.8); }
+            100% { opacity: 0.8; transform: scale(1.2); }
+        }
+
+        /* Páginas */
+        .page {
+            display: none;
+            min-height: 100vh;
+            padding: 1rem;
+            position: relative;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        #mainPage {
+            display: block;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .logo {
+            font-size: clamp(2rem, 8vw, 3.5rem);
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Grid de juegos */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            transition: var(--transition);
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--neon-blue);
+            box-shadow: var(--shadow);
+        }
+
+        .game-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .game-number {
+            background: var(--neon-blue);
+            color: var(--dark-bg);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .game-title {
+            font-size: 1.2rem;
+            color: var(--neon-blue);
+            line-height: 1.3;
+        }
+
+        .game-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .game-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+
+        .game-difficulty {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .game-difficulty.easy {
+            background: rgba(0, 255, 0, 0.2);
+            color: var(--neon-green);
+        }
+
+        .game-difficulty.medium {
+            background: rgba(255, 255, 0, 0.2);
+            color: #ff0;
+        }
+
+        .game-difficulty.hard {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff6666;
+        }
+
+        /* Botones */
+        .play-btn {
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
+            color: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: bold;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+        }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+            padding: 0.5rem 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem;
+            transition: var(--transition);
+            font-weight: bold;
+        }
+
+        .theme-toggle:hover {
+            background: var(--neon-blue);
+            color: var(--dark-bg);
+        }
+
+        /* Página del juego */
+        .game-page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .back-button {
+            background: none;
+            border: 2px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 0.5rem 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            font-weight: bold;
+            order: 1;
+        }
+
+        .back-button:hover {
+            background: var(--neon-blue);
+            color: var(--dark-bg);
+        }
+
+        .game-title-large {
+            color: var(--neon-blue);
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            text-align: center;
+            order: 2;
+            flex-grow: 1;
+        }
+
+        /* Contenedor del juego */
+        .game-container {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            min-height: 400px;
+            backdrop-filter: blur(10px);
+            margin-top: 1rem;
+        }
+
+        .game-instructions {
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        /* Controles de juego */
+        .game-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .game-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--neon-blue);
+            border-radius: 10px;
+            padding: 0.8rem 1.2rem;
+            color: white;
+            font-size: 1rem;
+            width: 100%;
+            max-width: 250px;
+        }
+
+        .game-button {
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+
+        .game-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+        }
+
+        /* Tableros de juego */
+        .tic-tac-toe-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 5px;
+            margin: 1.5rem auto;
+            max-width: 300px;
+            aspect-ratio: 1;
+        }
+
+        .tic-tac-toe-cell {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--neon-blue);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(2rem, 8vw, 2.5rem);
+            cursor: pointer;
+            transition: var(--transition);
+            user-select: none;
+        }
+
+        .tic-tac-toe-cell:hover {
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        /* Feedback y stats */
+        .game-feedback {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            text-align: center;
+            border: 1px solid rgba(0, 255, 255, 0.1);
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-box {
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .stat-box h3 {
+            color: var(--neon-blue);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-box p {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--neon-green);
+        }
+
+        /* Responsive para móviles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0.5rem;
+            }
+
+            .page {
+                padding: 0.5rem;
+            }
+
+            .header {
+                padding: 1rem 0.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .games-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .game-card {
+                padding: 1rem;
+            }
+
+            .game-page-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .back-button {
+                order: 1;
+                align-self: flex-start;
+            }
+
+            .game-title-large {
+                order: 2;
+                margin: 0.5rem 0;
+            }
+
+            .game-container {
+                padding: 1rem;
+                min-height: 300px;
+            }
+
+            .game-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .game-input {
+                max-width: 100%;
+            }
+
+            .tic-tac-toe-board {
+                max-width: 250px;
+            }
+        }
+
+        /* Para tablets */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .games-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Scroll personalizado */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(var(--neon-blue), var(--neon-pink));
+            border-radius: 5px;
+        }
+
+        /* Mensajes de "coming soon" */
+        .coming-soon {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .coming-soon-icon {
+            font-size: 4rem;
+            color: var(--neon-blue);
+            margin-bottom: 1rem;
+            opacity: 0.7;
+        }
     </style>
 </head>
 <body>
-    <!-- [TODO EL HTML ANTERIOR SE MANTIENE IGUAL] -->
+    <!-- Fondo animado -->
+    <div id="gridLines"></div>
+    <div id="neonDots"></div>
+    
+    <!-- Página principal -->
+    <div id="mainPage" class="page">
+        <div class="container">
+            <header class="header">
+                <h1 class="logo">ARCADE LÓGICO</h1>
+                <p class="subtitle">15 Minijuegos de Lógica - Desafía tu Mente</p>
+                <button id="themeToggle" class="theme-toggle">
+                    <i class="fas fa-moon"></i> Cambiar Tema
+                </button>
+            </header>
+            
+            <main>
+                <div id="gamesGrid" class="games-grid">
+                    <!-- Los juegos se cargan dinámicamente aquí -->
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Página del juego -->
+    <div id="gamePage" class="page">
+        <div class="container">
+            <div class="game-page-header">
+                <button id="backBtn" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </button>
+                <h2 id="currentGameTitle" class="game-title-large">Juego Actual</h2>
+                <div style="width: 80px; order: 3;"></div> <!-- Espaciador para alineación -->
+            </div>
+            
+            <div id="gameContent">
+                <!-- El contenido del juego se carga aquí dinámicamente -->
+            </div>
+        </div>
+    </div>
     
     <script>
         // Datos de los 15 minijuegos COMPLETOS
@@ -164,7 +701,7 @@
         // Crear puntos de neón animados para el fondo
         function createNeonDots() {
             const container = document.getElementById('neonDots');
-            const dotCount = 50;
+            const dotCount = window.innerWidth < 768 ? 30 : 50;
             
             for (let i = 0; i < dotCount; i++) {
                 const dot = document.createElement('div');
@@ -175,7 +712,7 @@
                 const posY = Math.random() * 100;
                 
                 // Tamaño y animación aleatoria
-                const size = 1 + Math.random() * 3;
+                const size = window.innerWidth < 768 ? 1 + Math.random() * 2 : 1 + Math.random() * 3;
                 const duration = 3 + Math.random() * 7;
                 const delay = Math.random() * 5;
                 
@@ -261,9 +798,11 @@
             
             // Cargar el juego correspondiente
             loadGameContent(game);
+            
+            // Scroll al inicio del juego
+            window.scrollTo(0, 0);
         }
 
-        // ==================== FUNCIÓN CORREGIDA ====================
         // Cargar el contenido del juego seleccionado
         function loadGameContent(game) {
             const content = document.getElementById('gameContent');
@@ -299,14 +838,14 @@
                             <div class="coming-soon-icon">
                                 <i class="fas ${game.icon}"></i>
                             </div>
-                            <p style="color:var(--text-secondary);max-width:500px;margin-bottom:2rem;">
+                            <p class="game-instructions">
                                 ${game.description}
                             </p>
-                            <p style="color:var(--neon-pink);margin-bottom:2rem;">
+                            <p style="color:var(--neon-pink);margin:1.5rem 0;font-weight:bold;">
                                 <i class="fas fa-tools"></i> Este juego estará disponible en la próxima actualización
                             </p>
                             <button class="game-button" onclick="returnToMain()">
-                                <i class="fas fa-arrow-left"></i> Volver al Menú Principal
+                                <i class="fas fa-arrow-left"></i> Volver al Menú
                             </button>
                         </div>
                     </div>
@@ -325,7 +864,7 @@
                         He pensado en un número entre 1 y 100. ¡Adivina cuál es! Te daré pistas.
                     </p>
                     <div class="game-controls">
-                        <input type="number" id="guessInput" class="game-input" placeholder="Tu número">
+                        <input type="number" id="guessInput" class="game-input" placeholder="Tu número" min="1" max="100">
                         <button id="guessButton" class="game-button">Adivinar</button>
                     </div>
                     <div class="game-feedback" id="feedback">
@@ -336,28 +875,65 @@
                             <h3>Intentos</h3>
                             <p id="attemptsCount">0</p>
                         </div>
+                        <div class="stat-box">
+                            <h3>Rango</h3>
+                            <p>1-100</p>
+                        </div>
+                    </div>
+                    <div class="game-controls">
+                        <button id="newGameButton" class="game-button">Nuevo Juego</button>
                     </div>
                 </div>
             `;
             
-            // Inicialización simple del juego
-            let secretNumber = Math.floor(Math.random() * 100) + 1;
-            let attempts = 0;
+            // Inicialización del juego
+            let secretNumber, attempts;
+            
+            function initGame() {
+                secretNumber = Math.floor(Math.random() * 100) + 1;
+                attempts = 0;
+                document.getElementById('attemptsCount').textContent = attempts;
+                document.getElementById('feedbackText').innerHTML = 'Introduce un número entre 1 y 100';
+                document.getElementById('guessInput').value = '';
+                document.getElementById('guessInput').focus();
+            }
+            
+            initGame();
             
             document.getElementById('guessButton').addEventListener('click', function() {
-                const guess = parseInt(document.getElementById('guessInput').value);
+                const input = document.getElementById('guessInput');
+                const guess = parseInt(input.value);
+                
+                if (isNaN(guess) || guess < 1 || guess > 100) {
+                    document.getElementById('feedbackText').innerHTML = 
+                        '<span style="color:var(--neon-pink)">Por favor, introduce un número válido entre 1 y 100</span>';
+                    return;
+                }
+                
                 attempts++;
                 document.getElementById('attemptsCount').textContent = attempts;
                 
                 if (guess === secretNumber) {
                     document.getElementById('feedbackText').innerHTML = 
-                        `<span style="color:var(--neon-green)">¡Correcto! El número era ${secretNumber}</span>`;
+                        `<span style="color:var(--neon-green)">¡Correcto! El número era ${secretNumber}. Lo adivinaste en ${attempts} intentos.</span>`;
                 } else if (guess < secretNumber) {
                     document.getElementById('feedbackText').innerHTML = 
                         `<span style="color:var(--neon-blue)">El número es mayor que ${guess}</span>`;
                 } else {
                     document.getElementById('feedbackText').innerHTML = 
                         `<span style="color:var(--neon-pink)">El número es menor que ${guess}</span>`;
+                }
+                
+                input.value = '';
+                input.focus();
+            });
+            
+            document.getElementById('newGameButton').addEventListener('click', initGame);
+            
+            // Permitir Enter para adivinar
+            document.getElementById('guessInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('guessButton').click();
                 }
             });
         }
@@ -368,18 +944,31 @@
                 <div class="game-container">
                     <h2 class="game-title-large">Tres en Raya</h2>
                     <p class="game-instructions">
-                        Juega contra la computadora. Tú eres X, la computadora es O.
+                        Juega contra la computadora. Tú eres X, la computadora es O. Haz clic en una casilla para empezar.
                     </p>
                     <div class="tic-tac-toe-board" id="ticTacToeBoard"></div>
+                    <div class="game-feedback" id="ticTacToeFeedback">
+                        <p id="ticTacToeMessage">Tu turno - Eres X</p>
+                    </div>
                     <div class="game-controls">
                         <button id="resetTicTacToe" class="game-button">Reiniciar</button>
                     </div>
                 </div>
             `;
             
-            // Inicialización simple
+            // Inicialización del juego
             const board = ['', '', '', '', '', '', '', '', ''];
+            let currentPlayer = 'X';
+            let gameActive = true;
             const boardElement = document.getElementById('ticTacToeBoard');
+            const messageElement = document.getElementById('ticTacToeMessage');
+            
+            // Combinaciones ganadoras
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Filas
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columnas
+                [0, 4, 8], [2, 4, 6] // Diagonales
+            ];
             
             function renderBoard() {
                 boardElement.innerHTML = '';
@@ -387,50 +976,246 @@
                     const cellElement = document.createElement('div');
                     cellElement.className = 'tic-tac-toe-cell';
                     cellElement.textContent = cell;
+                    cellElement.dataset.index = index;
+                    
+                    // Colores diferentes para X y O
+                    if (cell === 'X') {
+                        cellElement.style.color = 'var(--neon-blue)';
+                        cellElement.style.textShadow = '0 0 10px var(--neon-blue)';
+                    } else if (cell === 'O') {
+                        cellElement.style.color = 'var(--neon-pink)';
+                        cellElement.style.textShadow = '0 0 10px var(--neon-pink)';
+                    }
+                    
                     cellElement.addEventListener('click', () => makeMove(index));
                     boardElement.appendChild(cellElement);
                 });
             }
             
-            renderBoard();
+            function makeMove(index) {
+                if (!gameActive || board[index] !== '') return;
+                
+                // Movimiento del jugador
+                board[index] = currentPlayer;
+                renderBoard();
+                
+                if (checkWinner()) {
+                    messageElement.innerHTML = `<span style="color:var(--neon-green)">¡${currentPlayer} gana!</span>`;
+                    gameActive = false;
+                    return;
+                }
+                
+                if (checkDraw()) {
+                    messageElement.innerHTML = '<span style="color:var(--neon-blue)">¡Empate!</span>';
+                    gameActive = false;
+                    return;
+                }
+                
+                // Cambiar turno
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                messageElement.textContent = `Turno de ${currentPlayer}`;
+                
+                // Si es turno de la computadora
+                if (currentPlayer === 'O' && gameActive) {
+                    setTimeout(computerMove, 500);
+                }
+            }
+            
+            function computerMove() {
+                // Estrategia simple: elegir una casilla vacía aleatoria
+                const emptyCells = board.map((cell, index) => cell === '' ? index : -1).filter(index => index !== -1);
+                
+                if (emptyCells.length > 0) {
+                    const randomIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                    makeMove(randomIndex);
+                }
+            }
+            
+            function checkWinner() {
+                return winPatterns.some(pattern => {
+                    const [a, b, c] = pattern;
+                    return board[a] && board[a] === board[b] && board[a] === board[c];
+                });
+            }
+            
+            function checkDraw() {
+                return board.every(cell => cell !== '');
+            }
+            
+            function resetGame() {
+                board.fill('');
+                currentPlayer = 'X';
+                gameActive = true;
+                messageElement.textContent = 'Tu turno - Eres X';
+                renderBoard();
+            }
+            
+            document.getElementById('resetTicTacToe').addEventListener('click', resetGame);
+            
+            // Inicializar
+            resetGame();
         }
 
-        // JUEGO 3: Sudoku (versión simplificada)
+        // JUEGO 3: Sudoku (versión simplificada 4x4)
         function loadSudokuGame(container) {
             container.innerHTML = `
                 <div class="game-container">
-                    <h2 class="game-title-large">Sudoku</h2>
+                    <h2 class="game-title-large">Sudoku 4x4</h2>
                     <p class="game-instructions">
-                        Completa la cuadrícula 4x4. Cada fila y columna debe tener números del 1 al 4 sin repetir.
+                        Completa la cuadrícula 4x4. Cada fila, columna y región 2x2 debe tener números del 1 al 4 sin repetir.
                     </p>
                     <div class="sudoku-board" id="sudokuBoard"></div>
+                    <div class="game-feedback" id="sudokuFeedback">
+                        <p id="sudokuMessage">Rellena las casillas vacías</p>
+                    </div>
                     <div class="game-controls">
                         <button id="sudokuCheck" class="game-button">Comprobar</button>
+                        <button id="sudokuNew" class="game-button">Nuevo Juego</button>
                     </div>
                 </div>
             `;
             
-            // Tablero 4x4 simple
-            const board = [
+            // Tablero inicial simple
+            let puzzle = [
                 [1, 0, 0, 0],
                 [0, 2, 0, 0],
                 [0, 0, 3, 0],
                 [0, 0, 0, 4]
             ];
             
+            let solution = [
+                [1, 3, 4, 2],
+                [4, 2, 1, 3],
+                [2, 4, 3, 1],
+                [3, 1, 2, 4]
+            ];
+            
             const boardElement = document.getElementById('sudokuBoard');
+            const messageElement = document.getElementById('sudokuMessage');
+            
+            // Estilos para el tablero
+            const style = document.createElement('style');
+            style.textContent = `
+                .sudoku-board {
+                    display: grid;
+                    grid-template-columns: repeat(4, 1fr);
+                    grid-template-rows: repeat(4, 1fr);
+                    gap: 2px;
+                    margin: 1.5rem auto;
+                    max-width: 300px;
+                    aspect-ratio: 1;
+                    border: 2px solid var(--neon-blue);
+                }
+                .sudoku-cell {
+                    background: rgba(255, 255, 255, 0.1);
+                    border: 1px solid rgba(0, 255, 255, 0.3);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.5rem;
+                    font-weight: bold;
+                    cursor: pointer;
+                    transition: var(--transition);
+                    user-select: none;
+                }
+                .sudoku-cell:hover {
+                    background: rgba(0, 255, 255, 0.1);
+                }
+                .sudoku-cell.fixed {
+                    color: var(--neon-blue);
+                    cursor: default;
+                }
+                .sudoku-cell.editable {
+                    color: var(--neon-green);
+                }
+                .sudoku-cell.error {
+                    color: var(--neon-pink);
+                    animation: shake 0.5s;
+                }
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    25% { transform: translateX(-5px); }
+                    75% { transform: translateX(5px); }
+                }
+            `;
+            document.head.appendChild(style);
             
             function renderBoard() {
                 boardElement.innerHTML = '';
-                board.forEach((row, rowIndex) => {
-                    row.forEach((cell, colIndex) => {
-                        const cellElement = document.createElement('div');
-                        cellElement.className = 'sudoku-cell';
-                        cellElement.textContent = cell || '';
-                        boardElement.appendChild(cellElement);
-                    });
-                });
+                
+                for (let row = 0; row < 4; row++) {
+                    for (let col = 0; col < 4; col++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'sudoku-cell';
+                        cell.dataset.row = row;
+                        cell.dataset.col = col;
+                        
+                        const value = puzzle[row][col];
+                        if (value !== 0) {
+                            cell.textContent = value;
+                            cell.classList.add('fixed');
+                        } else {
+                            cell.classList.add('editable');
+                            cell.textContent = '';
+                            cell.addEventListener('click', () => editCell(row, col));
+                        }
+                        
+                        // Bordes más gruesos para regiones 2x2
+                        if (row === 1 || row === 3) cell.style.borderTopWidth = '2px';
+                        if (col === 1 || col === 3) cell.style.borderLeftWidth = '2px';
+                        
+                        boardElement.appendChild(cell);
+                    }
+                }
             }
+            
+            function editCell(row, col) {
+                const currentValue = puzzle[row][col];
+                let newValue = currentValue + 1;
+                if (newValue > 4) newValue = 0;
+                
+                puzzle[row][col] = newValue;
+                renderBoard();
+                messageElement.textContent = 'Rellena las casillas vacías';
+            }
+            
+            function checkSolution() {
+                let correct = true;
+                
+                for (let row = 0; row < 4; row++) {
+                    for (let col = 0; col < 4; col++) {
+                        const cell = boardElement.children[row * 4 + col];
+                        
+                        if (puzzle[row][col] !== solution[row][col]) {
+                            cell.classList.add('error');
+                            correct = false;
+                        } else {
+                            cell.classList.remove('error');
+                        }
+                    }
+                }
+                
+                if (correct) {
+                    messageElement.innerHTML = '<span style="color:var(--neon-green)">¡Correcto! Sudoku resuelto.</span>';
+                } else {
+                    messageElement.innerHTML = '<span style="color:var(--neon-pink)">Algunos números son incorrectos</span>';
+                }
+            }
+            
+            function newGame() {
+                // Generar un nuevo puzzle simple
+                puzzle = [
+                    [1, 0, 0, 0],
+                    [0, 2, 0, 0],
+                    [0, 0, 3, 0],
+                    [0, 0, 0, 4]
+                ];
+                messageElement.textContent = 'Rellena las casillas vacías';
+                renderBoard();
+            }
+            
+            document.getElementById('sudokuCheck').addEventListener('click', checkSolution);
+            document.getElementById('sudokuNew').addEventListener('click', newGame);
             
             renderBoard();
         }
@@ -441,360 +1226,435 @@
                 <div class="game-container">
                     <h2 class="game-title-large">Memorama</h2>
                     <p class="game-instructions">
-                        Encuentra las parejas de cartas iguales.
+                        Encuentra todas las parejas de cartas iguales. Haz clic en dos cartas para voltearlas.
                     </p>
                     <div class="memory-board" id="memoryBoard"></div>
+                    <div class="game-stats">
+                        <div class="stat-box">
+                            <h3>Pares</h3>
+                            <p id="pairsFound">0/8</p>
+                        </div>
+                        <div class="stat-box">
+                            <h3>Intentos</h3>
+                            <p id="memoryAttempts">0</p>
+                        </div>
+                    </div>
                     <div class="game-controls">
                         <button id="memoryReset" class="game-button">Reiniciar</button>
                     </div>
                 </div>
             `;
             
-            // Inicialización simple
-            const symbols = ['A', 'B', 'C', 'D', 'A', 'B', 'C', 'D'];
+            // Estilos para el memorama
+            const style = document.createElement('style');
+            style.textContent = `
+                .memory-board {
+                    display: grid;
+                    grid-template-columns: repeat(4, 1fr);
+                    gap: 10px;
+                    margin: 1.5rem auto;
+                    max-width: 400px;
+                }
+                .memory-card {
+                    aspect-ratio: 1;
+                    background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
+                    border-radius: 10px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.8rem;
+                    font-weight: bold;
+                    cursor: pointer;
+                    transition: var(--transition);
+                    transform-style: preserve-3d;
+                    position: relative;
+                }
+                .memory-card .front,
+                .memory-card .back {
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                    backface-visibility: hidden;
+                    border-radius: 10px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .memory-card .front {
+                    background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
+                    color: var(--dark-bg);
+                    transform: rotateY(180deg);
+                }
+                .memory-card .back {
+                    background: rgba(255, 255, 255, 0.1);
+                    color: var(--text-primary);
+                    border: 2px solid var(--neon-blue);
+                }
+                .memory-card.flipped {
+                    transform: rotateY(180deg);
+                }
+                .memory-card.matched {
+                    opacity: 0.5;
+                    cursor: default;
+                    transform: rotateY(180deg) scale(0.95);
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Símbolos para las cartas (8 pares)
+            const symbols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+            const cards = [...symbols, ...symbols];
+            let flippedCards = [];
+            let matchedCards = [];
+            let attempts = 0;
+            let canFlip = true;
+            
             const boardElement = document.getElementById('memoryBoard');
+            const pairsElement = document.getElementById('pairsFound');
+            const attemptsElement = document.getElementById('memoryAttempts');
+            
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
             
             function renderBoard() {
                 boardElement.innerHTML = '';
-                symbols.forEach((symbol, index) => {
+                const shuffledCards = shuffleArray([...cards]);
+                
+                shuffledCards.forEach((symbol, index) => {
                     const card = document.createElement('div');
                     card.className = 'memory-card';
-                    card.textContent = '?';
+                    card.dataset.index = index;
+                    card.dataset.symbol = symbol;
+                    
+                    card.innerHTML = `
+                        <div class="front">${symbol}</div>
+                        <div class="back">?</div>
+                    `;
+                    
+                    card.addEventListener('click', () => flipCard(card));
                     boardElement.appendChild(card);
                 });
             }
             
-            renderBoard();
+            function flipCard(card) {
+                if (!canFlip || flippedCards.length >= 2 || card.classList.contains('flipped') || card.classList.contains('matched')) {
+                    return;
+                }
+                
+                card.classList.add('flipped');
+                flippedCards.push(card);
+                
+                if (flippedCards.length === 2) {
+                    attempts++;
+                    attemptsElement.textContent = attempts;
+                    canFlip = false;
+                    
+                    const [card1, card2] = flippedCards;
+                    
+                    if (card1.dataset.symbol === card2.dataset.symbol) {
+                        // ¡Par encontrado!
+                        setTimeout(() => {
+                            card1.classList.add('matched');
+                            card2.classList.add('matched');
+                            matchedCards.push(card1, card2);
+                            flippedCards = [];
+                            canFlip = true;
+                            
+                            pairsElement.textContent = `${matchedCards.length / 2}/8`;
+                            
+                            if (matchedCards.length === 16) {
+                                setTimeout(() => {
+                                    alert(`¡Ganaste! Encontraste todos los pares en ${attempts} intentos.`);
+                                }, 500);
+                            }
+                        }, 500);
+                    } else {
+                        // No son pareja
+                        setTimeout(() => {
+                            card1.classList.remove('flipped');
+                            card2.classList.remove('flipped');
+                            flippedCards = [];
+                            canFlip = true;
+                        }, 1000);
+                    }
+                }
+            }
+            
+            function resetGame() {
+                flippedCards = [];
+                matchedCards = [];
+                attempts = 0;
+                attemptsElement.textContent = attempts;
+                pairsElement.textContent = '0/8';
+                canFlip = true;
+                renderBoard();
+            }
+            
+            document.getElementById('memoryReset').addEventListener('click', resetGame);
+            
+            resetGame();
         }
 
-        // JUEGO 5: Torres de Hanoi
+        // JUEGOS 5-15: Implementaciones simplificadas (plantillas)
         function loadHanoiGame(container) {
             container.innerHTML = `
                 <div class="game-container">
                     <h2 class="game-title-large">Torres de Hanoi</h2>
                     <p class="game-instructions">
-                        Mueve todos los discos de la torre izquierda a la derecha.
+                        Mueve todos los discos de la torre izquierda a la derecha, sin colocar discos grandes sobre pequeños.
                     </p>
-                    <div class="hanoi-container" id="hanoiContainer"></div>
-                    <div class="game-controls">
-                        <button id="hanoiReset" class="game-button">Reiniciar</button>
+                    <div class="coming-soon">
+                        <div class="coming-soon-icon">
+                            <i class="fas fa-layer-group"></i>
+                        </div>
+                        <p class="game-instructions">
+                            Este juego estará disponible en la próxima actualización. Por ahora, ¡disfruta de los otros minijuegos!
+                        </p>
+                        <button class="game-button" onclick="returnToMain()">
+                            <i class="fas fa-arrow-left"></i> Volver al Menú
+                        </button>
                     </div>
-                </div>
-            `;
-            
-            // Implementación básica
-            const containerElement = document.getElementById('hanoiContainer');
-            containerElement.innerHTML = `
-                <div class="hanoi-tower">
-                    <div class="hanoi-base"></div>
-                    <div class="hanoi-pole"></div>
-                </div>
-                <div class="hanoi-tower">
-                    <div class="hanoi-base"></div>
-                    <div class="hanoi-pole"></div>
-                </div>
-                <div class="hanoi-tower">
-                    <div class="hanoi-base"></div>
-                    <div class="hanoi-pole"></div>
                 </div>
             `;
         }
 
-        // JUEGO 6: Busca Minas
+        // Plantillas similares para los otros juegos...
         function loadMinesweeperGame(container) {
             container.innerHTML = `
                 <div class="game-container">
                     <h2 class="game-title-large">Busca Minas</h2>
                     <p class="game-instructions">
-                        Encuentra las minas sin activarlas.
+                        Encuentra todas las minas sin activar ninguna. Usa los números como pistas.
                     </p>
-                    <div class="minesweeper-board" id="minesweeperBoard"></div>
-                    <div class="game-controls">
-                        <button id="minesweeperNew" class="game-button">Nuevo Juego</button>
+                    <div class="coming-soon">
+                        <div class="coming-soon-icon">
+                            <i class="fas fa-bomb"></i>
+                        </div>
+                        <p class="game-instructions">
+                            Este juego estará disponible en la próxima actualización. Por ahora, ¡disfruta de los otros minijuegos!
+                        </p>
+                        <button class="game-button" onclick="returnToMain()">
+                            <i class="fas fa-arrow-left"></i> Volver al Menú
+                        </button>
                     </div>
                 </div>
             `;
-            
-            // Tablero simple 5x5
-            const boardElement = document.getElementById('minesweeperBoard');
-            
-            function renderBoard() {
-                boardElement.innerHTML = '';
-                for (let i = 0; i < 25; i++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'minesweeper-cell';
-                    boardElement.appendChild(cell);
-                }
-            }
-            
-            renderBoard();
         }
 
-        // JUEGO 7: 15 Puzzle
         function loadPuzzle15Game(container) {
             container.innerHTML = `
                 <div class="game-container">
                     <h2 class="game-title-large">15 Puzzle</h2>
                     <p class="game-instructions">
-                        Ordena los números del 1 al 15.
+                        Ordena los números del 1 al 15 deslizando las piezas en el tablero 4x4.
                     </p>
-                    <div class="puzzle15-board" id="puzzle15Board"></div>
-                    <div class="game-controls">
-                        <button id="puzzleShuffle" class="game-button">Mezclar</button>
+                    <div class="coming-soon">
+                        <div class="coming-soon-icon">
+                            <i class="fas fa-puzzle-piece"></i>
+                        </div>
+                        <p class="game-instructions">
+                            Este juego estará disponible en la próxima actualización. Por ahora, ¡disfruta de los otros minijuegos!
+                        </p>
+                        <button class="game-button" onclick="returnToMain()">
+                            <i class="fas fa-arrow-left"></i> Volver al Menú
+                        </button>
                     </div>
                 </div>
             `;
-            
-            // Tablero 4x4
-            const boardElement = document.getElementById('puzzle15Board');
-            
-            function renderBoard() {
-                boardElement.innerHTML = '';
-                for (let i = 1; i <= 15; i++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'puzzle15-cell';
-                    cell.textContent = i;
-                    boardElement.appendChild(cell);
-                }
-                // Celda vacía
-                const emptyCell = document.createElement('div');
-                emptyCell.className = 'puzzle15-cell empty';
-                boardElement.appendChild(emptyCell);
-            }
-            
-            renderBoard();
         }
 
-        // JUEGO 8: Ahorcado
+        // Funciones restantes (plantillas similares)
         function loadHangmanGame(container) {
             container.innerHTML = `
                 <div class="game-container">
                     <h2 class="game-title-large">Ahorcado</h2>
                     <p class="game-instructions">
-                        Adivina la palabra letra por letra.
+                        Adivina la palabra letra por letra antes de que se complete el dibujo del ahorcado.
                     </p>
-                    <div id="hangmanWord">_ _ _ _ _</div>
-                    <div id="hangmanKeyboard"></div>
-                    <div class="game-controls">
-                        <button id="hangmanNew" class="game-button">Nueva Palabra</button>
+                    <div class="coming-soon">
+                        <div class="coming-soon-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <p class="game-instructions">
+                            Este juego estará disponible en la próxima actualización. Por ahora, ¡disfruta de los otros minijuegos!
+                        </p>
+                        <button class="game-button" onclick="returnToMain()">
+                            <i class="fas fa-arrow-left"></i> Volver al Menú
+                        </button>
                     </div>
                 </div>
             `;
-            
-            // Teclado simple
-            const keyboard = document.getElementById('hangmanKeyboard');
-            'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(letter => {
-                const key = document.createElement('button');
-                key.textContent = letter;
-                key.className = 'game-button';
-                keyboard.appendChild(key);
-            });
         }
 
-        // JUEGO 9: Conecta 4
         function loadConnect4Game(container) {
             container.innerHTML = `
                 <div class="game-container">
                     <h2 class="game-title-large">Conecta 4</h2>
                     <p class="game-instructions">
-                        Conecta cuatro fichas en línea.
+                        Conecta cuatro fichas en línea horizontal, vertical o diagonal. Estrategia pura para dos jugadores.
                     </p>
-                    <div class="connect4-board" id="connect4Board"></div>
-                    <div class="game-controls">
-                        <button id="connect4Reset" class="game-button">Reiniciar</button>
+                    <div class="coming-soon">
+                        <div class="coming-soon-icon">
+                            <i class="fas fa-circle"></i>
+                        </div>
+                        <p class="game-instructions">
+                            Este juego estará disponible en la próxima actualización. Por ahora, ¡disfruta de los otros minijuegos!
+                        </p>
+                        <button class="game-button" onclick="returnToMain()">
+                            <i class="fas fa-arrow-left"></i> Volver al Menú
+                        </button>
                     </div>
                 </div>
             `;
-            
-            // Tablero 7x6
-            const boardElement = document.getElementById('connect4Board');
-            
-            function renderBoard() {
-                boardElement.innerHTML = '';
-                for (let i = 0; i < 42; i++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'connect4-cell';
-                    boardElement.appendChild(cell);
-                }
-            }
-            
-            renderBoard();
         }
 
-        // JUEGO 10: Laberinto
         function loadMazeGame(container) {
             container.innerHTML = `
                 <div class="game-container">
                     <h2 class="game-title-large">Laberinto</h2>
                     <p class="game-instructions">
-                        Encuentra la salida del laberinto.
+                        Encuentra la salida del laberinto generado aleatoriamente. ¡Navega por el camino más corto!
                     </p>
-                    <div id="mazeContainer"></div>
-                    <div class="game-controls">
-                        <button id="mazeNew" class="game-button">Nuevo Laberinto</button>
+                    <div class="coming-soon">
+                        <div class="coming-soon-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <p class="game-instructions">
+                            Este juego estará disponible en la próxima actualización. Por ahora, ¡disfruta de los otros minijuegos!
+                        </p>
+                        <button class="game-button" onclick="returnToMain()">
+                            <i class="fas fa-arrow-left"></i> Volver al Menú
+                        </button>
                     </div>
                 </div>
             `;
-            
-            // Laberinto simple
-            const mazeContainer = document.getElementById('mazeContainer');
-            mazeContainer.innerHTML = '<p style="color:var(--neon-green)">Usa las teclas de flecha para moverte</p>';
         }
 
-        // JUEGO 11: Criptograma
         function loadCryptogramGame(container) {
             container.innerHTML = `
                 <div class="game-container">
                     <h2 class="game-title-large">Criptograma</h2>
                     <p class="game-instructions">
-                        Descifra el mensaje codificado.
+                        Descifra el mensaje codificado sustituyendo letras. Un desafío de lógica lingüística.
                     </p>
-                    <div id="cryptogramMessage">ABCD EFGH IJKL</div>
-                    <div class="cryptogram-keyboard" id="cryptogramKeyboard"></div>
+                    <div class="coming-soon">
+                        <div class="coming-soon-icon">
+                            <i class="fas fa-key"></i>
+                        </div>
+                        <p class="game-instructions">
+                            Este juego estará disponible en la próxima actualización. Por ahora, ¡disfruta de los otros minijuegos!
+                        </p>
+                        <button class="game-button" onclick="returnToMain()">
+                            <i class="fas fa-arrow-left"></i> Volver al Menú
+                        </button>
+                    </div>
                 </div>
             `;
-            
-            // Teclado para criptograma
-            const keyboard = document.getElementById('cryptogramKeyboard');
-            'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(letter => {
-                const key = document.createElement('div');
-                key.className = 'cryptogram-key';
-                key.textContent = letter;
-                keyboard.appendChild(key);
-            });
         }
 
-        // JUEGO 12: Mastermind
         function loadMastermindGame(container) {
             container.innerHTML = `
                 <div class="game-container">
                     <h2 class="game-title-large">Mastermind</h2>
                     <p class="game-instructions">
-                        Adivina la combinación de colores.
+                        Adivina la combinación secreta de colores usando pistas de posición y color. ¡Pura deducción lógica!
                     </p>
-                    <div class="mastermind-board" id="mastermindBoard"></div>
-                    <div id="colorPalette"></div>
+                    <div class="coming-soon">
+                        <div class="coming-soon-icon">
+                            <i class="fas fa-user-secret"></i>
+                        </div>
+                        <p class="game-instructions">
+                            Este juego estará disponible en la próxima actualización. Por ahora, ¡disfruta de los otros minijuegos!
+                        </p>
+                        <button class="game-button" onclick="returnToMain()">
+                            <i class="fas fa-arrow-left"></i> Volver al Menú
+                        </button>
+                    </div>
                 </div>
             `;
-            
-            // Colores disponibles
-            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00'];
-            const palette = document.getElementById('colorPalette');
-            
-            colors.forEach(color => {
-                const colorBtn = document.createElement('div');
-                colorBtn.className = 'mastermind-peg';
-                colorBtn.style.background = color;
-                palette.appendChild(colorBtn);
-            });
         }
 
-        // JUEGO 13: Juego de la Vida
         function loadLifeGame(container) {
             container.innerHTML = `
                 <div class="game-container">
                     <h2 class="game-title-large">Juego de la Vida</h2>
                     <p class="game-instructions">
-                        Simulación del autómata celular de Conway.
+                        Simula el autómata celular de Conway. Observa cómo evolucionan los patrones según reglas simples.
                     </p>
-                    <div class="life-board" id="lifeBoard"></div>
-                    <div class="game-controls">
-                        <button id="lifeStart" class="game-button">Iniciar</button>
-                        <button id="lifePause" class="game-button">Pausar</button>
+                    <div class="coming-soon">
+                        <div class="coming-soon-icon">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <p class="game-instructions">
+                            Este juego estará disponible en la próxima actualización. Por ahora, ¡disfruta de los otros minijuegos!
+                        </p>
+                        <button class="game-button" onclick="returnToMain()">
+                            <i class="fas fa-arrow-left"></i> Volver al Menú
+                        </button>
                     </div>
                 </div>
             `;
-            
-            // Grid simple
-            const board = document.getElementById('lifeBoard');
-            
-            function renderBoard() {
-                board.innerHTML = '';
-                for (let i = 0; i < 100; i++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'life-cell';
-                    board.appendChild(cell);
-                }
-            }
-            
-            renderBoard();
         }
 
-        // JUEGO 14: Battleship
         function loadBattleshipGame(container) {
             container.innerHTML = `
                 <div class="game-container">
                     <h2 class="game-title-large">Battleship</h2>
                     <p class="game-instructions">
-                        Hunde la flota enemiga.
+                        Hunde la flota enemiga antes de que hundan la tuya. Estrategia naval clásica para dos jugadores.
                     </p>
-                    <div class="battleship-container">
-                        <div class="battleship-board" id="playerBoard"></div>
-                        <div class="battleship-board" id="enemyBoard"></div>
+                    <div class="coming-soon">
+                        <div class="coming-soon-icon">
+                            <i class="fas fa-ship"></i>
+                        </div>
+                        <p class="game-instructions">
+                            Este juego estará disponible en la próxima actualización. Por ahora, ¡disfruta de los otros minijuegos!
+                        </p>
+                        <button class="game-button" onclick="returnToMain()">
+                            <i class="fas fa-arrow-left"></i> Volver al Menú
+                        </button>
                     </div>
                 </div>
             `;
-            
-            // Dos tableros
-            const playerBoard = document.getElementById('playerBoard');
-            const enemyBoard = document.getElementById('enemyBoard');
-            
-            function renderBoard(boardElement) {
-                boardElement.innerHTML = '';
-                for (let i = 0; i < 100; i++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'battleship-cell';
-                    boardElement.appendChild(cell);
-                }
-            }
-            
-            renderBoard(playerBoard);
-            renderBoard(enemyBoard);
         }
 
-        // JUEGO 15: Nonogramas
         function loadNonogramGame(container) {
             container.innerHTML = `
                 <div class="game-container">
                     <h2 class="game-title-large">Nonogramas</h2>
                     <p class="game-instructions">
-                        Resuelve el rompecabezas lógico.
+                        Resuelve el rompecabezas lógico donde números indican grupos de casillas a rellenar. ¡Crea una imagen!
                     </p>
-                    <div class="nonogram-container">
-                        <div class="nonogram-board" id="nonogramBoard"></div>
-                    </div>
-                    <div class="game-controls">
-                        <button id="nonogramNew" class="game-button">Nuevo Nonograma</button>
+                    <div class="coming-soon">
+                        <div class="coming-soon-icon">
+                            <i class="fas fa-border-style"></i>
+                        </div>
+                        <p class="game-instructions">
+                            Este juego estará disponible en la próxima actualización. Por ahora, ¡disfruta de los otros minijuegos!
+                        </p>
+                        <button class="game-button" onclick="returnToMain()">
+                            <i class="fas fa-arrow-left"></i> Volver al Menú
+                        </button>
                     </div>
                 </div>
             `;
-            
-            // Tablero 5x5
-            const board = document.getElementById('nonogramBoard');
-            
-            function renderBoard() {
-                board.innerHTML = '';
-                for (let i = 0; i < 25; i++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'nonogram-cell';
-                    board.appendChild(cell);
-                }
-            }
-            
-            renderBoard();
         }
 
         // ==================== FUNCIONES GENERALES ====================
-        // Volver al menú principal
         function returnToMain() {
             document.getElementById('mainPage').style.display = 'block';
             document.getElementById('gamePage').style.display = 'none';
             state.currentGame = null;
         }
 
-        // Cambiar tema claro/oscuro
         function toggleTheme() {
             const root = document.documentElement;
+            const icon = document.querySelector('#themeToggle i');
             
             if (state.darkMode) {
                 // Cambiar a modo claro
@@ -803,20 +1663,29 @@
                 root.style.setProperty('--text-primary', '#222244');
                 root.style.setProperty('--text-secondary', '#444466');
                 root.style.setProperty('--grid-color', 'rgba(0, 100, 255, 0.1)');
+                icon.className = 'fas fa-sun';
                 state.darkMode = false;
             } else {
-                // Volver a modo oscuro (original)
+                // Volver a modo oscuro
                 root.style.setProperty('--dark-bg', '#0a0a1a');
                 root.style.setProperty('--card-bg', 'rgba(16, 16, 32, 0.85)');
                 root.style.setProperty('--text-primary', '#ffffff');
                 root.style.setProperty('--text-secondary', '#ccccff');
                 root.style.setProperty('--grid-color', 'rgba(0, 255, 255, 0.1)');
+                icon.className = 'fas fa-moon';
                 state.darkMode = true;
             }
         }
 
         // Hacer returnToMain accesible globalmente
         window.returnToMain = returnToMain;
+        
+        // Manejar redimensionamiento de ventana
+        window.addEventListener('resize', function() {
+            // Recrear puntos de neón para adaptarse al nuevo tamaño
+            document.getElementById('neonDots').innerHTML = '';
+            createNeonDots();
+        });
     </script>
 </body>
 </html>
