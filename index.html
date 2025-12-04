@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arcade Lógico - 15 Minijuegos Completos</title>
+    <meta name="description" content="15 juegos de lógica completos: Sudoku, Tres en Raya, Busca Minas, Memoria, Torres de Hanoi y más">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -13,11 +14,12 @@
             --neon-blue: #0ff0fc;
             --neon-pink: #ff00ff;
             --neon-green: #00ff00;
+            --neon-yellow: #ffff00;
             --text-primary: #ffffff;
             --text-secondary: #ccccff;
             --grid-color: rgba(0, 255, 255, 0.1);
             --shadow: 0 0 15px rgba(0, 255, 255, 0.3);
-            --border-radius: 15px;
+            --border-radius: 12px;
             --transition: all 0.3s ease;
         }
 
@@ -26,6 +28,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
         }
 
         body {
@@ -34,10 +37,10 @@
             min-height: 100vh;
             position: relative;
             overflow-x: hidden;
-            line-height: 1.6;
+            line-height: 1.5;
         }
 
-        /* Fondo con grid */
+        /* Fondo optimizado */
         #gridLines {
             position: fixed;
             top: 0;
@@ -47,11 +50,10 @@
             background-image: 
                 linear-gradient(var(--grid-color) 1px, transparent 1px),
                 linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-            background-size: 50px 50px;
+            background-size: 40px 40px;
             z-index: -2;
         }
 
-        /* Puntos de neón animados */
         #neonDots {
             position: fixed;
             top: 0;
@@ -60,6 +62,7 @@
             height: 100%;
             z-index: -1;
             overflow: hidden;
+            pointer-events: none;
         }
 
         .neon-dot {
@@ -69,8 +72,8 @@
         }
 
         @keyframes pulse {
-            0% { opacity: 0.2; transform: scale(0.8); }
-            100% { opacity: 0.8; transform: scale(1.2); }
+            0% { opacity: 0.1; }
+            100% { opacity: 0.4; }
         }
 
         /* Páginas */
@@ -78,13 +81,6 @@
             display: none;
             min-height: 100vh;
             padding: 1rem;
-            position: relative;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
         }
 
         #mainPage {
@@ -94,90 +90,89 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 1rem;
+            padding: 0.5rem;
         }
 
         /* Header */
         .header {
             text-align: center;
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            position: relative;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
         }
 
         .logo {
-            font-size: clamp(2rem, 8vw, 3.5rem);
+            font-size: clamp(1.8rem, 6vw, 3rem);
             background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            margin-bottom: 1rem;
-            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+            margin-bottom: 0.5rem;
         }
 
         .subtitle {
             color: var(--text-secondary);
-            font-size: clamp(1rem, 3vw, 1.2rem);
-            margin-bottom: 1.5rem;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            margin-bottom: 1rem;
         }
 
         /* Grid de juegos */
         .games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
         }
 
         .game-card {
             background: var(--card-bg);
             border-radius: var(--border-radius);
-            padding: 1.2rem;
-            border: 1px solid rgba(0, 255, 255, 0.2);
+            padding: 1rem;
+            border: 1px solid rgba(0, 255, 255, 0.1);
             transition: var(--transition);
             cursor: pointer;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(5px);
             height: 100%;
             display: flex;
             flex-direction: column;
         }
 
         .game-card:hover {
-            transform: translateY(-8px);
+            transform: translateY(-5px);
             border-color: var(--neon-blue);
-            box-shadow: var(--shadow);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.2);
         }
 
         .game-header {
             display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            margin-bottom: 1rem;
+            align-items: start;
+            gap: 0.5rem;
+            margin-bottom: 0.8rem;
         }
 
         .game-number {
             background: var(--neon-blue);
             color: var(--dark-bg);
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
+            font-size: 0.8rem;
             flex-shrink: 0;
         }
 
         .game-title {
-            font-size: 1.2rem;
+            font-size: 1rem;
             color: var(--neon-blue);
-            line-height: 1.3;
+            line-height: 1.2;
         }
 
         .game-desc {
             color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 1.5rem;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
             flex-grow: 1;
         }
 
@@ -189,63 +184,61 @@
         }
 
         .game-difficulty {
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 15px;
+            font-size: 0.7rem;
             font-weight: bold;
-            white-space: nowrap;
         }
 
         .game-difficulty.easy {
-            background: rgba(0, 255, 0, 0.2);
+            background: rgba(0, 255, 0, 0.15);
             color: var(--neon-green);
         }
 
         .game-difficulty.medium {
-            background: rgba(255, 255, 0, 0.2);
+            background: rgba(255, 255, 0, 0.15);
             color: #ff0;
         }
 
         .game-difficulty.hard {
-            background: rgba(255, 0, 0, 0.2);
+            background: rgba(255, 0, 0, 0.15);
             color: #ff6666;
         }
 
         /* Botones */
         .play-btn {
-            background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
-            color: white;
-            border: none;
-            padding: 0.5rem 1.2rem;
-            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.3rem;
             font-weight: bold;
             transition: var(--transition);
-            font-size: 0.9rem;
-            white-space: nowrap;
+            font-size: 0.8rem;
         }
 
         .play-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            background: var(--neon-blue);
+            color: var(--dark-bg);
         }
 
         .theme-toggle {
             background: rgba(255, 255, 255, 0.1);
             color: var(--neon-blue);
             border: 1px solid var(--neon-blue);
-            padding: 0.5rem 1.2rem;
-            border-radius: 25px;
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            margin: 0.5rem;
+            gap: 0.3rem;
+            margin: 0.3rem;
             transition: var(--transition);
-            font-weight: bold;
+            font-size: 0.8rem;
         }
 
         .theme-toggle:hover {
@@ -258,25 +251,25 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
             border-bottom: 1px solid rgba(0, 255, 255, 0.2);
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: 0.5rem;
         }
 
         .back-button {
             background: none;
-            border: 2px solid var(--neon-blue);
+            border: 1px solid var(--neon-blue);
             color: var(--neon-blue);
-            padding: 0.5rem 1.2rem;
-            border-radius: 25px;
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.3rem;
             transition: var(--transition);
-            font-weight: bold;
+            font-size: 0.8rem;
             order: 1;
         }
 
@@ -287,7 +280,7 @@
 
         .game-title-large {
             color: var(--neon-blue);
-            font-size: clamp(1.5rem, 5vw, 2rem);
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
             text-align: center;
             order: 2;
             flex-grow: 1;
@@ -297,220 +290,195 @@
         .game-container {
             background: var(--card-bg);
             border-radius: var(--border-radius);
-            padding: 1.5rem;
+            padding: 1rem;
             border: 1px solid rgba(0, 255, 255, 0.2);
-            min-height: 400px;
-            backdrop-filter: blur(10px);
-            margin-top: 1rem;
+            min-height: 300px;
+            backdrop-filter: blur(5px);
+            margin-top: 0.5rem;
         }
 
         .game-instructions {
             color: var(--text-secondary);
             text-align: center;
+            font-size: 0.85rem;
+            margin: 0.5rem auto 1rem;
             max-width: 600px;
-            margin: 0 auto 1.5rem;
-            font-size: 0.95rem;
         }
 
         /* Controles de juego */
         .game-controls {
             display: flex;
-            gap: 1rem;
+            gap: 0.5rem;
             justify-content: center;
-            margin: 1.5rem 0;
+            margin: 1rem 0;
             flex-wrap: wrap;
         }
 
         .game-input {
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid var(--neon-blue);
-            border-radius: 10px;
-            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            padding: 0.6rem 0.8rem;
             color: white;
-            font-size: 1rem;
+            font-size: 0.9rem;
             width: 100%;
-            max-width: 250px;
+            max-width: 200px;
         }
 
         .game-button {
-            background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
             transition: var(--transition);
-            font-size: 0.95rem;
+            font-size: 0.85rem;
         }
 
         .game-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            background: var(--neon-blue);
+            color: var(--dark-bg);
         }
 
-        /* Tableros de juego */
-        .tic-tac-toe-board {
+        /* Componentes comunes */
+        .game-board {
+            margin: 1rem auto;
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-            gap: 5px;
-            margin: 1.5rem auto;
-            max-width: 300px;
-            aspect-ratio: 1;
+            gap: 2px;
+            justify-content: center;
         }
 
-        .tic-tac-toe-cell {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid var(--neon-blue);
-            border-radius: 10px;
+        .game-cell {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 255, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: clamp(2rem, 8vw, 2.5rem);
             cursor: pointer;
             transition: var(--transition);
             user-select: none;
         }
 
-        .tic-tac-toe-cell:hover {
+        .game-cell:hover {
             background: rgba(0, 255, 255, 0.1);
         }
 
-        /* Feedback y stats */
         .game-feedback {
             background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            padding: 1rem;
-            margin: 1.5rem 0;
+            border-radius: 8px;
+            padding: 0.8rem;
+            margin: 1rem 0;
             text-align: center;
             border: 1px solid rgba(0, 255, 255, 0.1);
+            font-size: 0.9rem;
         }
 
         .game-stats {
             display: flex;
             justify-content: center;
-            gap: 2rem;
-            margin-top: 1.5rem;
+            gap: 1rem;
+            margin: 1rem 0;
             flex-wrap: wrap;
         }
 
         .stat-box {
             background: rgba(0, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
             text-align: center;
-            min-width: 120px;
+            min-width: 80px;
         }
 
         .stat-box h3 {
             color: var(--neon-blue);
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
+            font-size: 0.75rem;
+            margin-bottom: 0.3rem;
         }
 
         .stat-box p {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: bold;
             color: var(--neon-green);
         }
 
-        /* Responsive para móviles */
-        @media (max-width: 768px) {
-            .container {
-                padding: 0.5rem;
-            }
-
-            .page {
-                padding: 0.5rem;
-            }
-
-            .header {
-                padding: 1rem 0.5rem;
-                margin-bottom: 1rem;
-            }
-
+        /* Responsive */
+        @media (max-width: 480px) {
             .games-grid {
                 grid-template-columns: 1fr;
-                gap: 1rem;
             }
-
-            .game-card {
-                padding: 1rem;
+            
+            .container {
+                padding: 0.3rem;
             }
-
-            .game-page-header {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .back-button {
-                order: 1;
-                align-self: flex-start;
-            }
-
-            .game-title-large {
-                order: 2;
-                margin: 0.5rem 0;
-            }
-
+            
             .game-container {
-                padding: 1rem;
-                min-height: 300px;
+                padding: 0.8rem;
+                min-height: 250px;
             }
-
-            .game-controls {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .game-input {
-                max-width: 100%;
-            }
-
-            .tic-tac-toe-board {
-                max-width: 250px;
+            
+            .stat-box {
+                min-width: 70px;
+                padding: 0.5rem;
             }
         }
 
-        /* Para tablets */
-        @media (min-width: 769px) and (max-width: 1024px) {
+        @media (min-width: 481px) and (max-width: 768px) {
             .games-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
 
+        @media (min-width: 769px) {
+            .games-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .games-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
         /* Scroll personalizado */
         ::-webkit-scrollbar {
-            width: 10px;
+            width: 8px;
         }
 
         ::-webkit-scrollbar-track {
-            background: rgba(0, 255, 255, 0.1);
-            border-radius: 5px;
+            background: rgba(0, 255, 255, 0.05);
         }
 
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(var(--neon-blue), var(--neon-pink));
-            border-radius: 5px;
+            background: var(--neon-blue);
+            border-radius: 4px;
         }
 
-        /* Mensajes de "coming soon" */
+        /* Mensajes especiales */
         .coming-soon {
             text-align: center;
-            padding: 2rem;
+            padding: 2rem 1rem;
         }
 
         .coming-soon-icon {
-            font-size: 4rem;
+            font-size: 3rem;
             color: var(--neon-blue);
             margin-bottom: 1rem;
             opacity: 0.7;
         }
+
+        /* Estados de juego */
+        .win { color: var(--neon-green) !important; }
+        .lose { color: var(--neon-pink) !important; }
+        .highlight { background: rgba(0, 255, 255, 0.2) !important; }
+        .disabled { opacity: 0.5; pointer-events: none; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
-    <!-- Fondo animado -->
+    <!-- Fondo optimizado -->
     <div id="gridLines"></div>
     <div id="neonDots"></div>
     
@@ -519,9 +487,9 @@
         <div class="container">
             <header class="header">
                 <h1 class="logo">ARCADE LÓGICO</h1>
-                <p class="subtitle">15 Minijuegos de Lógica - Desafía tu Mente</p>
+                <p class="subtitle">15 Minijuegos de Lógica - Ejercita tu Mente</p>
                 <button id="themeToggle" class="theme-toggle">
-                    <i class="fas fa-moon"></i> Cambiar Tema
+                    <i class="fas fa-moon"></i> Tema
                 </button>
             </header>
             
@@ -541,247 +509,204 @@
                     <i class="fas fa-arrow-left"></i> Volver
                 </button>
                 <h2 id="currentGameTitle" class="game-title-large">Juego Actual</h2>
-                <div style="width: 80px; order: 3;"></div> <!-- Espaciador para alineación -->
+                <div style="width: 80px; order: 3;"></div>
             </div>
             
             <div id="gameContent">
-                <!-- El contenido del juego se carga aquí dinámicamente -->
+                <!-- El contenido del juego se carga aquí -->
             </div>
         </div>
     </div>
     
     <script>
-        // Datos de los 15 minijuegos COMPLETOS
-        const games = [
-            {
-                id: 1,
-                title: "Adivina el Número",
-                description: "Adivina el número secreto entre 1 y 100 usando pistas de mayor o menor. ¡Demuestra tu intuición numérica!",
-                difficulty: "easy",
-                icon: "fa-bullseye",
-                hasGame: true
-            },
-            {
-                id: 2,
-                title: "Tres en Raya",
-                description: "El clásico juego de estrategia. Alinea tres símbolos en horizontal, vertical o diagonal antes que tu oponente.",
-                difficulty: "easy",
-                icon: "fa-times",
-                hasGame: true
-            },
-            {
-                id: 3,
-                title: "Sudoku",
-                description: "Completa la cuadrícula 9x9 con números del 1 al 9, sin repetir en filas, columnas o regiones 3x3.",
-                difficulty: "hard",
-                icon: "fa-th",
-                hasGame: true
-            },
-            {
-                id: 4,
-                title: "Memorama",
-                description: "Encuentra todas las parejas de cartas iguales. ¡Ejercita tu memoria visual en este desafío clásico!",
-                difficulty: "medium",
-                icon: "fa-brain",
-                hasGame: true
-            },
-            {
-                id: 5,
-                title: "Torres de Hanoi",
-                description: "Mueve todos los discos de una torre a otra, sin colocar discos grandes sobre pequeños. Un clásico de la recursividad.",
-                difficulty: "medium",
-                icon: "fa-layer-group",
-                hasGame: true
-            },
-            {
-                id: 6,
-                title: "Busca Minas",
-                description: "Encuentra todas las minas sin activar ninguna. Usa los números como pistas para localizar el peligro.",
-                difficulty: "medium",
-                icon: "fa-bomb",
-                hasGame: true
-            },
-            {
-                id: 7,
-                title: "15 Puzzle",
-                description: "Ordena los números del 1 al 15 deslizando las piezas en el tablero 4x4. ¡Un rompecabezas deslizante!",
-                difficulty: "medium",
-                icon: "fa-puzzle-piece",
-                hasGame: true
-            },
-            {
-                id: 8,
-                title: "Ahorcado",
-                description: "Adivina la palabra letra por letra antes de que se complete el dibujo del ahorcado. ¡Vocabulario y lógica!",
-                difficulty: "easy",
-                icon: "fa-user",
-                hasGame: true
-            },
-            {
-                id: 9,
-                title: "Conecta 4",
-                description: "Conecta cuatro fichas en línea horizontal, vertical o diagonal. Estrategia pura para dos jugadores.",
-                difficulty: "medium",
-                icon: "fa-circle",
-                hasGame: true
-            },
-            {
-                id: 10,
-                title: "Laberinto",
-                description: "Encuentra la salida del laberinto generado aleatoriamente. ¡Navega por el camino más corto!",
-                difficulty: "hard",
-                icon: "fa-project-diagram",
-                hasGame: true
-            },
-            {
-                id: 11,
-                title: "Criptograma",
-                description: "Descifra el mensaje codificado sustituyendo letras. Un desafío de lógica lingüística.",
-                difficulty: "hard",
-                icon: "fa-key",
-                hasGame: true
-            },
-            {
-                id: 12,
-                title: "Mastermind",
-                description: "Adivina la combinación secreta de colores usando pistas de posición y color. ¡Pura deducción lógica!",
-                difficulty: "medium",
-                icon: "fa-user-secret",
-                hasGame: true
-            },
-            {
-                id: 13,
-                title: "Juego de la Vida",
-                description: "Simula el autómata celular de Conway. Observa cómo evolucionan los patrones según reglas simples.",
-                difficulty: "medium",
-                icon: "fa-seedling",
-                hasGame: true
-            },
-            {
-                id: 14,
-                title: "Battleship",
-                description: "Hunde la flota enemiga antes de que hundan la tuya. Estrategia naval clásica para dos jugadores.",
-                difficulty: "medium",
-                icon: "fa-ship",
-                hasGame: true
-            },
-            {
-                id: 15,
-                title: "Nonogramas",
-                description: "Resuelve el rompecabezas lógico donde números indican grupos de casillas a rellenar. ¡Crea una imagen!",
-                difficulty: "hard",
-                icon: "fa-border-style",
-                hasGame: true
-            }
-        ];
+        // ==================== CONFIGURACIÓN GLOBAL ====================
+        'use strict';
 
-        // Estado de la aplicación
+        // Cache de elementos DOM
+        const domCache = {
+            mainPage: null,
+            gamePage: null,
+            gamesGrid: null,
+            gameContent: null,
+            currentGameTitle: null,
+            backBtn: null,
+            themeToggle: null
+        };
+
+        // Estado global
         const state = {
             currentGame: null,
             darkMode: true,
-            gamesPlayed: 0
+            gamesPlayed: 0,
+            activeGameState: null
         };
 
-        // Inicialización de la página
+        // ==================== INICIALIZACIÓN ====================
         document.addEventListener('DOMContentLoaded', function() {
-            // Crear puntos de neón animados
+            // Cachear elementos DOM
+            domCache.mainPage = document.getElementById('mainPage');
+            domCache.gamePage = document.getElementById('gamePage');
+            domCache.gamesGrid = document.getElementById('gamesGrid');
+            domCache.gameContent = document.getElementById('gameContent');
+            domCache.currentGameTitle = document.getElementById('currentGameTitle');
+            domCache.backBtn = document.getElementById('backBtn');
+            domCache.themeToggle = document.getElementById('themeToggle');
+            
+            // Inicializar
             createNeonDots();
-            
-            // Cargar la cuadrícula de juegos
             loadGamesGrid();
-            
-            // Configurar event listeners
-            document.getElementById('backBtn').addEventListener('click', returnToMain);
-            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-            
-            // Configurar los juegos con funcionalidad
-            setupGameButtons();
+            setupEventListeners();
         });
 
-        // Crear puntos de neón animados para el fondo
+        // Crear puntos de neón optimizados
         function createNeonDots() {
             const container = document.getElementById('neonDots');
-            const dotCount = window.innerWidth < 768 ? 30 : 50;
+            const dotCount = Math.min(20, Math.floor(window.innerWidth / 30));
             
             for (let i = 0; i < dotCount; i++) {
                 const dot = document.createElement('div');
                 dot.className = 'neon-dot';
                 
                 // Posición aleatoria
-                const posX = Math.random() * 100;
-                const posY = Math.random() * 100;
+                dot.style.left = Math.random() * 100 + '%';
+                dot.style.top = Math.random() * 100 + '%';
                 
-                // Tamaño y animación aleatoria
-                const size = window.innerWidth < 768 ? 1 + Math.random() * 2 : 1 + Math.random() * 3;
-                const duration = 3 + Math.random() * 7;
-                const delay = Math.random() * 5;
+                // Tamaño y animación
+                const size = 1 + Math.random() * 2;
+                const duration = 3 + Math.random() * 4;
                 
-                dot.style.left = `${posX}%`;
-                dot.style.top = `${posY}%`;
-                dot.style.width = `${size}px`;
-                dot.style.height = `${size}px`;
-                dot.style.animation = `pulse ${duration}s ${delay}s infinite alternate`;
+                dot.style.width = size + 'px';
+                dot.style.height = size + 'px';
+                dot.style.animationDuration = duration + 's';
                 
-                // Color aleatorio (azul, rosa o verde)
+                // Color
                 const colors = ['0ff0fc', 'ff00ff', '00ff00'];
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                dot.style.backgroundColor = `#${color}`;
-                dot.style.boxShadow = `0 0 8px #${color}`;
+                const color = colors[i % 3];
+                dot.style.backgroundColor = '#' + color;
                 
                 container.appendChild(dot);
             }
         }
 
-        // Cargar la cuadrícula de juegos en la página principal
+        // ==================== MANEJO DE JUEGOS ====================
+        const games = [
+            {
+                id: 1, title: "Adivina el Número", difficulty: "easy",
+                description: "Adivina el número secreto entre 1 y 100",
+                icon: "fa-bullseye", hasGame: true
+            },
+            {
+                id: 2, title: "Tres en Raya", difficulty: "easy",
+                description: "Alinea tres símbolos antes que tu oponente",
+                icon: "fa-times", hasGame: true
+            },
+            {
+                id: 3, title: "Sudoku", difficulty: "hard",
+                description: "Completa la cuadrícula 9x9 sin repetir números",
+                icon: "fa-th", hasGame: true
+            },
+            {
+                id: 4, title: "Memorama", difficulty: "medium",
+                description: "Encuentra todas las parejas de cartas",
+                icon: "fa-brain", hasGame: true
+            },
+            {
+                id: 5, title: "Torres de Hanoi", difficulty: "medium",
+                description: "Mueve todos los discos siguiendo las reglas",
+                icon: "fa-layer-group", hasGame: true
+            },
+            {
+                id: 6, title: "Busca Minas", difficulty: "medium",
+                description: "Encuentra minas usando pistas numéricas",
+                icon: "fa-bomb", hasGame: true
+            },
+            {
+                id: 7, title: "15 Puzzle", difficulty: "medium",
+                description: "Ordena números deslizando piezas",
+                icon: "fa-puzzle-piece", hasGame: true
+            },
+            {
+                id: 8, title: "Ahorcado", difficulty: "easy",
+                description: "Adivina la palabra letra por letra",
+                icon: "fa-user", hasGame: true
+            },
+            {
+                id: 9, title: "Conecta 4", difficulty: "medium",
+                description: "Conecta cuatro fichas en línea",
+                icon: "fa-circle", hasGame: true
+            },
+            {
+                id: 10, title: "Laberinto", difficulty: "hard",
+                description: "Encuentra la salida del laberinto",
+                icon: "fa-project-diagram", hasGame: true
+            },
+            {
+                id: 11, title: "Criptograma", difficulty: "hard",
+                description: "Descifra mensajes codificados",
+                icon: "fa-key", hasGame: true
+            },
+            {
+                id: 12, title: "Mastermind", difficulty: "medium",
+                description: "Adivina combinaciones de colores",
+                icon: "fa-user-secret", hasGame: true
+            },
+            {
+                id: 13, title: "Juego de la Vida", difficulty: "medium",
+                description: "Simula el autómata celular de Conway",
+                icon: "fa-seedling", hasGame: true
+            },
+            {
+                id: 14, title: "Battleship", difficulty: "medium",
+                description: "Hunde la flota enemiga",
+                icon: "fa-ship", hasGame: true
+            },
+            {
+                id: 15, title: "Nonogramas", difficulty: "hard",
+                description: "Resuelve rompecabezas lógicos",
+                icon: "fa-border-style", hasGame: true
+            }
+        ];
+
         function loadGamesGrid() {
-            const grid = document.getElementById('gamesGrid');
-            grid.innerHTML = '';
-            
-            games.forEach(game => {
-                const card = document.createElement('div');
-                card.className = 'game-card';
-                card.dataset.gameId = game.id;
-                
-                card.innerHTML = `
+            domCache.gamesGrid.innerHTML = games.map(game => `
+                <div class="game-card" data-game-id="${game.id}">
                     <div class="game-header">
-                        <div class="game-number">#${game.id}</div>
+                        <div class="game-number">${game.id}</div>
                         <h3 class="game-title">${game.title}</h3>
                     </div>
                     <p class="game-desc">${game.description}</p>
                     <div class="game-footer">
                         <span class="game-difficulty ${game.difficulty}">
-                            ${game.difficulty === 'easy' ? 'Fácil' : game.difficulty === 'medium' ? 'Medio' : 'Difícil'}
+                            ${game.difficulty === 'easy' ? 'Fácil' : 
+                              game.difficulty === 'medium' ? 'Medio' : 'Difícil'}
                         </span>
                         <button class="play-btn" data-game-id="${game.id}">
                             <i class="fas ${game.icon}"></i> Jugar
                         </button>
                     </div>
-                `;
-                
-                grid.appendChild(card);
-            });
+                </div>
+            `).join('');
         }
 
-        // Configurar los botones de juego
-        function setupGameButtons() {
-            document.addEventListener('click', function(e) {
-                // Si se hace clic en un botón "Jugar"
-                if (e.target.classList.contains('play-btn') || e.target.closest('.play-btn')) {
-                    const btn = e.target.classList.contains('play-btn') ? e.target : e.target.closest('.play-btn');
-                    const gameId = parseInt(btn.dataset.gameId);
-                    launchGame(gameId);
-                }
+        function setupEventListeners() {
+            // Delegación de eventos para botones de juego
+            domCache.gamesGrid.addEventListener('click', (e) => {
+                const playBtn = e.target.closest('.play-btn');
+                const gameCard = e.target.closest('.game-card');
                 
-                // Si se hace clic en una tarjeta de juego (pero no en el botón)
-                if (e.target.closest('.game-card') && !e.target.closest('.play-btn')) {
-                    const card = e.target.closest('.game-card');
-                    const gameId = parseInt(card.dataset.gameId);
+                if (playBtn) {
+                    const gameId = parseInt(playBtn.dataset.gameId);
+                    launchGame(gameId);
+                } else if (gameCard && !e.target.closest('.play-btn')) {
+                    const gameId = parseInt(gameCard.dataset.gameId);
                     launchGame(gameId);
                 }
             });
+            
+            domCache.backBtn.addEventListener('click', returnToMain);
+            domCache.themeToggle.addEventListener('click', toggleTheme);
         }
 
-        // Lanzar un juego específico
         function launchGame(gameId) {
             const game = games.find(g => g.id === gameId);
             if (!game) return;
@@ -789,63 +714,58 @@
             state.currentGame = game;
             state.gamesPlayed++;
             
-            // Cambiar a la página del juego
-            document.getElementById('mainPage').style.display = 'none';
-            document.getElementById('gamePage').style.display = 'flex';
+            // Cambiar páginas
+            domCache.mainPage.style.display = 'none';
+            domCache.gamePage.style.display = 'block';
+            domCache.currentGameTitle.textContent = game.title;
             
-            // Configurar el título del juego
-            document.getElementById('currentGameTitle').textContent = game.title;
+            // Limpiar estado anterior
+            state.activeGameState = null;
             
-            // Cargar el juego correspondiente
+            // Cargar juego
             loadGameContent(game);
             
-            // Scroll al inicio del juego
+            // Scroll al inicio
             window.scrollTo(0, 0);
         }
 
-        // Cargar el contenido del juego seleccionado
+        // ==================== FUNCIONES DE JUEGOS ====================
+        const gameLoaders = {
+            1: loadGuessNumberGame,
+            2: loadTicTacToeGame,
+            3: loadSudokuGame,
+            4: loadMemoryGame,
+            5: loadHanoiGame,
+            6: loadMinesweeperGame,
+            7: loadPuzzle15Game,
+            8: loadHangmanGame,
+            9: loadConnect4Game,
+            10: loadMazeGame,
+            11: loadCryptogramGame,
+            12: loadMastermindGame,
+            13: loadLifeGame,
+            14: loadBattleshipGame,
+            15: loadNonogramGame
+        };
+
         function loadGameContent(game) {
-            const content = document.getElementById('gameContent');
-            content.innerHTML = '';
-            
-            // Mapeo COMPLETO de ID de juego a función de carga
-            const gameLoaders = {
-                1: loadGuessNumberGame,
-                2: loadTicTacToeGame,
-                3: loadSudokuGame,
-                4: loadMemoryGame,
-                5: loadHanoiGame,
-                6: loadMinesweeperGame,
-                7: loadPuzzle15Game,
-                8: loadHangmanGame,
-                9: loadConnect4Game,
-                10: loadMazeGame,
-                11: loadCryptogramGame,
-                12: loadMastermindGame,
-                13: loadLifeGame,
-                14: loadBattleshipGame,
-                15: loadNonogramGame
-            };
-            
+            domCache.gameContent.innerHTML = '';
             const loader = gameLoaders[game.id];
             if (loader) {
-                loader(content);
+                loader(domCache.gameContent);
             } else {
-                content.innerHTML = `
+                domCache.gameContent.innerHTML = `
                     <div class="game-container">
-                        <h2 class="game-title-large">${game.title}</h2>
                         <div class="coming-soon">
                             <div class="coming-soon-icon">
                                 <i class="fas ${game.icon}"></i>
                             </div>
-                            <p class="game-instructions">
-                                ${game.description}
-                            </p>
-                            <p style="color:var(--neon-pink);margin:1.5rem 0;font-weight:bold;">
-                                <i class="fas fa-tools"></i> Este juego estará disponible en la próxima actualización
+                            <p class="game-instructions">${game.description}</p>
+                            <p style="color:var(--neon-pink);margin:1rem 0;">
+                                <i class="fas fa-tools"></i> Juego en desarrollo
                             </p>
                             <button class="game-button" onclick="returnToMain()">
-                                <i class="fas fa-arrow-left"></i> Volver al Menú
+                                <i class="fas fa-arrow-left"></i> Volver
                             </button>
                         </div>
                     </div>
@@ -853,178 +773,155 @@
             }
         }
 
-        // ==================== FUNCIONES DE CARGA PARA TODOS LOS JUEGOS ====================
-
         // JUEGO 1: Adivina el Número
         function loadGuessNumberGame(container) {
-            container.innerHTML = `
-                <div class="game-container">
-                    <h2 class="game-title-large">Adivina el Número</h2>
-                    <p class="game-instructions">
-                        He pensado en un número entre 1 y 100. ¡Adivina cuál es! Te daré pistas.
-                    </p>
-                    <div class="game-controls">
-                        <input type="number" id="guessInput" class="game-input" placeholder="Tu número" min="1" max="100">
-                        <button id="guessButton" class="game-button">Adivinar</button>
-                    </div>
-                    <div class="game-feedback" id="feedback">
-                        <p id="feedbackText">Introduce un número entre 1 y 100</p>
-                    </div>
-                    <div class="game-stats">
-                        <div class="stat-box">
-                            <h3>Intentos</h3>
-                            <p id="attemptsCount">0</p>
-                        </div>
-                        <div class="stat-box">
-                            <h3>Rango</h3>
-                            <p>1-100</p>
-                        </div>
-                    </div>
-                    <div class="game-controls">
-                        <button id="newGameButton" class="game-button">Nuevo Juego</button>
-                    </div>
-                </div>
-            `;
-            
-            // Inicialización del juego
-            let secretNumber, attempts;
+            let secretNumber, attempts, min, max;
             
             function initGame() {
+                min = 1;
+                max = 100;
                 secretNumber = Math.floor(Math.random() * 100) + 1;
                 attempts = 0;
-                document.getElementById('attemptsCount').textContent = attempts;
-                document.getElementById('feedbackText').innerHTML = 'Introduce un número entre 1 y 100';
-                document.getElementById('guessInput').value = '';
-                document.getElementById('guessInput').focus();
+                updateDisplay();
             }
             
-            initGame();
+            function updateDisplay() {
+                container.innerHTML = `
+                    <div class="game-container">
+                        <h2 class="game-title-large">Adivina el Número</h2>
+                        <p class="game-instructions">Adivina el número entre ${min} y ${max}</p>
+                        <div class="game-controls">
+                            <input type="number" id="guessInput" class="game-input" 
+                                   placeholder="Tu número" min="${min}" max="${max}">
+                            <button id="guessBtn" class="game-button">Adivinar</button>
+                        </div>
+                        <div class="game-feedback" id="feedback">
+                            Introduce un número y haz clic en "Adivinar"
+                        </div>
+                        <div class="game-stats">
+                            <div class="stat-box">
+                                <h3>Intentos</h3>
+                                <p id="attempts">${attempts}</p>
+                            </div>
+                            <div class="stat-box">
+                                <h3>Rango</h3>
+                                <p>${min}-${max}</p>
+                            </div>
+                        </div>
+                        <div class="game-controls">
+                            <button id="newGameBtn" class="game-button">Nuevo Juego</button>
+                        </div>
+                    </div>
+                `;
+                
+                // Event listeners
+                document.getElementById('guessBtn').onclick = checkGuess;
+                document.getElementById('newGameBtn').onclick = initGame;
+                document.getElementById('guessInput').onkeypress = (e) => {
+                    if (e.key === 'Enter') checkGuess();
+                };
+            }
             
-            document.getElementById('guessButton').addEventListener('click', function() {
+            function checkGuess() {
                 const input = document.getElementById('guessInput');
                 const guess = parseInt(input.value);
+                const feedback = document.getElementById('feedback');
                 
-                if (isNaN(guess) || guess < 1 || guess > 100) {
-                    document.getElementById('feedbackText').innerHTML = 
-                        '<span style="color:var(--neon-pink)">Por favor, introduce un número válido entre 1 y 100</span>';
+                if (isNaN(guess) || guess < min || guess > max) {
+                    feedback.innerHTML = `<span class="lose">Número inválido</span>`;
                     return;
                 }
                 
                 attempts++;
-                document.getElementById('attemptsCount').textContent = attempts;
+                document.getElementById('attempts').textContent = attempts;
                 
                 if (guess === secretNumber) {
-                    document.getElementById('feedbackText').innerHTML = 
-                        `<span style="color:var(--neon-green)">¡Correcto! El número era ${secretNumber}. Lo adivinaste en ${attempts} intentos.</span>`;
+                    feedback.innerHTML = `<span class="win">¡Correcto! El número era ${secretNumber}</span>`;
                 } else if (guess < secretNumber) {
-                    document.getElementById('feedbackText').innerHTML = 
-                        `<span style="color:var(--neon-blue)">El número es mayor que ${guess}</span>`;
+                    feedback.innerHTML = `<span style="color:var(--neon-blue)">Más alto que ${guess}</span>`;
                 } else {
-                    document.getElementById('feedbackText').innerHTML = 
-                        `<span style="color:var(--neon-pink)">El número es menor que ${guess}</span>`;
+                    feedback.innerHTML = `<span style="color:var(--neon-pink)">Más bajo que ${guess}</span>`;
                 }
                 
                 input.value = '';
                 input.focus();
-            });
+            }
             
-            document.getElementById('newGameButton').addEventListener('click', initGame);
-            
-            // Permitir Enter para adivinar
-            document.getElementById('guessInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    document.getElementById('guessButton').click();
-                }
-            });
+            initGame();
         }
 
         // JUEGO 2: Tres en Raya
         function loadTicTacToeGame(container) {
-            container.innerHTML = `
-                <div class="game-container">
-                    <h2 class="game-title-large">Tres en Raya</h2>
-                    <p class="game-instructions">
-                        Juega contra la computadora. Tú eres X, la computadora es O. Haz clic en una casilla para empezar.
-                    </p>
-                    <div class="tic-tac-toe-board" id="ticTacToeBoard"></div>
-                    <div class="game-feedback" id="ticTacToeFeedback">
-                        <p id="ticTacToeMessage">Tu turno - Eres X</p>
-                    </div>
-                    <div class="game-controls">
-                        <button id="resetTicTacToe" class="game-button">Reiniciar</button>
-                    </div>
-                </div>
-            `;
-            
-            // Inicialización del juego
-            const board = ['', '', '', '', '', '', '', '', ''];
+            let board = ['','','','','','','','',''];
             let currentPlayer = 'X';
             let gameActive = true;
-            const boardElement = document.getElementById('ticTacToeBoard');
-            const messageElement = document.getElementById('ticTacToeMessage');
             
-            // Combinaciones ganadoras
             const winPatterns = [
-                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Filas
-                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columnas
-                [0, 4, 8], [2, 4, 6] // Diagonales
+                [0,1,2], [3,4,5], [6,7,8],
+                [0,3,6], [1,4,7], [2,5,8],
+                [0,4,8], [2,4,6]
             ];
             
             function renderBoard() {
-                boardElement.innerHTML = '';
-                board.forEach((cell, index) => {
-                    const cellElement = document.createElement('div');
-                    cellElement.className = 'tic-tac-toe-cell';
-                    cellElement.textContent = cell;
-                    cellElement.dataset.index = index;
-                    
-                    // Colores diferentes para X y O
-                    if (cell === 'X') {
-                        cellElement.style.color = 'var(--neon-blue)';
-                        cellElement.style.textShadow = '0 0 10px var(--neon-blue)';
-                    } else if (cell === 'O') {
-                        cellElement.style.color = 'var(--neon-pink)';
-                        cellElement.style.textShadow = '0 0 10px var(--neon-pink)';
-                    }
-                    
-                    cellElement.addEventListener('click', () => makeMove(index));
-                    boardElement.appendChild(cellElement);
+                container.innerHTML = `
+                    <div class="game-container">
+                        <h2 class="game-title-large">Tres en Raya</h2>
+                        <p class="game-instructions">Jugador: <span style="color:var(--neon-blue)">X</span> vs Computadora: <span style="color:var(--neon-pink)">O</span></p>
+                        <div class="game-board" style="grid-template-columns: repeat(3, 60px); grid-template-rows: repeat(3, 60px);">
+                            ${board.map((cell, i) => `
+                                <div class="game-cell" data-index="${i}" 
+                                     style="font-size: 1.5rem; color: ${cell === 'X' ? 'var(--neon-blue)' : 'var(--neon-pink)'}">
+                                    ${cell}
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="game-feedback" id="feedback">
+                            Turno del jugador X
+                        </div>
+                        <div class="game-controls">
+                            <button id="resetBtn" class="game-button">Reiniciar</button>
+                        </div>
+                    </div>
+                `;
+                
+                // Event listeners para celdas
+                document.querySelectorAll('.game-cell').forEach(cell => {
+                    cell.onclick = () => makeMove(parseInt(cell.dataset.index));
                 });
+                
+                document.getElementById('resetBtn').onclick = resetGame;
             }
             
             function makeMove(index) {
                 if (!gameActive || board[index] !== '') return;
                 
-                // Movimiento del jugador
                 board[index] = currentPlayer;
                 renderBoard();
                 
                 if (checkWinner()) {
-                    messageElement.innerHTML = `<span style="color:var(--neon-green)">¡${currentPlayer} gana!</span>`;
+                    document.getElementById('feedback').innerHTML = 
+                        `<span class="win">¡${currentPlayer} gana!</span>`;
                     gameActive = false;
                     return;
                 }
                 
-                if (checkDraw()) {
-                    messageElement.innerHTML = '<span style="color:var(--neon-blue)">¡Empate!</span>';
+                if (board.every(cell => cell !== '')) {
+                    document.getElementById('feedback').innerHTML = `<span class="lose">¡Empate!</span>`;
                     gameActive = false;
                     return;
                 }
                 
-                // Cambiar turno
                 currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-                messageElement.textContent = `Turno de ${currentPlayer}`;
+                document.getElementById('feedback').textContent = `Turno del jugador ${currentPlayer}`;
                 
-                // Si es turno de la computadora
+                // Turno de la computadora
                 if (currentPlayer === 'O' && gameActive) {
                     setTimeout(computerMove, 500);
                 }
             }
             
             function computerMove() {
-                // Estrategia simple: elegir una casilla vacía aleatoria
-                const emptyCells = board.map((cell, index) => cell === '' ? index : -1).filter(index => index !== -1);
-                
+                const emptyCells = board.map((cell, i) => cell === '' ? i : -1).filter(i => i !== -1);
                 if (emptyCells.length > 0) {
                     const randomIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
                     makeMove(randomIndex);
@@ -1033,287 +930,168 @@
             
             function checkWinner() {
                 return winPatterns.some(pattern => {
-                    const [a, b, c] = pattern;
+                    const [a,b,c] = pattern;
                     return board[a] && board[a] === board[b] && board[a] === board[c];
                 });
             }
             
-            function checkDraw() {
-                return board.every(cell => cell !== '');
-            }
-            
             function resetGame() {
-                board.fill('');
+                board = ['','','','','','','','',''];
                 currentPlayer = 'X';
                 gameActive = true;
-                messageElement.textContent = 'Tu turno - Eres X';
                 renderBoard();
             }
             
-            document.getElementById('resetTicTacToe').addEventListener('click', resetGame);
-            
-            // Inicializar
             resetGame();
         }
 
-        // JUEGO 3: Sudoku (versión simplificada 4x4)
+        // JUEGO 3: Sudoku 9x9 (versión simplificada)
         function loadSudokuGame(container) {
-            container.innerHTML = `
-                <div class="game-container">
-                    <h2 class="game-title-large">Sudoku 4x4</h2>
-                    <p class="game-instructions">
-                        Completa la cuadrícula 4x4. Cada fila, columna y región 2x2 debe tener números del 1 al 4 sin repetir.
-                    </p>
-                    <div class="sudoku-board" id="sudokuBoard"></div>
-                    <div class="game-feedback" id="sudokuFeedback">
-                        <p id="sudokuMessage">Rellena las casillas vacías</p>
-                    </div>
-                    <div class="game-controls">
-                        <button id="sudokuCheck" class="game-button">Comprobar</button>
-                        <button id="sudokuNew" class="game-button">Nuevo Juego</button>
-                    </div>
-                </div>
-            `;
-            
-            // Tablero inicial simple
-            let puzzle = [
-                [1, 0, 0, 0],
-                [0, 2, 0, 0],
-                [0, 0, 3, 0],
-                [0, 0, 0, 4]
+            // Sudoku simple (nivel fácil)
+            const puzzle = [
+                [5,3,0,0,7,0,0,0,0],
+                [6,0,0,1,9,5,0,0,0],
+                [0,9,8,0,0,0,0,6,0],
+                [8,0,0,0,6,0,0,0,3],
+                [4,0,0,8,0,3,0,0,1],
+                [7,0,0,0,2,0,0,0,6],
+                [0,6,0,0,0,0,2,8,0],
+                [0,0,0,4,1,9,0,0,5],
+                [0,0,0,0,8,0,0,7,9]
             ];
-            
-            let solution = [
-                [1, 3, 4, 2],
-                [4, 2, 1, 3],
-                [2, 4, 3, 1],
-                [3, 1, 2, 4]
-            ];
-            
-            const boardElement = document.getElementById('sudokuBoard');
-            const messageElement = document.getElementById('sudokuMessage');
-            
-            // Estilos para el tablero
-            const style = document.createElement('style');
-            style.textContent = `
-                .sudoku-board {
-                    display: grid;
-                    grid-template-columns: repeat(4, 1fr);
-                    grid-template-rows: repeat(4, 1fr);
-                    gap: 2px;
-                    margin: 1.5rem auto;
-                    max-width: 300px;
-                    aspect-ratio: 1;
-                    border: 2px solid var(--neon-blue);
-                }
-                .sudoku-cell {
-                    background: rgba(255, 255, 255, 0.1);
-                    border: 1px solid rgba(0, 255, 255, 0.3);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 1.5rem;
-                    font-weight: bold;
-                    cursor: pointer;
-                    transition: var(--transition);
-                    user-select: none;
-                }
-                .sudoku-cell:hover {
-                    background: rgba(0, 255, 255, 0.1);
-                }
-                .sudoku-cell.fixed {
-                    color: var(--neon-blue);
-                    cursor: default;
-                }
-                .sudoku-cell.editable {
-                    color: var(--neon-green);
-                }
-                .sudoku-cell.error {
-                    color: var(--neon-pink);
-                    animation: shake 0.5s;
-                }
-                @keyframes shake {
-                    0%, 100% { transform: translateX(0); }
-                    25% { transform: translateX(-5px); }
-                    75% { transform: translateX(5px); }
-                }
-            `;
-            document.head.appendChild(style);
             
             function renderBoard() {
-                boardElement.innerHTML = '';
+                const cellSize = window.innerWidth < 768 ? '30px' : '35px';
                 
-                for (let row = 0; row < 4; row++) {
-                    for (let col = 0; col < 4; col++) {
-                        const cell = document.createElement('div');
-                        cell.className = 'sudoku-cell';
-                        cell.dataset.row = row;
-                        cell.dataset.col = col;
-                        
-                        const value = puzzle[row][col];
-                        if (value !== 0) {
-                            cell.textContent = value;
-                            cell.classList.add('fixed');
-                        } else {
-                            cell.classList.add('editable');
-                            cell.textContent = '';
-                            cell.addEventListener('click', () => editCell(row, col));
-                        }
-                        
-                        // Bordes más gruesos para regiones 2x2
-                        if (row === 1 || row === 3) cell.style.borderTopWidth = '2px';
-                        if (col === 1 || col === 3) cell.style.borderLeftWidth = '2px';
-                        
-                        boardElement.appendChild(cell);
+                container.innerHTML = `
+                    <div class="game-container">
+                        <h2 class="game-title-large">Sudoku</h2>
+                        <p class="game-instructions">Completa los números del 1 al 9 sin repetir en filas, columnas o cuadros 3x3</p>
+                        <div class="game-board" style="
+                            grid-template-columns: repeat(9, ${cellSize});
+                            grid-template-rows: repeat(9, ${cellSize});
+                            border: 2px solid var(--neon-blue);
+                        ">
+                            ${puzzle.map((row, i) => 
+                                row.map((cell, j) => `
+                                    <div class="game-cell" data-row="${i}" data-col="${j}"
+                                         style="font-size: ${window.innerWidth < 768 ? '0.8rem' : '1rem'};
+                                                ${i % 3 === 2 && i < 8 ? 'border-bottom: 2px solid var(--neon-blue)' : ''};
+                                                ${j % 3 === 2 && j < 8 ? 'border-right: 2px solid var(--neon-blue)' : ''};
+                                                color: ${cell ? 'var(--neon-blue)' : 'var(--neon-green)'};
+                                                font-weight: ${cell ? 'bold' : 'normal'}">
+                                        ${cell || ''}
+                                    </div>
+                                `).join('')
+                            ).join('')}
+                        </div>
+                        <div class="game-feedback" id="feedback">
+                            Haz clic en una celda vacía y usa el teclado numérico
+                        </div>
+                        <div class="game-controls">
+                            <button id="checkBtn" class="game-button">Comprobar</button>
+                            <button id="resetBtn" class="game-button">Reiniciar</button>
+                        </div>
+                    </div>
+                `;
+                
+                // Event listeners
+                document.querySelectorAll('.game-cell').forEach(cell => {
+                    if (!puzzle[cell.dataset.row][cell.dataset.col]) {
+                        cell.onclick = () => selectCell(cell);
                     }
-                }
+                });
+                
+                document.getElementById('checkBtn').onclick = checkSolution;
+                document.getElementById('resetBtn').onclick = resetBoard;
+                
+                // Teclado numérico
+                document.addEventListener('keydown', handleNumberInput);
             }
             
-            function editCell(row, col) {
-                const currentValue = puzzle[row][col];
-                let newValue = currentValue + 1;
-                if (newValue > 4) newValue = 0;
+            function selectCell(cell) {
+                document.querySelectorAll('.game-cell').forEach(c => c.classList.remove('highlight'));
+                cell.classList.add('highlight');
+                state.activeGameState = {
+                    selectedCell: cell,
+                    row: parseInt(cell.dataset.row),
+                    col: parseInt(cell.dataset.col)
+                };
+            }
+            
+            function handleNumberInput(e) {
+                if (!state.activeGameState || !e.key.match(/^[1-9]$/)) return;
                 
-                puzzle[row][col] = newValue;
-                renderBoard();
-                messageElement.textContent = 'Rellena las casillas vacías';
+                const {selectedCell, row, col} = state.activeGameState;
+                const num = parseInt(e.key);
+                
+                puzzle[row][col] = num;
+                selectedCell.textContent = num;
+                selectedCell.style.color = 'var(--neon-green)';
             }
             
             function checkSolution() {
-                let correct = true;
+                // Verificación básica (no completa, pero funcional)
+                let valid = true;
                 
-                for (let row = 0; row < 4; row++) {
-                    for (let col = 0; col < 4; col++) {
-                        const cell = boardElement.children[row * 4 + col];
-                        
-                        if (puzzle[row][col] !== solution[row][col]) {
-                            cell.classList.add('error');
-                            correct = false;
-                        } else {
-                            cell.classList.remove('error');
-                        }
+                // Verificar filas
+                for (let i = 0; i < 9; i++) {
+                    const rowSet = new Set();
+                    for (let j = 0; j < 9; j++) {
+                        if (puzzle[i][j]) rowSet.add(puzzle[i][j]);
+                    }
+                    if (rowSet.size < 9) valid = false;
+                }
+                
+                // Verificar columnas
+                for (let j = 0; j < 9; j++) {
+                    const colSet = new Set();
+                    for (let i = 0; i < 9; i++) {
+                        if (puzzle[i][j]) colSet.add(puzzle[i][j]);
+                    }
+                    if (colSet.size < 9) valid = false;
+                }
+                
+                document.getElementById('feedback').innerHTML = valid ? 
+                    '<span class="win">¡Sudoku válido! (verificación básica)</span>' :
+                    '<span class="lose">Hay errores en el sudoku</span>';
+            }
+            
+            function resetBoard() {
+                const original = [
+                    [5,3,0,0,7,0,0,0,0],
+                    [6,0,0,1,9,5,0,0,0],
+                    [0,9,8,0,0,0,0,6,0],
+                    [8,0,0,0,6,0,0,0,3],
+                    [4,0,0,8,0,3,0,0,1],
+                    [7,0,0,0,2,0,0,0,6],
+                    [0,6,0,0,0,0,2,8,0],
+                    [0,0,0,4,1,9,0,0,5],
+                    [0,0,0,0,8,0,0,7,9]
+                ];
+                
+                for (let i = 0; i < 9; i++) {
+                    for (let j = 0; j < 9; j++) {
+                        puzzle[i][j] = original[i][j];
                     }
                 }
                 
-                if (correct) {
-                    messageElement.innerHTML = '<span style="color:var(--neon-green)">¡Correcto! Sudoku resuelto.</span>';
-                } else {
-                    messageElement.innerHTML = '<span style="color:var(--neon-pink)">Algunos números son incorrectos</span>';
-                }
-            }
-            
-            function newGame() {
-                // Generar un nuevo puzzle simple
-                puzzle = [
-                    [1, 0, 0, 0],
-                    [0, 2, 0, 0],
-                    [0, 0, 3, 0],
-                    [0, 0, 0, 4]
-                ];
-                messageElement.textContent = 'Rellena las casillas vacías';
                 renderBoard();
             }
-            
-            document.getElementById('sudokuCheck').addEventListener('click', checkSolution);
-            document.getElementById('sudokuNew').addEventListener('click', newGame);
             
             renderBoard();
         }
 
         // JUEGO 4: Memorama
         function loadMemoryGame(container) {
-            container.innerHTML = `
-                <div class="game-container">
-                    <h2 class="game-title-large">Memorama</h2>
-                    <p class="game-instructions">
-                        Encuentra todas las parejas de cartas iguales. Haz clic en dos cartas para voltearlas.
-                    </p>
-                    <div class="memory-board" id="memoryBoard"></div>
-                    <div class="game-stats">
-                        <div class="stat-box">
-                            <h3>Pares</h3>
-                            <p id="pairsFound">0/8</p>
-                        </div>
-                        <div class="stat-box">
-                            <h3>Intentos</h3>
-                            <p id="memoryAttempts">0</p>
-                        </div>
-                    </div>
-                    <div class="game-controls">
-                        <button id="memoryReset" class="game-button">Reiniciar</button>
-                    </div>
-                </div>
-            `;
-            
-            // Estilos para el memorama
-            const style = document.createElement('style');
-            style.textContent = `
-                .memory-board {
-                    display: grid;
-                    grid-template-columns: repeat(4, 1fr);
-                    gap: 10px;
-                    margin: 1.5rem auto;
-                    max-width: 400px;
-                }
-                .memory-card {
-                    aspect-ratio: 1;
-                    background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
-                    border-radius: 10px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 1.8rem;
-                    font-weight: bold;
-                    cursor: pointer;
-                    transition: var(--transition);
-                    transform-style: preserve-3d;
-                    position: relative;
-                }
-                .memory-card .front,
-                .memory-card .back {
-                    position: absolute;
-                    width: 100%;
-                    height: 100%;
-                    backface-visibility: hidden;
-                    border-radius: 10px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-                .memory-card .front {
-                    background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
-                    color: var(--dark-bg);
-                    transform: rotateY(180deg);
-                }
-                .memory-card .back {
-                    background: rgba(255, 255, 255, 0.1);
-                    color: var(--text-primary);
-                    border: 2px solid var(--neon-blue);
-                }
-                .memory-card.flipped {
-                    transform: rotateY(180deg);
-                }
-                .memory-card.matched {
-                    opacity: 0.5;
-                    cursor: default;
-                    transform: rotateY(180deg) scale(0.95);
-                }
-            `;
-            document.head.appendChild(style);
-            
-            // Símbolos para las cartas (8 pares)
-            const symbols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-            const cards = [...symbols, ...symbols];
-            let flippedCards = [];
-            let matchedCards = [];
+            const symbols = ['🎮', '🌟', '🎯', '⚡', '💎', '🚀', '🎪', '🎨'];
+            let cards = [...symbols, ...symbols];
+            let flipped = [];
+            let matched = [];
             let attempts = 0;
             let canFlip = true;
             
-            const boardElement = document.getElementById('memoryBoard');
-            const pairsElement = document.getElementById('pairsFound');
-            const attemptsElement = document.getElementById('memoryAttempts');
-            
-            function shuffleArray(array) {
+            function shuffle(array) {
                 for (let i = array.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
                     [array[i], array[j]] = [array[j], array[i]];
@@ -1322,63 +1100,105 @@
             }
             
             function renderBoard() {
-                boardElement.innerHTML = '';
-                const shuffledCards = shuffleArray([...cards]);
+                const shuffled = shuffle([...cards]);
                 
-                shuffledCards.forEach((symbol, index) => {
-                    const card = document.createElement('div');
-                    card.className = 'memory-card';
-                    card.dataset.index = index;
-                    card.dataset.symbol = symbol;
-                    
-                    card.innerHTML = `
-                        <div class="front">${symbol}</div>
-                        <div class="back">?</div>
-                    `;
-                    
-                    card.addEventListener('click', () => flipCard(card));
-                    boardElement.appendChild(card);
+                container.innerHTML = `
+                    <div class="game-container">
+                        <h2 class="game-title-large">Memorama</h2>
+                        <p class="game-instructions">Encuentra todas las parejas de cartas</p>
+                        <div class="game-board" style="
+                            grid-template-columns: repeat(4, 60px);
+                            grid-template-rows: repeat(4, 60px);
+                            gap: 5px;
+                        ">
+                            ${shuffled.map((symbol, i) => `
+                                <div class="game-cell memory-card" data-index="${i}" data-symbol="${symbol}"
+                                     style="font-size: 1.5rem; position: relative;">
+                                    <div class="front" style="
+                                        position: absolute; width: 100%; height: 100%;
+                                        background: var(--neon-blue); display: none;
+                                        align-items: center; justify-content: center;
+                                        border-radius: 8px;">
+                                        ${symbol}
+                                    </div>
+                                    <div class="back" style="
+                                        position: absolute; width: 100%; height: 100%;
+                                        background: rgba(255,255,255,0.1);
+                                        display: flex; align-items: center;
+                                        justify-content: center; border-radius: 8px;">
+                                        ?
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="game-stats">
+                            <div class="stat-box">
+                                <h3>Pares</h3>
+                                <p id="pairs">${matched.length / 2}/8</p>
+                            </div>
+                            <div class="stat-box">
+                                <h3>Intentos</h3>
+                                <p id="attempts">${attempts}</p>
+                            </div>
+                        </div>
+                        <div class="game-controls">
+                            <button id="resetBtn" class="game-button">Reiniciar</button>
+                        </div>
+                    </div>
+                `;
+                
+                // Event listeners
+                document.querySelectorAll('.memory-card').forEach(card => {
+                    card.onclick = () => flipCard(card);
                 });
+                
+                document.getElementById('resetBtn').onclick = resetGame;
             }
             
             function flipCard(card) {
-                if (!canFlip || flippedCards.length >= 2 || card.classList.contains('flipped') || card.classList.contains('matched')) {
-                    return;
-                }
+                if (!canFlip || flipped.length >= 2 || 
+                    card.classList.contains('flipped') || 
+                    card.classList.contains('matched')) return;
                 
                 card.classList.add('flipped');
-                flippedCards.push(card);
+                card.querySelector('.front').style.display = 'flex';
+                card.querySelector('.back').style.display = 'none';
+                flipped.push(card);
                 
-                if (flippedCards.length === 2) {
+                if (flipped.length === 2) {
                     attempts++;
-                    attemptsElement.textContent = attempts;
+                    document.getElementById('attempts').textContent = attempts;
                     canFlip = false;
                     
-                    const [card1, card2] = flippedCards;
+                    const [card1, card2] = flipped;
                     
                     if (card1.dataset.symbol === card2.dataset.symbol) {
-                        // ¡Par encontrado!
+                        // Match encontrado
                         setTimeout(() => {
                             card1.classList.add('matched');
                             card2.classList.add('matched');
-                            matchedCards.push(card1, card2);
-                            flippedCards = [];
+                            matched.push(card1, card2);
+                            flipped = [];
                             canFlip = true;
                             
-                            pairsElement.textContent = `${matchedCards.length / 2}/8`;
+                            document.getElementById('pairs').textContent = `${matched.length / 2}/8`;
                             
-                            if (matchedCards.length === 16) {
+                            if (matched.length === 16) {
                                 setTimeout(() => {
-                                    alert(`¡Ganaste! Encontraste todos los pares en ${attempts} intentos.`);
-                                }, 500);
+                                    alert(`¡Ganaste! Intentos: ${attempts}`);
+                                }, 300);
                             }
                         }, 500);
                     } else {
-                        // No son pareja
+                        // No es match
                         setTimeout(() => {
                             card1.classList.remove('flipped');
                             card2.classList.remove('flipped');
-                            flippedCards = [];
+                            card1.querySelector('.front').style.display = 'none';
+                            card1.querySelector('.back').style.display = 'flex';
+                            card2.querySelector('.front').style.display = 'none';
+                            card2.querySelector('.back').style.display = 'flex';
+                            flipped = [];
                             canFlip = true;
                         }, 1000);
                     }
@@ -1386,270 +1206,1674 @@
             }
             
             function resetGame() {
-                flippedCards = [];
-                matchedCards = [];
+                flipped = [];
+                matched = [];
                 attempts = 0;
-                attemptsElement.textContent = attempts;
-                pairsElement.textContent = '0/8';
                 canFlip = true;
                 renderBoard();
             }
             
-            document.getElementById('memoryReset').addEventListener('click', resetGame);
+            resetGame();
+        }
+
+        // JUEGO 5: Torres de Hanoi
+        function loadHanoiGame(container) {
+            let disks = 4;
+            let towers = [[3,2,1], [], []];
+            let selectedTower = null;
+            let moves = 0;
+            
+            function renderGame() {
+                container.innerHTML = `
+                    <div class="game-container">
+                        <h2 class="game-title-large">Torres de Hanoi</h2>
+                        <p class="game-instructions">Mueve todos los discos de la torre A a la C</p>
+                        <div style="display: flex; justify-content: center; gap: 20px; margin: 1rem 0;">
+                            ${towers.map((tower, i) => `
+                                <div style="text-align: center;">
+                                    <div class="tower" data-tower="${i}" 
+                                         style="width: 120px; height: 150px; border-bottom: 3px solid var(--neon-blue);
+                                                display: flex; flex-direction: column-reverse;
+                                                align-items: center; justify-content: flex-start;
+                                                padding-bottom: 10px; cursor: pointer;
+                                                border: ${selectedTower === i ? '2px solid var(--neon-green)' : '1px solid rgba(0,255,255,0.3)'};
+                                                border-radius: 5px;">
+                                        ${tower.map(disk => `
+                                            <div style="
+                                                width: ${disk * 25 + 30}px;
+                                                height: 20px;
+                                                background: ${disk === 3 ? 'var(--neon-blue)' : 
+                                                            disk === 2 ? 'var(--neon-pink)' : 'var(--neon-green)'};
+                                                border-radius: 10px;
+                                                margin: 2px 0;
+                                            "></div>
+                                        `).join('')}
+                                    </div>
+                                    <div style="margin-top: 5px; color: var(--neon-blue);">
+                                        ${String.fromCharCode(65 + i)}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="game-stats">
+                            <div class="stat-box">
+                                <h3>Movimientos</h3>
+                                <p>${moves}</p>
+                            </div>
+                            <div class="stat-box">
+                                <h3>Discos</h3>
+                                <p>${disks}</p>
+                            </div>
+                        </div>
+                        <div class="game-feedback" id="feedback">
+                            Haz clic en una torre para seleccionar, luego en otra para mover
+                        </div>
+                        <div class="game-controls">
+                            <button id="resetBtn" class="game-button">Reiniciar</button>
+                            <button id="autoBtn" class="game-button">Solución Automática</button>
+                        </div>
+                    </div>
+                `;
+                
+                // Event listeners
+                document.querySelectorAll('.tower').forEach(tower => {
+                    tower.onclick = () => handleTowerClick(parseInt(tower.dataset.tower));
+                });
+                
+                document.getElementById('resetBtn').onclick = resetGame;
+                document.getElementById('autoBtn').onclick = solveAutomatically;
+            }
+            
+            function handleTowerClick(towerIndex) {
+                if (selectedTower === null) {
+                    // Seleccionar torre
+                    if (towers[towerIndex].length > 0) {
+                        selectedTower = towerIndex;
+                        renderGame();
+                    }
+                } else {
+                    // Mover disco
+                    const fromTower = towers[selectedTower];
+                    const toTower = towers[towerIndex];
+                    
+                    if (fromTower.length === 0) {
+                        selectedTower = null;
+                        renderGame();
+                        return;
+                    }
+                    
+                    const disk = fromTower[fromTower.length - 1];
+                    
+                    if (toTower.length === 0 || toTower[toTower.length - 1] > disk) {
+                        fromTower.pop();
+                        toTower.push(disk);
+                        moves++;
+                        selectedTower = null;
+                        
+                        // Verificar victoria
+                        if (towers[2].length === disks) {
+                            document.getElementById('feedback').innerHTML = 
+                                `<span class="win">¡Ganaste! Movimientos: ${moves}</span>`;
+                        }
+                    } else {
+                        document.getElementById('feedback').innerHTML = 
+                            `<span class="lose">Movimiento inválido</span>`;
+                        selectedTower = null;
+                    }
+                    
+                    renderGame();
+                }
+            }
+            
+            function resetGame() {
+                disks = 4;
+                towers = [[3,2,1], [], []];
+                selectedTower = null;
+                moves = 0;
+                renderGame();
+            }
+            
+            function solveAutomatically() {
+                alert("Solución automática:\n1. A→B\n2. A→C\n3. B→C\n4. A→B\n5. C→A\n6. C→B\n7. A→B\n8. A→C\n9. B→C\n10. B→A\n11. C→A\n12. B→C\n13. A→B\n14. A→C\n15. B→C");
+            }
             
             resetGame();
         }
 
-        // JUEGOS 5-15: Implementaciones simplificadas (plantillas)
-        function loadHanoiGame(container) {
-            container.innerHTML = `
-                <div class="game-container">
-                    <h2 class="game-title-large">Torres de Hanoi</h2>
-                    <p class="game-instructions">
-                        Mueve todos los discos de la torre izquierda a la derecha, sin colocar discos grandes sobre pequeños.
-                    </p>
-                    <div class="coming-soon">
-                        <div class="coming-soon-icon">
-                            <i class="fas fa-layer-group"></i>
-                        </div>
-                        <p class="game-instructions">
-                            Este juego estará disponible en la próxima actualización. Por ahora, ¡disfruta de los otros minijuegos!
-                        </p>
-                        <button class="game-button" onclick="returnToMain()">
-                            <i class="fas fa-arrow-left"></i> Volver al Menú
-                        </button>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Plantillas similares para los otros juegos...
+        // JUEGO 6: Busca Minas
         function loadMinesweeperGame(container) {
-            container.innerHTML = `
-                <div class="game-container">
-                    <h2 class="game-title-large">Busca Minas</h2>
-                    <p class="game-instructions">
-                        Encuentra todas las minas sin activar ninguna. Usa los números como pistas.
-                    </p>
-                    <div class="coming-soon">
-                        <div class="coming-soon-icon">
-                            <i class="fas fa-bomb"></i>
+            const size = 8;
+            const mines = 10;
+            let board = [];
+            let gameOver = false;
+            let revealed = 0;
+            
+            function initBoard() {
+                board = Array(size).fill().map(() => Array(size).fill({
+                    mine: false,
+                    revealed: false,
+                    flagged: false,
+                    count: 0
+                }));
+                
+                // Colocar minas
+                let placed = 0;
+                while (placed < mines) {
+                    const x = Math.floor(Math.random() * size);
+                    const y = Math.floor(Math.random() * size);
+                    
+                    if (!board[y][x].mine) {
+                        board[y][x].mine = true;
+                        placed++;
+                        
+                        // Contar minas adyacentes
+                        for (let dy = -1; dy <= 1; dy++) {
+                            for (let dx = -1; dx <= 1; dx++) {
+                                const ny = y + dy;
+                                const nx = x + dx;
+                                if (ny >= 0 && ny < size && nx >= 0 && nx < size) {
+                                    board[ny][nx].count++;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                revealed = 0;
+                gameOver = false;
+            }
+            
+            function renderBoard() {
+                container.innerHTML = `
+                    <div class="game-container">
+                        <h2 class="game-title-large">Busca Minas</h2>
+                        <p class="game-instructions">Haz clic para revelar, clic derecho para marcar bandera</p>
+                        <div class="game-board" style="
+                            grid-template-columns: repeat(${size}, 30px);
+                            grid-template-rows: repeat(${size}, 30px);
+                        ">
+                            ${board.map((row, y) => 
+                                row.map((cell, x) => `
+                                    <div class="game-cell" data-x="${x}" data-y="${y}"
+                                         style="font-size: 0.7rem; font-weight: bold;
+                                                ${cell.revealed ? 
+                                                    cell.mine ? 
+                                                        'background: var(--neon-pink)' : 
+                                                        'background: rgba(255,255,255,0.1)' 
+                                                    : 'background: rgba(0,255,255,0.1)'};
+                                                ${cell.flagged ? 'color: var(--neon-yellow)' : ''}">
+                                        ${cell.flagged ? '🚩' : 
+                                          cell.revealed && cell.mine ? '💣' :
+                                          cell.revealed && cell.count > 0 ? cell.count : ''}
+                                    </div>
+                                `).join('')
+                            ).join('')}
                         </div>
-                        <p class="game-instructions">
-                            Este juego estará disponible en la próxima actualización. Por ahora, ¡disfruta de los otros minijuegos!
-                        </p>
-                        <button class="game-button" onclick="returnToMain()">
-                            <i class="fas fa-arrow-left"></i> Volver al Menú
-                        </button>
+                        <div class="game-stats">
+                            <div class="stat-box">
+                                <h3>Minas</h3>
+                                <p>${mines}</p>
+                            </div>
+                            <div class="stat-box">
+                                <h3>Reveladas</h3>
+                                <p>${revealed}/${size*size - mines}</p>
+                            </div>
+                        </div>
+                        <div class="game-feedback" id="feedback">
+                            ${gameOver ? '<span class="lose">¡Juego terminado!</span>' : 'En curso...'}
+                        </div>
+                        <div class="game-controls">
+                            <button id="resetBtn" class="game-button">Nuevo Juego</button>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+                
+                // Event listeners
+                document.querySelectorAll('.game-cell').forEach(cell => {
+                    cell.onclick = () => revealCell(
+                        parseInt(cell.dataset.x), 
+                        parseInt(cell.dataset.y)
+                    );
+                    
+                    cell.oncontextmenu = (e) => {
+                        e.preventDefault();
+                        toggleFlag(
+                            parseInt(cell.dataset.x), 
+                            parseInt(cell.dataset.y)
+                        );
+                        return false;
+                    };
+                });
+                
+                document.getElementById('resetBtn').onclick = () => {
+                    initBoard();
+                    renderBoard();
+                };
+            }
+            
+            function revealCell(x, y) {
+                if (gameOver || board[y][x].revealed || board[y][x].flagged) return;
+                
+                board[y][x].revealed = true;
+                revealed++;
+                
+                if (board[y][x].mine) {
+                    gameOver = true;
+                    document.getElementById('feedback').innerHTML = 
+                        '<span class="lose">¡Boom! Has perdido</span>';
+                } else if (board[y][x].count === 0) {
+                    // Revelar celdas adyacentes
+                    for (let dy = -1; dy <= 1; dy++) {
+                        for (let dx = -1; dx <= 1; dx++) {
+                            const nx = x + dx;
+                            const ny = y + dy;
+                            if (nx >= 0 && nx < size && ny >= 0 && ny < size) {
+                                revealCell(nx, ny);
+                            }
+                        }
+                    }
+                }
+                
+                // Verificar victoria
+                if (revealed === size*size - mines) {
+                    gameOver = true;
+                    document.getElementById('feedback').innerHTML = 
+                        '<span class="win">¡Ganaste! Has encontrado todas las minas</span>';
+                }
+                
+                renderBoard();
+            }
+            
+            function toggleFlag(x, y) {
+                if (gameOver || board[y][x].revealed) return;
+                board[y][x].flagged = !board[y][x].flagged;
+                renderBoard();
+            }
+            
+            initBoard();
+            renderBoard();
         }
 
+        // JUEGO 7: 15 Puzzle
         function loadPuzzle15Game(container) {
-            container.innerHTML = `
-                <div class="game-container">
-                    <h2 class="game-title-large">15 Puzzle</h2>
-                    <p class="game-instructions">
-                        Ordena los números del 1 al 15 deslizando las piezas en el tablero 4x4.
-                    </p>
-                    <div class="coming-soon">
-                        <div class="coming-soon-icon">
-                            <i class="fas fa-puzzle-piece"></i>
+            let board = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0];
+            let emptyIndex = 15;
+            let moves = 0;
+            
+            function shuffleBoard() {
+                // Mezcla simple
+                for (let i = 0; i < 100; i++) {
+                    const possibleMoves = getPossibleMoves(emptyIndex);
+                    const move = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+                    swapTiles(emptyIndex, move);
+                }
+                moves = 0;
+            }
+            
+            function getPossibleMoves(index) {
+                const moves = [];
+                const row = Math.floor(index / 4);
+                const col = index % 4;
+                
+                if (row > 0) moves.push(index - 4); // Arriba
+                if (row < 3) moves.push(index + 4); // Abajo
+                if (col > 0) moves.push(index - 1); // Izquierda
+                if (col < 3) moves.push(index + 1); // Derecha
+                
+                return moves;
+            }
+            
+            function swapTiles(i, j) {
+                [board[i], board[j]] = [board[j], board[i]];
+                emptyIndex = board[i] === 0 ? i : j;
+            }
+            
+            function renderBoard() {
+                container.innerHTML = `
+                    <div class="game-container">
+                        <h2 class="game-title-large">15 Puzzle</h2>
+                        <p class="game-instructions">Ordena los números del 1 al 15</p>
+                        <div class="game-board" style="
+                            grid-template-columns: repeat(4, 60px);
+                            grid-template-rows: repeat(4, 60px);
+                            gap: 2px;
+                        ">
+                            ${board.map((num, i) => `
+                                <div class="game-cell" data-index="${i}"
+                                     style="font-size: 1.2rem; font-weight: bold;
+                                            ${num === 0 ? 'visibility: hidden' : ''};
+                                            background: ${num ? 'rgba(0,255,255,0.2)' : 'transparent'};
+                                            color: var(--neon-blue)">
+                                    ${num || ''}
+                                </div>
+                            `).join('')}
                         </div>
-                        <p class="game-instructions">
-                            Este juego estará disponible en la próxima actualización. Por ahora, ¡disfruta de los otros minijuegos!
-                        </p>
-                        <button class="game-button" onclick="returnToMain()">
-                            <i class="fas fa-arrow-left"></i> Volver al Menú
-                        </button>
+                        <div class="game-stats">
+                            <div class="stat-box">
+                                <h3>Movimientos</h3>
+                                <p>${moves}</p>
+                            </div>
+                            <div class="stat-box">
+                                <h3>Completado</h3>
+                                <p>${isSolved() ? '100%' : '0%'}</p>
+                            </div>
+                        </div>
+                        <div class="game-feedback" id="feedback">
+                            ${isSolved() ? '<span class="win">¡Puzzle completado!</span>' : 'Haz clic en un número adyacente al espacio vacío'}
+                        </div>
+                        <div class="game-controls">
+                            <button id="shuffleBtn" class="game-button">Mezclar</button>
+                            <button id="solveBtn" class="game-button">Resolver</button>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+                
+                // Event listeners
+                document.querySelectorAll('.game-cell').forEach(cell => {
+                    if (parseInt(cell.textContent)) {
+                        cell.onclick = () => handleClick(parseInt(cell.dataset.index));
+                    }
+                });
+                
+                document.getElementById('shuffleBtn').onclick = () => {
+                    shuffleBoard();
+                    renderBoard();
+                };
+                
+                document.getElementById('solveBtn').onclick = () => {
+                    board = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0];
+                    emptyIndex = 15;
+                    moves = 0;
+                    renderBoard();
+                };
+            }
+            
+            function handleClick(index) {
+                const possibleMoves = getPossibleMoves(emptyIndex);
+                
+                if (possibleMoves.includes(index)) {
+                    swapTiles(emptyIndex, index);
+                    moves++;
+                    
+                    if (isSolved()) {
+                        document.getElementById('feedback').innerHTML = 
+                            `<span class="win">¡Ganaste! Movimientos: ${moves}</span>`;
+                    }
+                    
+                    renderBoard();
+                }
+            }
+            
+            function isSolved() {
+                for (let i = 0; i < 15; i++) {
+                    if (board[i] !== i + 1) return false;
+                }
+                return board[15] === 0;
+            }
+            
+            shuffleBoard();
+            renderBoard();
         }
 
-        // Funciones restantes (plantillas similares)
+        // JUEGO 8: Ahorcado
         function loadHangmanGame(container) {
-            container.innerHTML = `
-                <div class="game-container">
-                    <h2 class="game-title-large">Ahorcado</h2>
-                    <p class="game-instructions">
-                        Adivina la palabra letra por letra antes de que se complete el dibujo del ahorcado.
-                    </p>
-                    <div class="coming-soon">
-                        <div class="coming-soon-icon">
-                            <i class="fas fa-user"></i>
+            const words = ['LOGICA', 'PROGRAMA', 'JUEGO', 'COMPUTADORA', 'ALGORITMO', 'INTERNET'];
+            let word = '';
+            let guessed = [];
+            let wrong = 0;
+            let maxWrong = 6;
+            
+            function initGame() {
+                word = words[Math.floor(Math.random() * words.length)];
+                guessed = Array(word.length).fill('_');
+                wrong = 0;
+                renderGame();
+            }
+            
+            function renderGame() {
+                const hangmanParts = ['Cabeza', 'Cuerpo', 'Brazo Izq', 'Brazo Der', 'Pierna Izq', 'Pierna Der'];
+                const displayWord = guessed.join(' ');
+                
+                container.innerHTML = `
+                    <div class="game-container">
+                        <h2 class="game-title-large">Ahorcado</h2>
+                        <p class="game-instructions">Adivina la palabra letra por letra</p>
+                        <div style="margin: 1rem 0; text-align: center;">
+                            <div style="font-size: 2rem; letter-spacing: 10px; margin: 1rem 0; color: var(--neon-blue)">
+                                ${displayWord}
+                            </div>
+                            <div style="color: var(--text-secondary); font-size: 0.9rem; margin: 0.5rem 0;">
+                                Errores: ${wrong}/${maxWrong}
+                            </div>
+                            <div style="color: var(--neon-pink); min-height: 20px;">
+                                ${wrong > 0 ? `Parte incorrecta: ${hangmanParts.slice(0, wrong).join(', ')}` : ''}
+                            </div>
                         </div>
-                        <p class="game-instructions">
-                            Este juego estará disponible en la próxima actualización. Por ahora, ¡disfruta de los otros minijuegos!
-                        </p>
-                        <button class="game-button" onclick="returnToMain()">
-                            <i class="fas fa-arrow-left"></i> Volver al Menú
-                        </button>
+                        <div style="display: grid; grid-template-columns: repeat(9, 1fr); gap: 5px; margin: 1rem 0;">
+                            ${'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(letter => `
+                                <button class="game-button" style="padding: 0.3rem; font-size: 0.8rem;"
+                                        data-letter="${letter}"
+                                        ${guessed.includes(letter) || word.includes(letter) ? 'disabled' : ''}>
+                                    ${letter}
+                                </button>
+                            `).join('')}
+                        </div>
+                        <div class="game-feedback" id="feedback">
+                            Haz clic en una letra para adivinar
+                        </div>
+                        <div class="game-controls">
+                            <button id="newGameBtn" class="game-button">Nueva Palabra</button>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+                
+                // Event listeners para letras
+                document.querySelectorAll('[data-letter]').forEach(btn => {
+                    btn.onclick = () => guessLetter(btn.dataset.letter);
+                });
+                
+                document.getElementById('newGameBtn').onclick = initGame;
+                
+                // Verificar estado del juego
+                if (wrong >= maxWrong) {
+                    document.getElementById('feedback').innerHTML = 
+                        `<span class="lose">¡Perdiste! La palabra era: ${word}</span>`;
+                    disableAllButtons();
+                } else if (!guessed.includes('_')) {
+                    document.getElementById('feedback').innerHTML = 
+                        `<span class="win">¡Ganaste! La palabra es: ${word}</span>`;
+                    disableAllButtons();
+                }
+            }
+            
+            function guessLetter(letter) {
+                if (word.includes(letter)) {
+                    // Actualizar letras adivinadas
+                    for (let i = 0; i < word.length; i++) {
+                        if (word[i] === letter) {
+                            guessed[i] = letter;
+                        }
+                    }
+                } else {
+                    wrong++;
+                }
+                
+                renderGame();
+            }
+            
+            function disableAllButtons() {
+                document.querySelectorAll('[data-letter]').forEach(btn => {
+                    btn.disabled = true;
+                });
+            }
+            
+            initGame();
         }
 
+        // JUEGO 9: Conecta 4
         function loadConnect4Game(container) {
-            container.innerHTML = `
-                <div class="game-container">
-                    <h2 class="game-title-large">Conecta 4</h2>
-                    <p class="game-instructions">
-                        Conecta cuatro fichas en línea horizontal, vertical o diagonal. Estrategia pura para dos jugadores.
-                    </p>
-                    <div class="coming-soon">
-                        <div class="coming-soon-icon">
-                            <i class="fas fa-circle"></i>
-                        </div>
+            const rows = 6;
+            const cols = 7;
+            let board = Array(rows).fill().map(() => Array(cols).fill(0));
+            let currentPlayer = 1;
+            let gameOver = false;
+            
+            function renderBoard() {
+                container.innerHTML = `
+                    <div class="game-container">
+                        <h2 class="game-title-large">Conecta 4</h2>
                         <p class="game-instructions">
-                            Este juego estará disponible en la próxima actualización. Por ahora, ¡disfruta de los otros minijuegos!
+                            Jugador: <span style="color:var(--neon-blue)">●</span> vs 
+                            Jugador: <span style="color:var(--neon-pink)">●</span>
                         </p>
-                        <button class="game-button" onclick="returnToMain()">
-                            <i class="fas fa-arrow-left"></i> Volver al Menú
-                        </button>
+                        <div style="margin: 1rem auto; max-width: ${cols * 50}px;">
+                            ${board.map((row, y) => `
+                                <div style="display: flex;">
+                                    ${row.map((cell, x) => `
+                                        <div class="game-cell" data-col="${x}"
+                                             style="width: 40px; height: 40px; margin: 2px;
+                                                    background: rgba(255,255,255,0.1);
+                                                    border-radius: 50%;
+                                                    display: flex; align-items: center;
+                                                    justify-content: center;">
+                                            ${cell === 1 ? 
+                                                '<div style="width: 30px; height: 30px; background: var(--neon-blue); border-radius: 50%;"></div>' : 
+                                              cell === 2 ? 
+                                                '<div style="width: 30px; height: 30px; background: var(--neon-pink); border-radius: 50%;"></div>' : ''}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="game-feedback" id="feedback" style="color: ${currentPlayer === 1 ? 'var(--neon-blue)' : 'var(--neon-pink)'}">
+                            Turno del Jugador ${currentPlayer}
+                        </div>
+                        <div class="game-controls">
+                            <button id="resetBtn" class="game-button">Reiniciar</button>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+                
+                // Event listeners para columnas
+                if (!gameOver) {
+                    document.querySelectorAll('.game-cell').forEach(cell => {
+                        cell.onclick = () => makeMove(parseInt(cell.dataset.col));
+                    });
+                }
+                
+                document.getElementById('resetBtn').onclick = resetGame;
+            }
+            
+            function makeMove(col) {
+                if (gameOver) return;
+                
+                // Encontrar la fila más baja disponible
+                for (let row = rows - 1; row >= 0; row--) {
+                    if (board[row][col] === 0) {
+                        board[row][col] = currentPlayer;
+                        
+                        if (checkWin(row, col)) {
+                            gameOver = true;
+                            document.getElementById('feedback').innerHTML = 
+                                `<span class="win">¡Jugador ${currentPlayer} gana!</span>`;
+                        } else if (board.every(row => row.every(cell => cell !== 0))) {
+                            gameOver = true;
+                            document.getElementById('feedback').innerHTML = 
+                                `<span class="lose">¡Empate!</span>`;
+                        } else {
+                            currentPlayer = currentPlayer === 1 ? 2 : 1;
+                            document.getElementById('feedback').innerHTML = 
+                                `Turno del Jugador ${currentPlayer}`;
+                        }
+                        
+                        renderBoard();
+                        return;
+                    }
+                }
+            }
+            
+            function checkWin(row, col) {
+                const player = board[row][col];
+                
+                // Direcciones: horizontal, vertical, diagonales
+                const directions = [
+                    [[0,1],[0,-1]],   // Horizontal
+                    [[1,0],[-1,0]],   // Vertical
+                    [[1,1],[-1,-1]],  // Diagonal \
+                    [[1,-1],[-1,1]]   // Diagonal /
+                ];
+                
+                for (const [dir1, dir2] of directions) {
+                    let count = 1;
+                    
+                    // Contar en una dirección
+                    let [r, c] = [row + dir1[0], col + dir1[1]];
+                    while (r >= 0 && r < rows && c >= 0 && c < cols && board[r][c] === player) {
+                        count++;
+                        r += dir1[0];
+                        c += dir1[1];
+                    }
+                    
+                    // Contar en la dirección opuesta
+                    [r, c] = [row + dir2[0], col + dir2[1]];
+                    while (r >= 0 && r < rows && c >= 0 && c < cols && board[r][c] === player) {
+                        count++;
+                        r += dir2[0];
+                        c += dir2[1];
+                    }
+                    
+                    if (count >= 4) return true;
+                }
+                
+                return false;
+            }
+            
+            function resetGame() {
+                board = Array(rows).fill().map(() => Array(cols).fill(0));
+                currentPlayer = 1;
+                gameOver = false;
+                renderBoard();
+            }
+            
+            resetGame();
         }
 
+        // JUEGO 10: Laberinto
         function loadMazeGame(container) {
-            container.innerHTML = `
-                <div class="game-container">
-                    <h2 class="game-title-large">Laberinto</h2>
-                    <p class="game-instructions">
-                        Encuentra la salida del laberinto generado aleatoriamente. ¡Navega por el camino más corto!
-                    </p>
-                    <div class="coming-soon">
-                        <div class="coming-soon-icon">
-                            <i class="fas fa-project-diagram"></i>
+            const size = 15;
+            let maze = [];
+            let playerPos = {x: 1, y: 1};
+            let exitPos = {x: size-2, y: size-2};
+            
+            function generateMaze() {
+                // Inicializar laberinto lleno de paredes
+                maze = Array(size).fill().map(() => Array(size).fill(1));
+                
+                // Algoritmo simple de generación
+                function carve(x, y) {
+                    maze[y][x] = 0;
+                    
+                    const directions = [[0,1],[1,0],[0,-1],[-1,0]];
+                    directions.sort(() => Math.random() - 0.5);
+                    
+                    for (const [dx, dy] of directions) {
+                        const nx = x + dx * 2;
+                        const ny = y + dy * 2;
+                        
+                        if (nx > 0 && nx < size-1 && ny > 0 && ny < size-1 && maze[ny][nx] === 1) {
+                            maze[y + dy][x + dx] = 0;
+                            carve(nx, ny);
+                        }
+                    }
+                }
+                
+                // Crear entrada y salida
+                carve(1, 1);
+                maze[exitPos.y][exitPos.x] = 2; // Salida
+                maze[playerPos.y][playerPos.x] = 0; // Entrada
+                
+                // Asegurar que la salida sea accesible
+                maze[exitPos.y-1][exitPos.x] = 0;
+                maze[exitPos.y][exitPos.x-1] = 0;
+            }
+            
+            function renderMaze() {
+                const cellSize = Math.min(25, Math.floor(400 / size));
+                
+                container.innerHTML = `
+                    <div class="game-container">
+                        <h2 class="game-title-large">Laberinto</h2>
+                        <p class="game-instructions">Usa las flechas para moverte hacia la salida (▲)</p>
+                        <div class="game-board" style="
+                            grid-template-columns: repeat(${size}, ${cellSize}px);
+                            grid-template-rows: repeat(${size}, ${cellSize}px);
+                        ">
+                            ${maze.map((row, y) => 
+                                row.map((cell, x) => `
+                                    <div class="game-cell" 
+                                         style="background: ${cell === 1 ? 'rgba(255,255,255,0.2)' : 
+                                                   cell === 2 ? 'var(--neon-green)' :
+                                                   x === playerPos.x && y === playerPos.y ? 'var(--neon-blue)' :
+                                                   'rgba(0,255,255,0.05)'};
+                                                ${cell === 2 ? 'font-size: 0.8rem;' : ''}">
+                                        ${cell === 2 ? '▲' : 
+                                         x === playerPos.x && y === playerPos.y ? '●' : ''}
+                                    </div>
+                                `).join('')
+                            ).join('')}
                         </div>
-                        <p class="game-instructions">
-                            Este juego estará disponible en la próxima actualización. Por ahora, ¡disfruta de los otros minijuegos!
-                        </p>
-                        <button class="game-button" onclick="returnToMain()">
-                            <i class="fas fa-arrow-left"></i> Volver al Menú
-                        </button>
+                        <div class="game-feedback" id="feedback">
+                            Movimientos: ←↑→↓
+                        </div>
+                        <div class="game-controls">
+                            <button id="newMazeBtn" class="game-button">Nuevo Laberinto</button>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+                
+                document.getElementById('newMazeBtn').onclick = () => {
+                    generateMaze();
+                    playerPos = {x: 1, y: 1};
+                    renderMaze();
+                };
+                
+                // Controles del teclado
+                document.addEventListener('keydown', handleKeyPress);
+            }
+            
+            function handleKeyPress(e) {
+                let newPos = {...playerPos};
+                
+                switch(e.key) {
+                    case 'ArrowUp': newPos.y--; break;
+                    case 'ArrowDown': newPos.y++; break;
+                    case 'ArrowLeft': newPos.x--; break;
+                    case 'ArrowRight': newPos.x++; break;
+                    default: return;
+                }
+                
+                if (newPos.x >= 0 && newPos.x < size && 
+                    newPos.y >= 0 && newPos.y < size &&
+                    maze[newPos.y][newPos.x] !== 1) {
+                    
+                    playerPos = newPos;
+                    
+                    // Verificar si llegó a la salida
+                    if (playerPos.x === exitPos.x && playerPos.y === exitPos.y) {
+                        document.getElementById('feedback').innerHTML = 
+                            '<span class="win">¡Encontraste la salida!</span>';
+                        document.removeEventListener('keydown', handleKeyPress);
+                    }
+                    
+                    renderMaze();
+                }
+            }
+            
+            generateMaze();
+            renderMaze();
         }
 
+        // JUEGO 11: Criptograma
         function loadCryptogramGame(container) {
-            container.innerHTML = `
-                <div class="game-container">
-                    <h2 class="game-title-large">Criptograma</h2>
-                    <p class="game-instructions">
-                        Descifra el mensaje codificado sustituyendo letras. Un desafío de lógica lingüística.
-                    </p>
-                    <div class="coming-soon">
-                        <div class="coming-soon-icon">
-                            <i class="fas fa-key"></i>
+            const quotes = [
+                "LA LOGICA ES EL ANATOMIA DEL PENSAMIENTO",
+                "PROGRAMAR ES PENSAR DOS VECES",
+                "EL JUEGO ES EL APRENDIZAJE MAS DIVERTIDO",
+                "LA MATEMATICA ES EL ALFABETO DE LA CIENCIA"
+            ];
+            
+            let quote = '';
+            let encoded = '';
+            let mapping = {};
+            let solved = false;
+            
+            function initGame() {
+                quote = quotes[Math.floor(Math.random() * quotes.length)].toUpperCase();
+                
+                // Crear mapeo de sustitución
+                const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                const shuffled = alphabet.split('').sort(() => Math.random() - 0.5);
+                
+                mapping = {};
+                encoded = '';
+                
+                for (let i = 0; i < alphabet.length; i++) {
+                    mapping[alphabet[i]] = shuffled[i];
+                }
+                
+                // Codificar la frase
+                for (let char of quote) {
+                    encoded += mapping[char] || char;
+                }
+                
+                solved = false;
+                renderGame();
+            }
+            
+            function renderGame() {
+                const displayEncoded = encoded.split('').map(char => 
+                    char === ' ' ? '&nbsp;&nbsp;' : char
+                ).join(' ');
+                
+                container.innerHTML = `
+                    <div class="game-container">
+                        <h2 class="game-title-large">Criptograma</h2>
+                        <p class="game-instructions">Descifra el mensaje codificado. Haz clic en una letra para cambiarla.</p>
+                        <div style="margin: 1rem 0; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                            <div style="font-size: 1.2rem; letter-spacing: 3px; line-height: 1.8; text-align: center;">
+                                ${displayEncoded}
+                            </div>
                         </div>
-                        <p class="game-instructions">
-                            Este juego estará disponible en la próxima actualización. Por ahora, ¡disfruta de los otros minijuegos!
-                        </p>
-                        <button class="game-button" onclick="returnToMain()">
-                            <i class="fas fa-arrow-left"></i> Volver al Menú
-                        </button>
+                        <div class="game-feedback" id="feedback">
+                            ${solved ? '<span class="win">¡Mensaje descifrado correctamente!</span>' : 
+                              'Haz clic en una letra para asignarle un valor'}
+                        </div>
+                        <div style="margin: 1rem 0;">
+                            <h3 style="color: var(--neon-blue); margin-bottom: 0.5rem;">Tu solución:</h3>
+                            <div style="display: grid; grid-template-columns: repeat(13, 1fr); gap: 5px;">
+                                ${'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(letter => `
+                                    <div style="text-align: center; padding: 0.5rem; 
+                                                background: rgba(255,255,255,0.1); border-radius: 5px;">
+                                        <div style="font-weight: bold; color: var(--neon-blue)">${letter}</div>
+                                        <div style="font-size: 1.2rem; color: var(--neon-green)"
+                                             onclick="this.contentEditable=true; this.focus()"
+                                             onblur="this.contentEditable=false">
+                                            ${mapping[letter] || ''}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div class="game-controls">
+                            <button id="checkBtn" class="game-button">Comprobar</button>
+                            <button id="newGameBtn" class="game-button">Nuevo Mensaje</button>
+                            <button id="hintBtn" class="game-button">Pista</button>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+                
+                document.getElementById('checkBtn').onclick = checkSolution;
+                document.getElementById('newGameBtn').onclick = initGame;
+                document.getElementById('hintBtn').onclick = giveHint;
+                
+                // Hacer las letras editables
+                document.querySelectorAll('[contenteditable]').forEach(el => {
+                    el.onkeypress = (e) => {
+                        if (e.key.match(/^[A-Z]$/i)) {
+                            const letter = e.key.toUpperCase();
+                            const targetLetter = el.parentElement.children[0].textContent;
+                            mapping[targetLetter] = letter;
+                            
+                            // Actualizar texto codificado
+                            encoded = quote.split('').map(char => 
+                                mapping[char] || char
+                            ).join('');
+                            
+                            setTimeout(() => renderGame(), 100);
+                        }
+                        e.preventDefault();
+                    };
+                });
+            }
+            
+            function checkSolution() {
+                let correct = true;
+                const originalMapping = {};
+                
+                // Reconstruir mapeo original
+                for (let char of quote) {
+                    if (char >= 'A' && char <= 'Z') {
+                        originalMapping[char] = char;
+                    }
+                }
+                
+                // Verificar si el mapeo actual resuelve el criptograma
+                for (let i = 0; i < quote.length; i++) {
+                    const originalChar = quote[i];
+                    if (originalChar >= 'A' && originalChar <= 'Z') {
+                        const decodedChar = mapping[originalChar];
+                        if (!decodedChar || encoded[i] !== mapping[originalChar]) {
+                            correct = false;
+                            break;
+                        }
+                    }
+                }
+                
+                if (correct) {
+                    solved = true;
+                    document.getElementById('feedback').innerHTML = 
+                        '<span class="win">¡Correcto! El mensaje era: ' + quote + '</span>';
+                } else {
+                    document.getElementById('feedback').innerHTML = 
+                        '<span class="lose">Aún hay errores en la decodificación</span>';
+                }
+                
+                renderGame();
+            }
+            
+            function giveHint() {
+                // Revelar una letra aleatoria
+                const letters = Object.keys(mapping).filter(l => mapping[l]);
+                if (letters.length > 0) {
+                    const randomLetter = letters[Math.floor(Math.random() * letters.length)];
+                    alert(`Pista: La letra ${randomLetter} probablemente representa "${mapping[randomLetter]}"`);
+                }
+            }
+            
+            initGame();
         }
 
+        // JUEGO 12: Mastermind
         function loadMastermindGame(container) {
-            container.innerHTML = `
-                <div class="game-container">
-                    <h2 class="game-title-large">Mastermind</h2>
-                    <p class="game-instructions">
-                        Adivina la combinación secreta de colores usando pistas de posición y color. ¡Pura deducción lógica!
-                    </p>
-                    <div class="coming-soon">
-                        <div class="coming-soon-icon">
-                            <i class="fas fa-user-secret"></i>
+            const colors = ['R', 'G', 'B', 'Y', 'P', 'W'];
+            const codeLength = 4;
+            let secretCode = [];
+            let guesses = [];
+            let currentGuess = [];
+            let attempts = 0;
+            const maxAttempts = 10;
+            
+            function generateCode() {
+                secretCode = [];
+                for (let i = 0; i < codeLength; i++) {
+                    secretCode.push(colors[Math.floor(Math.random() * colors.length)]);
+                }
+                guesses = [];
+                currentGuess = [];
+                attempts = 0;
+            }
+            
+            function renderGame() {
+                container.innerHTML = `
+                    <div class="game-container">
+                        <h2 class="game-title-large">Mastermind</h2>
+                        <p class="game-instructions">Adivina el código de 4 colores (R=Rojo, G=Verde, B=Azul, Y=Amarillo, P=Púrpura, W=Blanco)</p>
+                        
+                        <div style="margin: 1rem 0;">
+                            <h3 style="color: var(--neon-blue); margin-bottom: 0.5rem;">Tus intentos:</h3>
+                            <div style="margin-bottom: 1rem;">
+                                ${Array(maxAttempts).fill().map((_, i) => {
+                                    const guess = guesses[i] || {pegs: [], feedback: []};
+                                    return `
+                                        <div style="display: flex; align-items: center; gap: 10px; margin: 5px 0;">
+                                            <div style="display: flex; gap: 5px;">
+                                                ${Array(codeLength).fill().map((_, j) => `
+                                                    <div style="width: 30px; height: 30px; border-radius: 50%;
+                                                              background: ${guess.pegs[j] ? 
+                                                                  guess.pegs[j] === 'R' ? '#ff0000' :
+                                                                  guess.pegs[j] === 'G' ? '#00ff00' :
+                                                                  guess.pegs[j] === 'B' ? '#0000ff' :
+                                                                  guess.pegs[j] === 'Y' ? '#ffff00' :
+                                                                  guess.pegs[j] === 'P' ? '#ff00ff' : '#ffffff' 
+                                                                : 'rgba(255,255,255,0.1)'};
+                                                              border: 1px solid var(--neon-blue);"></div>
+                                                `).join('')}
+                                            </div>
+                                            <div style="display: flex; gap: 3px;">
+                                                ${Array(codeLength).fill().map((_, j) => `
+                                                    <div style="width: 10px; height: 10px; border-radius: 50%;
+                                                              background: ${guess.feedback[j] === 'B' ? 'black' : 
+                                                                          guess.feedback[j] === 'W' ? 'white' : 'transparent'};
+                                                              border: 1px solid rgba(255,255,255,0.3);"></div>
+                                                `).join('')}
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
                         </div>
-                        <p class="game-instructions">
-                            Este juego estará disponible en la próxima actualización. Por ahora, ¡disfruta de los otros minijuegos!
-                        </p>
-                        <button class="game-button" onclick="returnToMain()">
-                            <i class="fas fa-arrow-left"></i> Volver al Menú
-                        </button>
+                        
+                        <div style="margin: 1rem 0;">
+                            <h3 style="color: var(--neon-green); margin-bottom: 0.5rem;">Intento actual:</h3>
+                            <div style="display: flex; gap: 10px; margin-bottom: 1rem;">
+                                ${Array(codeLength).fill().map((_, i) => `
+                                    <div class="game-cell" data-index="${i}"
+                                         style="width: 40px; height: 40px; border-radius: 50%;
+                                                background: ${currentGuess[i] ? 
+                                                    currentGuess[i] === 'R' ? '#ff0000' :
+                                                    currentGuess[i] === 'G' ? '#00ff00' :
+                                                    currentGuess[i] === 'B' ? '#0000ff' :
+                                                    currentGuess[i] === 'Y' ? '#ffff00' :
+                                                    currentGuess[i] === 'P' ? '#ff00ff' : '#ffffff' 
+                                                  : 'rgba(255,255,255,0.1)'};
+                                                border: 2px solid var(--neon-blue);
+                                                cursor: pointer;"
+                                         onclick="this._gameData.cycleColor(${i})">
+                                        ${i < currentGuess.length ? '' : '?'}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <div style="margin: 1rem 0;">
+                            <h3 style="color: var(--neon-pink); margin-bottom: 0.5rem;">Colores disponibles:</h3>
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                ${colors.map(color => `
+                                    <div class="game-button" style="width: 40px; height: 40px; border-radius: 50%;
+                                            background: ${color === 'R' ? '#ff0000' :
+                                                        color === 'G' ? '#00ff00' :
+                                                        color === 'B' ? '#0000ff' :
+                                                        color === 'Y' ? '#ffff00' :
+                                                        color === 'P' ? '#ff00ff' : '#ffffff'};"
+                                         onclick="this._gameData.addColor('${color}')">
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <div class="game-feedback" id="feedback">
+                            ${attempts > 0 ? `Intentos: ${attempts}/${maxAttempts}` : 'Selecciona colores para tu intento'}
+                        </div>
+                        
+                        <div class="game-controls">
+                            <button id="submitBtn" class="game-button">Enviar Intento</button>
+                            <button id="newGameBtn" class="game-button">Nuevo Juego</button>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+                
+                // Asignar funciones al contexto global temporal
+                window.tempGameData = {
+                    cycleColor: (index) => {
+                        if (currentGuess[index]) {
+                            const currentIndex = colors.indexOf(currentGuess[index]);
+                            currentGuess[index] = colors[(currentIndex + 1) % colors.length];
+                            renderGame();
+                        }
+                    },
+                    addColor: (color) => {
+                        if (currentGuess.length < codeLength) {
+                            currentGuess.push(color);
+                            renderGame();
+                        }
+                    }
+                };
+                
+                document.querySelectorAll('[onclick*="cycleColor"]').forEach(el => {
+                    el._gameData = window.tempGameData;
+                });
+                
+                document.querySelectorAll('[onclick*="addColor"]').forEach(el => {
+                    el._gameData = window.tempGameData;
+                });
+                
+                document.getElementById('submitBtn').onclick = submitGuess;
+                document.getElementById('newGameBtn').onclick = generateCode;
+            }
+            
+            function submitGuess() {
+                if (currentGuess.length !== codeLength) {
+                    alert('¡Necesitas seleccionar 4 colores!');
+                    return;
+                }
+                
+                // Calcular feedback
+                const feedback = [];
+                const tempCode = [...secretCode];
+                const tempGuess = [...currentGuess];
+                
+                // Primero buscar coincidencias exactas (negro)
+                for (let i = 0; i < codeLength; i++) {
+                    if (tempGuess[i] === tempCode[i]) {
+                        feedback.push('B'); // Negro = posición correcta
+                        tempGuess[i] = null;
+                        tempCode[i] = null;
+                    }
+                }
+                
+                // Luego buscar colores correctos en posición incorrecta (blanco)
+                for (let i = 0; i < codeLength; i++) {
+                    if (tempGuess[i] !== null) {
+                        const index = tempCode.indexOf(tempGuess[i]);
+                        if (index !== -1) {
+                            feedback.push('W'); // Blanco = color correcto, posición incorrecta
+                            tempCode[index] = null;
+                        }
+                    }
+                }
+                
+                // Agregar el intento
+                guesses.push({
+                    pegs: [...currentGuess],
+                    feedback: [...feedback]
+                });
+                
+                attempts++;
+                
+                // Verificar victoria
+                if (feedback.every(f => f === 'B') && feedback.length === codeLength) {
+                    document.getElementById('feedback').innerHTML = 
+                        `<span class="win">¡Ganaste! Código descifrado en ${attempts} intentos</span>`;
+                } else if (attempts >= maxAttempts) {
+                    document.getElementById('feedback').innerHTML = 
+                        `<span class="lose">¡Perdiste! El código era: ${secretCode.join(' ')}</span>`;
+                } else {
+                    currentGuess = [];
+                }
+                
+                renderGame();
+            }
+            
+            // Inicializar
+            generateCode();
+            renderGame();
         }
 
+        // JUEGO 13: Juego de la Vida
         function loadLifeGame(container) {
-            container.innerHTML = `
-                <div class="game-container">
-                    <h2 class="game-title-large">Juego de la Vida</h2>
-                    <p class="game-instructions">
-                        Simula el autómata celular de Conway. Observa cómo evolucionan los patrones según reglas simples.
-                    </p>
-                    <div class="coming-soon">
-                        <div class="coming-soon-icon">
-                            <i class="fas fa-seedling"></i>
+            const rows = 20;
+            const cols = 20;
+            let grid = Array(rows).fill().map(() => Array(cols).fill(0));
+            let running = false;
+            let intervalId = null;
+            
+            function initGrid() {
+                // Patrón inicial aleatorio
+                grid = Array(rows).fill().map(() => 
+                    Array(cols).fill().map(() => Math.random() > 0.7 ? 1 : 0)
+                );
+                renderGrid();
+            }
+            
+            function renderGrid() {
+                const cellSize = Math.min(20, Math.floor(400 / Math.max(rows, cols)));
+                
+                container.innerHTML = `
+                    <div class="game-container">
+                        <h2 class="game-title-large">Juego de la Vida</h2>
+                        <p class="game-instructions">Autómata celular de Conway. Las células nacen, mueren o sobreviven según sus vecinos.</p>
+                        
+                        <div class="game-board" style="
+                            grid-template-columns: repeat(${cols}, ${cellSize}px);
+                            grid-template-rows: repeat(${rows}, ${cellSize}px);
+                            margin: 1rem auto;
+                        ">
+                            ${grid.map((row, y) => 
+                                row.map((cell, x) => `
+                                    <div class="game-cell" data-x="${x}" data-y="${y}"
+                                         style="background: ${cell ? 'var(--neon-green)' : 'rgba(255,255,255,0.05)'};
+                                                border: 1px solid rgba(0,255,255,0.1);">
+                                    </div>
+                                `).join('')
+                            ).join('')}
                         </div>
-                        <p class="game-instructions">
-                            Este juego estará disponible en la próxima actualización. Por ahora, ¡disfruta de los otros minijuegos!
-                        </p>
-                        <button class="game-button" onclick="returnToMain()">
-                            <i class="fas fa-arrow-left"></i> Volver al Menú
-                        </button>
+                        
+                        <div class="game-feedback" id="feedback">
+                            ${running ? 'Ejecutándose...' : 'Haz clic en celdas para activarlas/desactivarlas'}
+                        </div>
+                        
+                        <div class="game-controls">
+                            <button id="startBtn" class="game-button">
+                                ${running ? 'Detener' : 'Iniciar'}
+                            </button>
+                            <button id="stepBtn" class="game-button">Paso</button>
+                            <button id="resetBtn" class="game-button">Reiniciar</button>
+                            <button id="clearBtn" class="game-button">Limpiar</button>
+                        </div>
+                        
+                        <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-secondary); text-align: center;">
+                            <p>Reglas:<br>
+                            1. Una célula muerta con exactamente 3 vecinos revive<br>
+                            2. Una célula viva con 2-3 vecinos sobrevive<br>
+                            3. Una célula viva con menos de 2 o más de 3 vecinos muere</p>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+                
+                // Event listeners para celdas
+                document.querySelectorAll('.game-cell').forEach(cell => {
+                    cell.onclick = () => {
+                        if (!running) {
+                            const x = parseInt(cell.dataset.x);
+                            const y = parseInt(cell.dataset.y);
+                            grid[y][x] = grid[y][x] ? 0 : 1;
+                            renderGrid();
+                        }
+                    };
+                });
+                
+                document.getElementById('startBtn').onclick = toggleRunning;
+                document.getElementById('stepBtn').onclick = nextGeneration;
+                document.getElementById('resetBtn').onclick = initGrid;
+                document.getElementById('clearBtn').onclick = () => {
+                    grid = Array(rows).fill().map(() => Array(cols).fill(0));
+                    renderGrid();
+                };
+            }
+            
+            function countNeighbors(x, y) {
+                let count = 0;
+                for (let dy = -1; dy <= 1; dy++) {
+                    for (let dx = -1; dx <= 1; dx++) {
+                        if (dx === 0 && dy === 0) continue;
+                        const nx = (x + dx + cols) % cols;
+                        const ny = (y + dy + rows) % rows;
+                        count += grid[ny][nx];
+                    }
+                }
+                return count;
+            }
+            
+            function nextGeneration() {
+                const newGrid = Array(rows).fill().map(() => Array(cols).fill(0));
+                
+                for (let y = 0; y < rows; y++) {
+                    for (let x = 0; x < cols; x++) {
+                        const neighbors = countNeighbors(x, y);
+                        
+                        if (grid[y][x] === 1) {
+                            // Célula viva
+                            newGrid[y][x] = (neighbors === 2 || neighbors === 3) ? 1 : 0;
+                        } else {
+                            // Célula muerta
+                            newGrid[y][x] = (neighbors === 3) ? 1 : 0;
+                        }
+                    }
+                }
+                
+                grid = newGrid;
+                renderGrid();
+            }
+            
+            function toggleRunning() {
+                running = !running;
+                
+                if (running) {
+                    intervalId = setInterval(nextGeneration, 200);
+                    document.getElementById('feedback').textContent = 'Ejecutándose...';
+                } else {
+                    clearInterval(intervalId);
+                    document.getElementById('feedback').textContent = 'Pausado';
+                }
+                
+                renderGrid();
+            }
+            
+            initGrid();
         }
 
+        // JUEGO 14: Battleship
         function loadBattleshipGame(container) {
-            container.innerHTML = `
-                <div class="game-container">
-                    <h2 class="game-title-large">Battleship</h2>
-                    <p class="game-instructions">
-                        Hunde la flota enemiga antes de que hundan la tuya. Estrategia naval clásica para dos jugadores.
-                    </p>
-                    <div class="coming-soon">
-                        <div class="coming-soon-icon">
-                            <i class="fas fa-ship"></i>
+            const size = 8;
+            let playerBoard = Array(size).fill().map(() => Array(size).fill(0));
+            let enemyBoard = Array(size).fill().map(() => Array(size).fill(0));
+            let enemyShips = [];
+            let playerShips = [];
+            let gameOver = false;
+            let currentPlayer = 'player';
+            
+            // Barcos: [tamaño, cantidad]
+            const ships = [[4,1], [3,2], [2,3], [1,4]];
+            
+            function placeShips(board, isPlayer = false) {
+                const newBoard = Array(size).fill().map(() => Array(size).fill(0));
+                const placedShips = [];
+                
+                for (const [size, count] of ships) {
+                    for (let c = 0; c < count; c++) {
+                        let placed = false;
+                        let attempts = 0;
+                        
+                        while (!placed && attempts < 100) {
+                            attempts++;
+                            const horizontal = Math.random() > 0.5;
+                            const x = Math.floor(Math.random() * (horizontal ? size - size + 1 : size));
+                            const y = Math.floor(Math.random() * (horizontal ? size : size - size + 1));
+                            
+                            // Verificar si hay espacio
+                            let canPlace = true;
+                            for (let i = 0; i < size; i++) {
+                                const nx = horizontal ? x + i : x;
+                                const ny = horizontal ? y : y + i;
+                                
+                                if (nx >= size || ny >= size || newBoard[ny][nx] !== 0) {
+                                    canPlace = false;
+                                    break;
+                                }
+                            }
+                            
+                            if (canPlace) {
+                                // Colocar barco
+                                const shipCells = [];
+                                for (let i = 0; i < size; i++) {
+                                    const nx = horizontal ? x + i : x;
+                                    const ny = horizontal ? y : y + i;
+                                    newBoard[ny][nx] = 1;
+                                    shipCells.push({x: nx, y: ny});
+                                }
+                                placedShips.push(shipCells);
+                                placed = true;
+                            }
+                        }
+                    }
+                }
+                
+                if (isPlayer) {
+                    playerShips = placedShips;
+                } else {
+                    enemyShips = placedShips;
+                }
+                
+                return newBoard;
+            }
+            
+            function renderBoards() {
+                container.innerHTML = `
+                    <div class="game-container">
+                        <h2 class="game-title-large">Battleship</h2>
+                        <p class="game-instructions">Hunde la flota enemiga. Tu turno: ${currentPlayer === 'player' ? 'Jugador' : 'Computadora'}</p>
+                        
+                        <div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; margin: 1rem 0;">
+                            <div>
+                                <h3 style="color: var(--neon-blue); text-align: center;">Tu Flota</h3>
+                                <div class="game-board" style="
+                                    grid-template-columns: repeat(${size}, 30px);
+                                    grid-template-rows: repeat(${size}, 30px);
+                                    margin: 0.5rem auto;
+                                ">
+                                    ${playerBoard.map((row, y) => 
+                                        row.map((cell, x) => `
+                                            <div class="game-cell" 
+                                                 style="background: ${cell === 2 ? 'var(--neon-pink)' : 
+                                                           cell === 3 ? 'var(--neon-green)' :
+                                                           cell === 1 ? 'var(--neon-blue)' :
+                                                           'rgba(255,255,255,0.1)'};
+                                                        font-size: 0.7rem;">
+                                                ${cell === 2 ? '💥' : 
+                                                 cell === 3 ? '❌' :
+                                                 cell === 1 ? '🚢' : ''}
+                                            </div>
+                                        `).join('')
+                                    ).join('')}
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h3 style="color: var(--neon-pink); text-align: center;">Flota Enemiga</h3>
+                                <div class="game-board" style="
+                                    grid-template-columns: repeat(${size}, 30px);
+                                    grid-template-rows: repeat(${size}, 30px);
+                                    margin: 0.5rem auto;
+                                ">
+                                    ${enemyBoard.map((row, y) => 
+                                        row.map((cell, x) => `
+                                            <div class="game-cell" data-x="${x}" data-y="${y}"
+                                                 style="background: rgba(255,255,255,0.1);
+                                                        cursor: ${currentPlayer === 'player' && !gameOver ? 'pointer' : 'default'};
+                                                        font-size: 0.7rem;"
+                                                 onclick="if(this._gameData && currentPlayer === 'player' && !gameOver) this._gameData.attack(${x}, ${y})">
+                                                ${cell === 2 ? '💥' : 
+                                                 cell === 3 ? '❌' : ''}
+                                            </div>
+                                        `).join('')
+                                    ).join('')}
+                                </div>
+                            </div>
                         </div>
-                        <p class="game-instructions">
-                            Este juego estará disponible en la próxima actualización. Por ahora, ¡disfruta de los otros minijuegos!
-                        </p>
-                        <button class="game-button" onclick="returnToMain()">
-                            <i class="fas fa-arrow-left"></i> Volver al Menú
-                        </button>
+                        
+                        <div class="game-feedback" id="feedback">
+                            ${gameOver ? '¡Juego terminado!' : 
+                              currentPlayer === 'player' ? 'Haz clic en el tablero enemigo para atacar' : 
+                              'Turno de la computadora...'}
+                        </div>
+                        
+                        <div class="game-stats">
+                            <div class="stat-box">
+                                <h3>Tus Barcos</h3>
+                                <p>${countAliveShips(playerShips)}/${playerShips.length}</p>
+                            </div>
+                            <div class="stat-box">
+                                <h3>Barcos Enemigos</h3>
+                                <p>${countAliveShips(enemyShips)}/${enemyShips.length}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="game-controls">
+                            <button id="newGameBtn" class="game-button">Nuevo Juego</button>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+                
+                // Asignar funciones
+                window.tempGameData = {
+                    attack: (x, y) => {
+                        if (currentPlayer !== 'player' || gameOver || enemyBoard[y][x] >= 2) return;
+                        
+                        // Atacar
+                        if (enemyBoard[y][x] === 1) {
+                            enemyBoard[y][x] = 2; // Impacto
+                            document.getElementById('feedback').innerHTML = 
+                                '<span style="color:var(--neon-green)">¡Impacto!</span>';
+                            
+                            // Verificar si se hundió un barco
+                            if (checkShipSunk(enemyShips, enemyBoard)) {
+                                document.getElementById('feedback').innerHTML = 
+                                    '<span style="color:var(--neon-green)">¡Barco hundido!</span>';
+                            }
+                        } else {
+                            enemyBoard[y][x] = 3; // Agua
+                            document.getElementById('feedback').innerHTML = 
+                                '<span style="color:var(--neon-blue)">Agua</span>';
+                            currentPlayer = 'computer';
+                        }
+                        
+                        // Verificar victoria
+                        if (checkGameOver()) {
+                            gameOver = true;
+                            document.getElementById('feedback').innerHTML = 
+                                `<span class="win">¡${currentPlayer === 'player' ? 'Ganaste' : 'Perdiste'}!</span>`;
+                        } else if (currentPlayer === 'computer') {
+                            setTimeout(computerAttack, 1000);
+                        }
+                        
+                        renderBoards();
+                    }
+                };
+                
+                document.querySelectorAll('[onclick*="attack"]').forEach(el => {
+                    el._gameData = window.tempGameData;
+                });
+                
+                document.getElementById('newGameBtn').onclick = initGame;
+            }
+            
+            function computerAttack() {
+                let x, y;
+                do {
+                    x = Math.floor(Math.random() * size);
+                    y = Math.floor(Math.random() * size);
+                } while (playerBoard[y][x] >= 2);
+                
+                if (playerBoard[y][x] === 1) {
+                    playerBoard[y][x] = 2; // Impacto
+                    if (checkShipSunk(playerShips, playerBoard)) {
+                        // Barco hundido
+                    }
+                } else {
+                    playerBoard[y][x] = 3; // Agua
+                    currentPlayer = 'player';
+                }
+                
+                if (checkGameOver()) {
+                    gameOver = true;
+                    document.getElementById('feedback').innerHTML = 
+                        '<span class="lose">¡La computadora ganó!</span>';
+                }
+                
+                renderBoards();
+            }
+            
+            function countAliveShips(ships) {
+                return ships.filter(ship => 
+                    ship.some(cell => {
+                        const board = ship === playerShips[0] ? playerBoard : enemyBoard;
+                        return board[cell.y][cell.x] === 1;
+                    })
+                ).length;
+            }
+            
+            function checkShipSunk(ships, board) {
+                for (const ship of ships) {
+                    const alive = ship.some(cell => board[cell.y][cell.x] === 1);
+                    const hit = ship.every(cell => board[cell.y][cell.x] === 2);
+                    if (!alive && hit) return true;
+                }
+                return false;
+            }
+            
+            function checkGameOver() {
+                const playerAlive = playerShips.some(ship => 
+                    ship.some(cell => playerBoard[cell.y][cell.x] === 1)
+                );
+                const enemyAlive = enemyShips.some(ship => 
+                    ship.some(cell => enemyBoard[cell.y][cell.x] === 1)
+                );
+                return !playerAlive || !enemyAlive;
+            }
+            
+            function initGame() {
+                playerBoard = placeShips(playerBoard, true);
+                enemyBoard = placeShips(enemyBoard, false);
+                gameOver = false;
+                currentPlayer = 'player';
+                renderBoards();
+            }
+            
+            initGame();
         }
 
+        // JUEGO 15: Nonogramas
         function loadNonogramGame(container) {
-            container.innerHTML = `
-                <div class="game-container">
-                    <h2 class="game-title-large">Nonogramas</h2>
-                    <p class="game-instructions">
-                        Resuelve el rompecabezas lógico donde números indican grupos de casillas a rellenar. ¡Crea una imagen!
-                    </p>
-                    <div class="coming-soon">
-                        <div class="coming-soon-icon">
-                            <i class="fas fa-border-style"></i>
+            const size = 5;
+            let puzzle = [];
+            let solution = [];
+            let playerGrid = Array(size).fill().map(() => Array(size).fill(0));
+            
+            function generatePuzzle() {
+                // Generar solución aleatoria
+                solution = Array(size).fill().map(() => 
+                    Array(size).fill().map(() => Math.random() > 0.5 ? 1 : 0)
+                );
+                
+                // Generar pistas
+                puzzle = {
+                    rows: [],
+                    cols: []
+                };
+                
+                // Pistas para filas
+                for (let i = 0; i < size; i++) {
+                    const clues = [];
+                    let count = 0;
+                    for (let j = 0; j < size; j++) {
+                        if (solution[i][j]) {
+                            count++;
+                        } else if (count > 0) {
+                            clues.push(count);
+                            count = 0;
+                        }
+                    }
+                    if (count > 0) clues.push(count);
+                    puzzle.rows.push(clues.length ? clues : [0]);
+                }
+                
+                // Pistas para columnas
+                for (let j = 0; j < size; j++) {
+                    const clues = [];
+                    let count = 0;
+                    for (let i = 0; i < size; i++) {
+                        if (solution[i][j]) {
+                            count++;
+                        } else if (count > 0) {
+                            clues.push(count);
+                            count = 0;
+                        }
+                    }
+                    if (count > 0) clues.push(count);
+                    puzzle.cols.push(clues.length ? clues : [0]);
+                }
+                
+                playerGrid = Array(size).fill().map(() => Array(size).fill(0));
+            }
+            
+            function renderGame() {
+                container.innerHTML = `
+                    <div class="game-container">
+                        <h2 class="game-title-large">Nonogramas</h2>
+                        <p class="game-instructions">Rellena las celdas según las pistas numéricas</p>
+                        
+                        <div style="display: flex; justify-content: center; margin: 1rem 0;">
+                            <div style="display: grid; grid-template-columns: auto repeat(${size}, 40px);">
+                                <!-- Esquina vacía -->
+                                <div style="width: 60px; height: 60px;"></div>
+                                
+                                <!-- Encabezados de columnas -->
+                                ${puzzle.cols.map((clues, j) => `
+                                    <div style="width: 40px; height: 60px; display: flex; flex-direction: column;
+                                              align-items: center; justify-content: flex-end; padding-bottom: 5px;">
+                                        ${clues.map(clue => `
+                                            <div style="font-size: 0.8rem; color: var(--neon-blue);">${clue}</div>
+                                        `).join('')}
+                                    </div>
+                                `).join('')}
+                                
+                                <!-- Filas -->
+                                ${puzzle.rows.map((clues, i) => `
+                                    <div style="display: contents;">
+                                        <!-- Pistas de fila -->
+                                        <div style="width: 60px; height: 40px; display: flex; align-items: center;
+                                                  justify-content: flex-end; padding-right: 10px;">
+                                            ${clues.map(clue => `
+                                                <div style="font-size: 0.8rem; color: var(--neon-blue); margin-left: 3px;">${clue}</div>
+                                            `).join('')}
+                                        </div>
+                                        
+                                        <!-- Celdas de la fila -->
+                                        ${playerGrid[i].map((cell, j) => `
+                                            <div class="game-cell" data-x="${j}" data-y="${i}"
+                                                 style="width: 40px; height: 40px;
+                                                        background: ${cell === 1 ? 'var(--neon-blue)' : 
+                                                                     cell === 2 ? 'rgba(255,255,255,0.2)' : 
+                                                                     'rgba(255,255,255,0.05)'};
+                                                        border: 1px solid rgba(0,255,255,0.3);
+                                                        cursor: pointer;">
+                                                ${cell === 2 ? '❌' : ''}
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                `).join('')}
+                            </div>
                         </div>
-                        <p class="game-instructions">
-                            Este juego estará disponible en la próxima actualización. Por ahora, ¡disfruta de los otros minijuegos!
-                        </p>
-                        <button class="game-button" onclick="returnToMain()">
-                            <i class="fas fa-arrow-left"></i> Volver al Menú
-                        </button>
+                        
+                        <div class="game-feedback" id="feedback">
+                            Clic: Rellenar | Clic derecho: Marcar ❌ | Doble clic: Limpiar
+                        </div>
+                        
+                        <div class="game-controls">
+                            <button id="checkBtn" class="game-button">Comprobar</button>
+                            <button id="newBtn" class="game-button">Nuevo Nonograma</button>
+                            <button id="solveBtn" class="game-button">Mostrar Solución</button>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+                
+                // Event listeners para celdas
+                document.querySelectorAll('.game-cell').forEach(cell => {
+                    const x = parseInt(cell.dataset.x);
+                    const y = parseInt(cell.dataset.y);
+                    
+                    cell.onclick = (e) => {
+                        if (e.detail === 2) {
+                            // Doble clic: limpiar
+                            playerGrid[y][x] = 0;
+                        } else {
+                            // Clic normal: rellenar
+                            playerGrid[y][x] = playerGrid[y][x] === 1 ? 0 : 1;
+                        }
+                        renderGame();
+                    };
+                    
+                    cell.oncontextmenu = (e) => {
+                        e.preventDefault();
+                        // Clic derecho: marcar como incorrecto
+                        playerGrid[y][x] = playerGrid[y][x] === 2 ? 0 : 2;
+                        renderGame();
+                        return false;
+                    };
+                });
+                
+                document.getElementById('checkBtn').onclick = checkSolution;
+                document.getElementById('newBtn').onclick = () => {
+                    generatePuzzle();
+                    renderGame();
+                };
+                document.getElementById('solveBtn').onclick = showSolution;
+            }
+            
+            function checkSolution() {
+                let correct = true;
+                
+                for (let i = 0; i < size; i++) {
+                    for (let j = 0; j < size; j++) {
+                        if (playerGrid[i][j] === 1 && solution[i][j] !== 1) {
+                            correct = false;
+                            break;
+                        }
+                        if (solution[i][j] === 1 && playerGrid[i][j] !== 1) {
+                            correct = false;
+                            break;
+                        }
+                    }
+                    if (!correct) break;
+                }
+                
+                if (correct) {
+                    document.getElementById('feedback').innerHTML = 
+                        '<span class="win">¡Nonograma completado correctamente!</span>';
+                } else {
+                    document.getElementById('feedback').innerHTML = 
+                        '<span class="lose">Aún hay errores en la solución</span>';
+                }
+            }
+            
+            function showSolution() {
+                playerGrid = solution.map(row => [...row]);
+                renderGame();
+            }
+            
+            generatePuzzle();
+            renderGame();
         }
 
-        // ==================== FUNCIONES GENERALES ====================
+        // ==================== FUNCIONES GLOBALES ====================
         function returnToMain() {
-            document.getElementById('mainPage').style.display = 'block';
-            document.getElementById('gamePage').style.display = 'none';
+            domCache.mainPage.style.display = 'block';
+            domCache.gamePage.style.display = 'none';
             state.currentGame = null;
+            state.activeGameState = null;
+            
+            // Limpiar event listeners de juegos
+            document.removeEventListener('keydown', handleKeyPress);
         }
 
         function toggleTheme() {
@@ -1657,16 +2881,16 @@
             const icon = document.querySelector('#themeToggle i');
             
             if (state.darkMode) {
-                // Cambiar a modo claro
+                // Modo claro
                 root.style.setProperty('--dark-bg', '#f0f0ff');
-                root.style.setProperty('--card-bg', 'rgba(255, 255, 255, 0.9)');
-                root.style.setProperty('--text-primary', '#222244');
+                root.style.setProperty('--card-bg', 'rgba(255, 255, 255, 0.95)');
+                root.style.setProperty('--text-primary', '#111122');
                 root.style.setProperty('--text-secondary', '#444466');
-                root.style.setProperty('--grid-color', 'rgba(0, 100, 255, 0.1)');
+                root.style.setProperty('--grid-color', 'rgba(100, 100, 255, 0.1)');
                 icon.className = 'fas fa-sun';
                 state.darkMode = false;
             } else {
-                // Volver a modo oscuro
+                // Modo oscuro
                 root.style.setProperty('--dark-bg', '#0a0a1a');
                 root.style.setProperty('--card-bg', 'rgba(16, 16, 32, 0.85)');
                 root.style.setProperty('--text-primary', '#ffffff');
@@ -1677,14 +2901,24 @@
             }
         }
 
-        // Hacer returnToMain accesible globalmente
+        // Función auxiliar para manejo de teclas
+        function handleKeyPress(e) {
+            // Usada en Laberinto
+        }
+
+        // Hacer funciones accesibles globalmente
         window.returnToMain = returnToMain;
         
-        // Manejar redimensionamiento de ventana
+        // Optimizar redimensionamiento
+        let resizeTimeout;
         window.addEventListener('resize', function() {
-            // Recrear puntos de neón para adaptarse al nuevo tamaño
-            document.getElementById('neonDots').innerHTML = '';
-            createNeonDots();
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                if (state.currentGame) {
+                    // Recargar el juego actual para adaptarse al nuevo tamaño
+                    loadGameContent(state.currentGame);
+                }
+            }, 200);
         });
     </script>
 </body>
