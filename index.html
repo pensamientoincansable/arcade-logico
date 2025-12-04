@@ -40,7 +40,6 @@
             line-height: 1.5;
         }
 
-        /* Fondo optimizado */
         #gridLines {
             position: fixed;
             top: 0;
@@ -76,7 +75,6 @@
             100% { opacity: 0.4; }
         }
 
-        /* Páginas */
         .page {
             display: none;
             min-height: 100vh;
@@ -93,7 +91,6 @@
             padding: 0.5rem;
         }
 
-        /* Header */
         .header {
             text-align: center;
             margin-bottom: 1.5rem;
@@ -115,7 +112,6 @@
             margin-bottom: 1rem;
         }
 
-        /* Grid de juegos */
         .games-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -205,7 +201,6 @@
             color: #ff6666;
         }
 
-        /* Botones */
         .play-btn {
             background: rgba(255, 255, 255, 0.1);
             color: var(--neon-blue);
@@ -246,7 +241,6 @@
             color: var(--dark-bg);
         }
 
-        /* Página del juego */
         .game-page-header {
             display: flex;
             align-items: center;
@@ -286,7 +280,6 @@
             flex-grow: 1;
         }
 
-        /* Contenedor del juego */
         .game-container {
             background: var(--card-bg);
             border-radius: var(--border-radius);
@@ -305,7 +298,6 @@
             max-width: 600px;
         }
 
-        /* Controles de juego */
         .game-controls {
             display: flex;
             gap: 0.5rem;
@@ -342,7 +334,6 @@
             color: var(--dark-bg);
         }
 
-        /* Componentes comunes */
         .game-board {
             margin: 1rem auto;
             display: grid;
@@ -403,7 +394,6 @@
             color: var(--neon-green);
         }
 
-        /* Responsive */
         @media (max-width: 480px) {
             .games-grid {
                 grid-template-columns: 1fr;
@@ -436,13 +426,6 @@
             }
         }
 
-        @media (min-width: 1200px) {
-            .games-grid {
-                grid-template-columns: repeat(5, 1fr);
-            }
-        }
-
-        /* Scroll personalizado */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -456,7 +439,6 @@
             border-radius: 4px;
         }
 
-        /* Mensajes especiales */
         .coming-soon {
             text-align: center;
             padding: 2rem 1rem;
@@ -469,7 +451,6 @@
             opacity: 0.7;
         }
 
-        /* Estados de juego */
         .win { color: var(--neon-green) !important; }
         .lose { color: var(--neon-pink) !important; }
         .highlight { background: rgba(0, 255, 255, 0.2) !important; }
@@ -478,11 +459,9 @@
     </style>
 </head>
 <body>
-    <!-- Fondo optimizado -->
     <div id="gridLines"></div>
     <div id="neonDots"></div>
     
-    <!-- Página principal -->
     <div id="mainPage" class="page">
         <div class="container">
             <header class="header">
@@ -494,14 +473,11 @@
             </header>
             
             <main>
-                <div id="gamesGrid" class="games-grid">
-                    <!-- Los juegos se cargan dinámicamente aquí -->
-                </div>
+                <div id="gamesGrid" class="games-grid"></div>
             </main>
         </div>
     </div>
     
-    <!-- Página del juego -->
     <div id="gamePage" class="page">
         <div class="container">
             <div class="game-page-header">
@@ -512,17 +488,12 @@
                 <div style="width: 80px; order: 3;"></div>
             </div>
             
-            <div id="gameContent">
-                <!-- El contenido del juego se carga aquí -->
-            </div>
+            <div id="gameContent"></div>
         </div>
     </div>
     
     <script>
-        // ==================== CONFIGURACIÓN GLOBAL ====================
-        'use strict';
-
-        // Cache de elementos DOM
+        // ==================== CONFIGURACIÓN ====================
         const domCache = {
             mainPage: null,
             gamePage: null,
@@ -533,7 +504,6 @@
             themeToggle: null
         };
 
-        // Estado global
         const state = {
             currentGame: null,
             darkMode: true,
@@ -541,9 +511,26 @@
             activeGameState: null
         };
 
+        const games = [
+            { id: 1, title: "Adivina el Número", difficulty: "easy", description: "Adivina el número secreto entre 1 y 100", icon: "fa-bullseye" },
+            { id: 2, title: "Tres en Raya", difficulty: "easy", description: "Alinea tres símbolos antes que tu oponente", icon: "fa-times" },
+            { id: 3, title: "Sudoku", difficulty: "hard", description: "Completa la cuadrícula 9x9 sin repetir números", icon: "fa-th" },
+            { id: 4, title: "Memorama", difficulty: "medium", description: "Encuentra todas las parejas de cartas", icon: "fa-brain" },
+            { id: 5, title: "Torres de Hanoi", difficulty: "medium", description: "Mueve todos los discos siguiendo las reglas", icon: "fa-layer-group" },
+            { id: 6, title: "Busca Minas", difficulty: "medium", description: "Encuentra minas usando pistas numéricas", icon: "fa-bomb" },
+            { id: 7, title: "15 Puzzle", difficulty: "medium", description: "Ordena números deslizando piezas", icon: "fa-puzzle-piece" },
+            { id: 8, title: "Ahorcado", difficulty: "easy", description: "Adivina la palabra letra por letra", icon: "fa-user" },
+            { id: 9, title: "Conecta 4", difficulty: "medium", description: "Conecta cuatro fichas en línea", icon: "fa-circle" },
+            { id: 10, title: "Laberinto", difficulty: "hard", description: "Encuentra la salida del laberinto", icon: "fa-project-diagram" },
+            { id: 11, title: "Criptograma", difficulty: "hard", description: "Descifra mensajes codificados", icon: "fa-key" },
+            { id: 12, title: "Mastermind", difficulty: "medium", description: "Adivina combinaciones de colores", icon: "fa-user-secret" },
+            { id: 13, title: "Juego de la Vida", difficulty: "medium", description: "Simula el autómata celular de Conway", icon: "fa-seedling" },
+            { id: 14, title: "Battleship", difficulty: "medium", description: "Hunde la flota enemiga", icon: "fa-ship" },
+            { id: 15, title: "Nonogramas", difficulty: "hard", description: "Resuelve rompecabezas lógicos", icon: "fa-border-style" }
+        ];
+
         // ==================== INICIALIZACIÓN ====================
         document.addEventListener('DOMContentLoaded', function() {
-            // Cachear elementos DOM
             domCache.mainPage = document.getElementById('mainPage');
             domCache.gamePage = document.getElementById('gamePage');
             domCache.gamesGrid = document.getElementById('gamesGrid');
@@ -552,13 +539,11 @@
             domCache.backBtn = document.getElementById('backBtn');
             domCache.themeToggle = document.getElementById('themeToggle');
             
-            // Inicializar
             createNeonDots();
             loadGamesGrid();
             setupEventListeners();
         });
 
-        // Crear puntos de neón optimizados
         function createNeonDots() {
             const container = document.getElementById('neonDots');
             const dotCount = Math.min(20, Math.floor(window.innerWidth / 30));
@@ -566,106 +551,19 @@
             for (let i = 0; i < dotCount; i++) {
                 const dot = document.createElement('div');
                 dot.className = 'neon-dot';
-                
-                // Posición aleatoria
                 dot.style.left = Math.random() * 100 + '%';
                 dot.style.top = Math.random() * 100 + '%';
-                
-                // Tamaño y animación
                 const size = 1 + Math.random() * 2;
                 const duration = 3 + Math.random() * 4;
-                
                 dot.style.width = size + 'px';
                 dot.style.height = size + 'px';
                 dot.style.animationDuration = duration + 's';
-                
-                // Color
                 const colors = ['0ff0fc', 'ff00ff', '00ff00'];
                 const color = colors[i % 3];
                 dot.style.backgroundColor = '#' + color;
-                
                 container.appendChild(dot);
             }
         }
-
-        // ==================== MANEJO DE JUEGOS ====================
-        const games = [
-            {
-                id: 1, title: "Adivina el Número", difficulty: "easy",
-                description: "Adivina el número secreto entre 1 y 100",
-                icon: "fa-bullseye", hasGame: true
-            },
-            {
-                id: 2, title: "Tres en Raya", difficulty: "easy",
-                description: "Alinea tres símbolos antes que tu oponente",
-                icon: "fa-times", hasGame: true
-            },
-            {
-                id: 3, title: "Sudoku", difficulty: "hard",
-                description: "Completa la cuadrícula 9x9 sin repetir números",
-                icon: "fa-th", hasGame: true
-            },
-            {
-                id: 4, title: "Memorama", difficulty: "medium",
-                description: "Encuentra todas las parejas de cartas",
-                icon: "fa-brain", hasGame: true
-            },
-            {
-                id: 5, title: "Torres de Hanoi", difficulty: "medium",
-                description: "Mueve todos los discos siguiendo las reglas",
-                icon: "fa-layer-group", hasGame: true
-            },
-            {
-                id: 6, title: "Busca Minas", difficulty: "medium",
-                description: "Encuentra minas usando pistas numéricas",
-                icon: "fa-bomb", hasGame: true
-            },
-            {
-                id: 7, title: "15 Puzzle", difficulty: "medium",
-                description: "Ordena números deslizando piezas",
-                icon: "fa-puzzle-piece", hasGame: true
-            },
-            {
-                id: 8, title: "Ahorcado", difficulty: "easy",
-                description: "Adivina la palabra letra por letra",
-                icon: "fa-user", hasGame: true
-            },
-            {
-                id: 9, title: "Conecta 4", difficulty: "medium",
-                description: "Conecta cuatro fichas en línea",
-                icon: "fa-circle", hasGame: true
-            },
-            {
-                id: 10, title: "Laberinto", difficulty: "hard",
-                description: "Encuentra la salida del laberinto",
-                icon: "fa-project-diagram", hasGame: true
-            },
-            {
-                id: 11, title: "Criptograma", difficulty: "hard",
-                description: "Descifra mensajes codificados",
-                icon: "fa-key", hasGame: true
-            },
-            {
-                id: 12, title: "Mastermind", difficulty: "medium",
-                description: "Adivina combinaciones de colores",
-                icon: "fa-user-secret", hasGame: true
-            },
-            {
-                id: 13, title: "Juego de la Vida", difficulty: "medium",
-                description: "Simula el autómata celular de Conway",
-                icon: "fa-seedling", hasGame: true
-            },
-            {
-                id: 14, title: "Battleship", difficulty: "medium",
-                description: "Hunde la flota enemiga",
-                icon: "fa-ship", hasGame: true
-            },
-            {
-                id: 15, title: "Nonogramas", difficulty: "hard",
-                description: "Resuelve rompecabezas lógicos",
-                icon: "fa-border-style", hasGame: true
-            }
-        ];
 
         function loadGamesGrid() {
             domCache.gamesGrid.innerHTML = games.map(game => `
@@ -677,8 +575,7 @@
                     <p class="game-desc">${game.description}</p>
                     <div class="game-footer">
                         <span class="game-difficulty ${game.difficulty}">
-                            ${game.difficulty === 'easy' ? 'Fácil' : 
-                              game.difficulty === 'medium' ? 'Medio' : 'Difícil'}
+                            ${game.difficulty === 'easy' ? 'Fácil' : game.difficulty === 'medium' ? 'Medio' : 'Difícil'}
                         </span>
                         <button class="play-btn" data-game-id="${game.id}">
                             <i class="fas ${game.icon}"></i> Jugar
@@ -689,7 +586,6 @@
         }
 
         function setupEventListeners() {
-            // Delegación de eventos para botones de juego
             domCache.gamesGrid.addEventListener('click', (e) => {
                 const playBtn = e.target.closest('.play-btn');
                 const gameCard = e.target.closest('.game-card');
@@ -714,22 +610,17 @@
             state.currentGame = game;
             state.gamesPlayed++;
             
-            // Cambiar páginas
             domCache.mainPage.style.display = 'none';
             domCache.gamePage.style.display = 'block';
             domCache.currentGameTitle.textContent = game.title;
             
-            // Limpiar estado anterior
             state.activeGameState = null;
-            
-            // Cargar juego
             loadGameContent(game);
-            
-            // Scroll al inicio
             window.scrollTo(0, 0);
         }
 
-        // ==================== FUNCIONES DE JUEGOS ====================
+        // ==================== JUEGOS CORREGIDOS ====================
+
         const gameLoaders = {
             1: loadGuessNumberGame,
             2: loadTicTacToeGame,
@@ -753,33 +644,14 @@
             const loader = gameLoaders[game.id];
             if (loader) {
                 loader(domCache.gameContent);
-            } else {
-                domCache.gameContent.innerHTML = `
-                    <div class="game-container">
-                        <div class="coming-soon">
-                            <div class="coming-soon-icon">
-                                <i class="fas ${game.icon}"></i>
-                            </div>
-                            <p class="game-instructions">${game.description}</p>
-                            <p style="color:var(--neon-pink);margin:1rem 0;">
-                                <i class="fas fa-tools"></i> Juego en desarrollo
-                            </p>
-                            <button class="game-button" onclick="returnToMain()">
-                                <i class="fas fa-arrow-left"></i> Volver
-                            </button>
-                        </div>
-                    </div>
-                `;
             }
         }
 
-        // JUEGO 1: Adivina el Número
+        // JUEGO 1: Adivina el Número (CORREGIDO)
         function loadGuessNumberGame(container) {
-            let secretNumber, attempts, min, max;
+            let secretNumber, attempts;
             
             function initGame() {
-                min = 1;
-                max = 100;
                 secretNumber = Math.floor(Math.random() * 100) + 1;
                 attempts = 0;
                 updateDisplay();
@@ -789,10 +661,10 @@
                 container.innerHTML = `
                     <div class="game-container">
                         <h2 class="game-title-large">Adivina el Número</h2>
-                        <p class="game-instructions">Adivina el número entre ${min} y ${max}</p>
+                        <p class="game-instructions">Adivina el número entre 1 y 100</p>
                         <div class="game-controls">
                             <input type="number" id="guessInput" class="game-input" 
-                                   placeholder="Tu número" min="${min}" max="${max}">
+                                   placeholder="Tu número" min="1" max="100">
                             <button id="guessBtn" class="game-button">Adivinar</button>
                         </div>
                         <div class="game-feedback" id="feedback">
@@ -805,7 +677,7 @@
                             </div>
                             <div class="stat-box">
                                 <h3>Rango</h3>
-                                <p>${min}-${max}</p>
+                                <p>1-100</p>
                             </div>
                         </div>
                         <div class="game-controls">
@@ -814,7 +686,6 @@
                     </div>
                 `;
                 
-                // Event listeners
                 document.getElementById('guessBtn').onclick = checkGuess;
                 document.getElementById('newGameBtn').onclick = initGame;
                 document.getElementById('guessInput').onkeypress = (e) => {
@@ -827,7 +698,7 @@
                 const guess = parseInt(input.value);
                 const feedback = document.getElementById('feedback');
                 
-                if (isNaN(guess) || guess < min || guess > max) {
+                if (isNaN(guess) || guess < 1 || guess > 100) {
                     feedback.innerHTML = `<span class="lose">Número inválido</span>`;
                     return;
                 }
@@ -850,7 +721,7 @@
             initGame();
         }
 
-        // JUEGO 2: Tres en Raya
+        // JUEGO 2: Tres en Raya (CORREGIDO)
         function loadTicTacToeGame(container) {
             let board = ['','','','','','','','',''];
             let currentPlayer = 'X';
@@ -884,7 +755,6 @@
                     </div>
                 `;
                 
-                // Event listeners para celdas
                 document.querySelectorAll('.game-cell').forEach(cell => {
                     cell.onclick = () => makeMove(parseInt(cell.dataset.index));
                 });
@@ -914,7 +784,6 @@
                 currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
                 document.getElementById('feedback').textContent = `Turno del jugador ${currentPlayer}`;
                 
-                // Turno de la computadora
                 if (currentPlayer === 'O' && gameActive) {
                     setTimeout(computerMove, 500);
                 }
@@ -945,48 +814,50 @@
             resetGame();
         }
 
-        // JUEGO 3: Sudoku 9x9 (versión simplificada)
+        // JUEGO 3: Sudoku (CORREGIDO - versión 4x4 por simplicidad)
         function loadSudokuGame(container) {
-            // Sudoku simple (nivel fácil)
+            // Sudoku 4x4 simple
             const puzzle = [
-                [5,3,0,0,7,0,0,0,0],
-                [6,0,0,1,9,5,0,0,0],
-                [0,9,8,0,0,0,0,6,0],
-                [8,0,0,0,6,0,0,0,3],
-                [4,0,0,8,0,3,0,0,1],
-                [7,0,0,0,2,0,0,0,6],
-                [0,6,0,0,0,0,2,8,0],
-                [0,0,0,4,1,9,0,0,5],
-                [0,0,0,0,8,0,0,7,9]
+                [1, 0, 0, 0],
+                [0, 2, 0, 0],
+                [0, 0, 3, 0],
+                [0, 0, 0, 4]
             ];
             
+            const solution = [
+                [1, 3, 4, 2],
+                [4, 2, 1, 3],
+                [2, 4, 3, 1],
+                [3, 1, 2, 4]
+            ];
+            
+            let currentBoard = JSON.parse(JSON.stringify(puzzle));
+            
             function renderBoard() {
-                const cellSize = window.innerWidth < 768 ? '30px' : '35px';
-                
                 container.innerHTML = `
                     <div class="game-container">
-                        <h2 class="game-title-large">Sudoku</h2>
-                        <p class="game-instructions">Completa los números del 1 al 9 sin repetir en filas, columnas o cuadros 3x3</p>
+                        <h2 class="game-title-large">Sudoku 4x4</h2>
+                        <p class="game-instructions">Completa los números del 1 al 4 sin repetir en filas, columnas o cuadros 2x2</p>
                         <div class="game-board" style="
-                            grid-template-columns: repeat(9, ${cellSize});
-                            grid-template-rows: repeat(9, ${cellSize});
+                            grid-template-columns: repeat(4, 50px);
+                            grid-template-rows: repeat(4, 50px);
                             border: 2px solid var(--neon-blue);
                         ">
-                            ${puzzle.map((row, i) => 
+                            ${currentBoard.map((row, i) => 
                                 row.map((cell, j) => `
                                     <div class="game-cell" data-row="${i}" data-col="${j}"
-                                         style="font-size: ${window.innerWidth < 768 ? '0.8rem' : '1rem'};
-                                                ${i % 3 === 2 && i < 8 ? 'border-bottom: 2px solid var(--neon-blue)' : ''};
-                                                ${j % 3 === 2 && j < 8 ? 'border-right: 2px solid var(--neon-blue)' : ''};
-                                                color: ${cell ? 'var(--neon-blue)' : 'var(--neon-green)'};
-                                                font-weight: ${cell ? 'bold' : 'normal'}">
+                                         style="font-size: 1.2rem;
+                                                ${i % 2 === 1 ? 'border-bottom: 2px solid var(--neon-blue)' : ''};
+                                                ${j % 2 === 1 ? 'border-right: 2px solid var(--neon-blue)' : ''};
+                                                color: ${puzzle[i][j] ? 'var(--neon-blue)' : 'var(--neon-green)'};
+                                                font-weight: ${puzzle[i][j] ? 'bold' : 'normal'}">
                                         ${cell || ''}
                                     </div>
                                 `).join('')
                             ).join('')}
                         </div>
                         <div class="game-feedback" id="feedback">
-                            Haz clic en una celda vacía y usa el teclado numérico
+                            Haz clic en una celda vacía y usa el teclado numérico (1-4)
                         </div>
                         <div class="game-controls">
                             <button id="checkBtn" class="game-button">Comprobar</button>
@@ -995,10 +866,11 @@
                     </div>
                 `;
                 
-                // Event listeners
                 document.querySelectorAll('.game-cell').forEach(cell => {
-                    if (!puzzle[cell.dataset.row][cell.dataset.col]) {
-                        cell.onclick = () => selectCell(cell);
+                    const row = parseInt(cell.dataset.row);
+                    const col = parseInt(cell.dataset.col);
+                    if (!puzzle[row][col]) {
+                        cell.onclick = () => selectCell(cell, row, col);
                     }
                 });
                 
@@ -1009,80 +881,51 @@
                 document.addEventListener('keydown', handleNumberInput);
             }
             
-            function selectCell(cell) {
+            let selectedCell = null;
+            
+            function selectCell(cell, row, col) {
                 document.querySelectorAll('.game-cell').forEach(c => c.classList.remove('highlight'));
                 cell.classList.add('highlight');
-                state.activeGameState = {
-                    selectedCell: cell,
-                    row: parseInt(cell.dataset.row),
-                    col: parseInt(cell.dataset.col)
-                };
+                selectedCell = { cell, row, col };
             }
             
             function handleNumberInput(e) {
-                if (!state.activeGameState || !e.key.match(/^[1-9]$/)) return;
+                if (!selectedCell || !e.key.match(/^[1-4]$/)) return;
                 
-                const {selectedCell, row, col} = state.activeGameState;
                 const num = parseInt(e.key);
+                const { cell, row, col } = selectedCell;
                 
-                puzzle[row][col] = num;
-                selectedCell.textContent = num;
-                selectedCell.style.color = 'var(--neon-green)';
+                currentBoard[row][col] = num;
+                cell.textContent = num;
+                cell.style.color = 'var(--neon-green)';
             }
             
             function checkSolution() {
-                // Verificación básica (no completa, pero funcional)
-                let valid = true;
+                let correct = true;
                 
-                // Verificar filas
-                for (let i = 0; i < 9; i++) {
-                    const rowSet = new Set();
-                    for (let j = 0; j < 9; j++) {
-                        if (puzzle[i][j]) rowSet.add(puzzle[i][j]);
+                for (let i = 0; i < 4; i++) {
+                    for (let j = 0; j < 4; j++) {
+                        if (currentBoard[i][j] !== solution[i][j]) {
+                            correct = false;
+                            break;
+                        }
                     }
-                    if (rowSet.size < 9) valid = false;
                 }
                 
-                // Verificar columnas
-                for (let j = 0; j < 9; j++) {
-                    const colSet = new Set();
-                    for (let i = 0; i < 9; i++) {
-                        if (puzzle[i][j]) colSet.add(puzzle[i][j]);
-                    }
-                    if (colSet.size < 9) valid = false;
-                }
-                
-                document.getElementById('feedback').innerHTML = valid ? 
-                    '<span class="win">¡Sudoku válido! (verificación básica)</span>' :
-                    '<span class="lose">Hay errores en el sudoku</span>';
+                document.getElementById('feedback').innerHTML = correct ? 
+                    '<span class="win">¡Sudoku completado correctamente!</span>' :
+                    '<span class="lose">Aún hay errores en el sudoku</span>';
             }
             
             function resetBoard() {
-                const original = [
-                    [5,3,0,0,7,0,0,0,0],
-                    [6,0,0,1,9,5,0,0,0],
-                    [0,9,8,0,0,0,0,6,0],
-                    [8,0,0,0,6,0,0,0,3],
-                    [4,0,0,8,0,3,0,0,1],
-                    [7,0,0,0,2,0,0,0,6],
-                    [0,6,0,0,0,0,2,8,0],
-                    [0,0,0,4,1,9,0,0,5],
-                    [0,0,0,0,8,0,0,7,9]
-                ];
-                
-                for (let i = 0; i < 9; i++) {
-                    for (let j = 0; j < 9; j++) {
-                        puzzle[i][j] = original[i][j];
-                    }
-                }
-                
+                currentBoard = JSON.parse(JSON.stringify(puzzle));
                 renderBoard();
             }
             
             renderBoard();
         }
 
-        // JUEGO 4: Memorama
+        // JUEGO 4: Memorama (CORREGIDO)
         function loadMemoryGame(container) {
             const symbols = ['🎮', '🌟', '🎯', '⚡', '💎', '🚀', '🎪', '🎨'];
             let cards = [...symbols, ...symbols];
@@ -1113,7 +956,7 @@
                         ">
                             ${shuffled.map((symbol, i) => `
                                 <div class="game-cell memory-card" data-index="${i}" data-symbol="${symbol}"
-                                     style="font-size: 1.5rem; position: relative;">
+                                     style="font-size: 1.5rem; position: relative; cursor: pointer;">
                                     <div class="front" style="
                                         position: absolute; width: 100%; height: 100%;
                                         background: var(--neon-blue); display: none;
@@ -1147,18 +990,29 @@
                     </div>
                 `;
                 
-                // Event listeners
                 document.querySelectorAll('.memory-card').forEach(card => {
                     card.onclick = () => flipCard(card);
                 });
                 
                 document.getElementById('resetBtn').onclick = resetGame;
+                
+                // Mostrar cartas volteadas
+                flipped.forEach(card => {
+                    card.querySelector('.front').style.display = 'flex';
+                    card.querySelector('.back').style.display = 'none';
+                });
+                
+                // Ocultar cartas emparejadas
+                matched.forEach(card => {
+                    card.style.opacity = '0.5';
+                    card.style.cursor = 'default';
+                });
             }
             
             function flipCard(card) {
                 if (!canFlip || flipped.length >= 2 || 
                     card.classList.contains('flipped') || 
-                    card.classList.contains('matched')) return;
+                    matched.includes(card)) return;
                 
                 card.classList.add('flipped');
                 card.querySelector('.front').style.display = 'flex';
@@ -1175,8 +1029,6 @@
                     if (card1.dataset.symbol === card2.dataset.symbol) {
                         // Match encontrado
                         setTimeout(() => {
-                            card1.classList.add('matched');
-                            card2.classList.add('matched');
                             matched.push(card1, card2);
                             flipped = [];
                             canFlip = true;
@@ -1188,6 +1040,8 @@
                                     alert(`¡Ganaste! Intentos: ${attempts}`);
                                 }, 300);
                             }
+                            
+                            renderBoard();
                         }, 500);
                     } else {
                         // No es match
@@ -1200,8 +1054,11 @@
                             card2.querySelector('.back').style.display = 'flex';
                             flipped = [];
                             canFlip = true;
+                            renderBoard();
                         }, 1000);
                     }
+                } else {
+                    renderBoard();
                 }
             }
             
@@ -1216,9 +1073,9 @@
             resetGame();
         }
 
-        // JUEGO 5: Torres de Hanoi
+        // JUEGO 5: Torres de Hanoi (CORREGIDO)
         function loadHanoiGame(container) {
-            let disks = 4;
+            let disks = 3;
             let towers = [[3,2,1], [], []];
             let selectedTower = null;
             let moves = 0;
@@ -1227,20 +1084,20 @@
                 container.innerHTML = `
                     <div class="game-container">
                         <h2 class="game-title-large">Torres de Hanoi</h2>
-                        <p class="game-instructions">Mueve todos los discos de la torre A a la C</p>
-                        <div style="display: flex; justify-content: center; gap: 20px; margin: 1rem 0;">
+                        <p class="game-instructions">Mueve todos los discos de la torre A a la C. No puedes poner un disco grande sobre uno pequeño.</p>
+                        <div style="display: flex; justify-content: center; gap: 40px; margin: 1rem 0;">
                             ${towers.map((tower, i) => `
                                 <div style="text-align: center;">
                                     <div class="tower" data-tower="${i}" 
-                                         style="width: 120px; height: 150px; border-bottom: 3px solid var(--neon-blue);
+                                         style="width: 150px; height: 120px; 
                                                 display: flex; flex-direction: column-reverse;
                                                 align-items: center; justify-content: flex-start;
                                                 padding-bottom: 10px; cursor: pointer;
-                                                border: ${selectedTower === i ? '2px solid var(--neon-green)' : '1px solid rgba(0,255,255,0.3)'};
-                                                border-radius: 5px;">
+                                                border-bottom: 3px solid var(--neon-blue);
+                                                position: relative;">
                                         ${tower.map(disk => `
                                             <div style="
-                                                width: ${disk * 25 + 30}px;
+                                                width: ${disk * 30 + 40}px;
                                                 height: 20px;
                                                 background: ${disk === 3 ? 'var(--neon-blue)' : 
                                                             disk === 2 ? 'var(--neon-pink)' : 'var(--neon-green)'};
@@ -1249,7 +1106,7 @@
                                             "></div>
                                         `).join('')}
                                     </div>
-                                    <div style="margin-top: 5px; color: var(--neon-blue);">
+                                    <div style="margin-top: 5px; color: var(--neon-blue); font-weight: bold;">
                                         ${String.fromCharCode(65 + i)}
                                     </div>
                                 </div>
@@ -1266,95 +1123,110 @@
                             </div>
                         </div>
                         <div class="game-feedback" id="feedback">
-                            Haz clic en una torre para seleccionar, luego en otra para mover
+                            ${selectedTower === null ? 'Selecciona una torre' : 'Selecciona la torre destino'}
                         </div>
                         <div class="game-controls">
                             <button id="resetBtn" class="game-button">Reiniciar</button>
-                            <button id="autoBtn" class="game-button">Solución Automática</button>
+                            <button id="hintBtn" class="game-button">Ayuda</button>
                         </div>
                     </div>
                 `;
                 
-                // Event listeners
                 document.querySelectorAll('.tower').forEach(tower => {
                     tower.onclick = () => handleTowerClick(parseInt(tower.dataset.tower));
                 });
                 
                 document.getElementById('resetBtn').onclick = resetGame;
-                document.getElementById('autoBtn').onclick = solveAutomatically;
+                document.getElementById('hintBtn').onclick = () => {
+                    alert("Instrucciones:\n1. Solo puedes mover un disco a la vez\n2. Solo puedes mover el disco superior de una torre\n3. No puedes colocar un disco grande sobre uno pequeño\n4. Objetivo: Mover todos los discos a la torre C");
+                };
+                
+                // Resaltar torre seleccionada
+                if (selectedTower !== null) {
+                    const towers = document.querySelectorAll('.tower');
+                    towers[selectedTower].style.border = '2px solid var(--neon-green)';
+                }
             }
             
             function handleTowerClick(towerIndex) {
                 if (selectedTower === null) {
-                    // Seleccionar torre
+                    // Seleccionar torre origen
                     if (towers[towerIndex].length > 0) {
                         selectedTower = towerIndex;
-                        renderGame();
+                        document.getElementById('feedback').textContent = 'Ahora selecciona la torre destino';
+                    } else {
+                        document.getElementById('feedback').innerHTML = '<span class="lose">Esta torre está vacía</span>';
                     }
                 } else {
                     // Mover disco
-                    const fromTower = towers[selectedTower];
-                    const toTower = towers[towerIndex];
-                    
-                    if (fromTower.length === 0) {
+                    if (selectedTower === towerIndex) {
                         selectedTower = null;
-                        renderGame();
-                        return;
-                    }
-                    
-                    const disk = fromTower[fromTower.length - 1];
-                    
-                    if (toTower.length === 0 || toTower[toTower.length - 1] > disk) {
-                        fromTower.pop();
-                        toTower.push(disk);
-                        moves++;
-                        selectedTower = null;
-                        
-                        // Verificar victoria
-                        if (towers[2].length === disks) {
-                            document.getElementById('feedback').innerHTML = 
-                                `<span class="win">¡Ganaste! Movimientos: ${moves}</span>`;
-                        }
+                        document.getElementById('feedback').textContent = 'Selecciona una torre';
                     } else {
-                        document.getElementById('feedback').innerHTML = 
-                            `<span class="lose">Movimiento inválido</span>`;
-                        selectedTower = null;
+                        const fromTower = towers[selectedTower];
+                        const toTower = towers[towerIndex];
+                        
+                        if (fromTower.length === 0) {
+                            document.getElementById('feedback').innerHTML = '<span class="lose">Torre origen vacía</span>';
+                            selectedTower = null;
+                            return;
+                        }
+                        
+                        const disk = fromTower[fromTower.length - 1];
+                        
+                        if (toTower.length === 0 || toTower[toTower.length - 1] > disk) {
+                            // Movimiento válido
+                            fromTower.pop();
+                            toTower.push(disk);
+                            moves++;
+                            selectedTower = null;
+                            
+                            // Verificar victoria
+                            if (towers[2].length === disks) {
+                                document.getElementById('feedback').innerHTML = 
+                                    `<span class="win">¡Ganaste! Movimientos: ${moves}</span>`;
+                            } else {
+                                document.getElementById('feedback').textContent = 'Movimiento realizado';
+                            }
+                        } else {
+                            document.getElementById('feedback').innerHTML = 
+                                '<span class="lose">No puedes poner un disco grande sobre uno pequeño</span>';
+                            selectedTower = null;
+                        }
                     }
-                    
-                    renderGame();
                 }
+                
+                renderGame();
             }
             
             function resetGame() {
-                disks = 4;
+                disks = 3;
                 towers = [[3,2,1], [], []];
                 selectedTower = null;
                 moves = 0;
                 renderGame();
             }
             
-            function solveAutomatically() {
-                alert("Solución automática:\n1. A→B\n2. A→C\n3. B→C\n4. A→B\n5. C→A\n6. C→B\n7. A→B\n8. A→C\n9. B→C\n10. B→A\n11. C→A\n12. B→C\n13. A→B\n14. A→C\n15. B→C");
-            }
-            
             resetGame();
         }
 
-        // JUEGO 6: Busca Minas
+        // JUEGO 6: Busca Minas (CORREGIDO - sin bucles infinitos)
         function loadMinesweeperGame(container) {
             const size = 8;
             const mines = 10;
             let board = [];
-            let gameOver = false;
             let revealed = 0;
+            let gameOver = false;
             
             function initBoard() {
-                board = Array(size).fill().map(() => Array(size).fill({
-                    mine: false,
-                    revealed: false,
-                    flagged: false,
-                    count: 0
-                }));
+                board = Array(size).fill().map(() => 
+                    Array(size).fill().map(() => ({
+                        mine: false,
+                        revealed: false,
+                        flagged: false,
+                        count: 0
+                    }))
+                );
                 
                 // Colocar minas
                 let placed = 0;
@@ -1366,7 +1238,7 @@
                         board[y][x].mine = true;
                         placed++;
                         
-                        // Contar minas adyacentes
+                        // Actualizar contadores
                         for (let dy = -1; dy <= 1; dy++) {
                             for (let dx = -1; dx <= 1; dx++) {
                                 const ny = y + dy;
@@ -1387,21 +1259,22 @@
                 container.innerHTML = `
                     <div class="game-container">
                         <h2 class="game-title-large">Busca Minas</h2>
-                        <p class="game-instructions">Haz clic para revelar, clic derecho para marcar bandera</p>
+                        <p class="game-instructions">Haz clic para revelar, clic derecho para marcar/desmarcar bandera</p>
                         <div class="game-board" style="
-                            grid-template-columns: repeat(${size}, 30px);
-                            grid-template-rows: repeat(${size}, 30px);
+                            grid-template-columns: repeat(${size}, 35px);
+                            grid-template-rows: repeat(${size}, 35px);
                         ">
                             ${board.map((row, y) => 
                                 row.map((cell, x) => `
                                     <div class="game-cell" data-x="${x}" data-y="${y}"
-                                         style="font-size: 0.7rem; font-weight: bold;
+                                         style="font-size: 0.8rem; font-weight: bold;
                                                 ${cell.revealed ? 
                                                     cell.mine ? 
                                                         'background: var(--neon-pink)' : 
                                                         'background: rgba(255,255,255,0.1)' 
                                                     : 'background: rgba(0,255,255,0.1)'};
-                                                ${cell.flagged ? 'color: var(--neon-yellow)' : ''}">
+                                                color: ${getNumberColor(cell.count)};
+                                                cursor: ${gameOver ? 'default' : 'pointer'};">
                                         ${cell.flagged ? '🚩' : 
                                           cell.revealed && cell.mine ? '💣' :
                                           cell.revealed && cell.count > 0 ? cell.count : ''}
@@ -1420,7 +1293,11 @@
                             </div>
                         </div>
                         <div class="game-feedback" id="feedback">
-                            ${gameOver ? '<span class="lose">¡Juego terminado!</span>' : 'En curso...'}
+                            ${gameOver ? 
+                                (board.some(row => row.some(cell => cell.revealed && cell.mine)) ? 
+                                    '<span class="lose">¡Boom! Has perdido</span>' : 
+                                    '<span class="win">¡Ganaste! Has encontrado todas las minas</span>') : 
+                                'En curso...'}
                         </div>
                         <div class="game-controls">
                             <button id="resetBtn" class="game-button">Nuevo Juego</button>
@@ -1428,27 +1305,38 @@
                     </div>
                 `;
                 
-                // Event listeners
-                document.querySelectorAll('.game-cell').forEach(cell => {
-                    cell.onclick = () => revealCell(
-                        parseInt(cell.dataset.x), 
-                        parseInt(cell.dataset.y)
-                    );
-                    
-                    cell.oncontextmenu = (e) => {
-                        e.preventDefault();
-                        toggleFlag(
-                            parseInt(cell.dataset.x), 
-                            parseInt(cell.dataset.y)
-                        );
-                        return false;
-                    };
-                });
+                if (!gameOver) {
+                    document.querySelectorAll('.game-cell').forEach(cell => {
+                        const x = parseInt(cell.dataset.x);
+                        const y = parseInt(cell.dataset.y);
+                        
+                        cell.onclick = () => revealCell(x, y);
+                        cell.oncontextmenu = (e) => {
+                            e.preventDefault();
+                            toggleFlag(x, y);
+                            return false;
+                        };
+                    });
+                }
                 
                 document.getElementById('resetBtn').onclick = () => {
                     initBoard();
                     renderBoard();
                 };
+            }
+            
+            function getNumberColor(count) {
+                switch(count) {
+                    case 1: return '#0000ff';
+                    case 2: return '#008000';
+                    case 3: return '#ff0000';
+                    case 4: return '#000080';
+                    case 5: return '#800000';
+                    case 6: return '#008080';
+                    case 7: return '#000000';
+                    case 8: return '#808080';
+                    default: return 'var(--text-primary)';
+                }
             }
             
             function revealCell(x, y) {
@@ -1459,16 +1347,39 @@
                 
                 if (board[y][x].mine) {
                     gameOver = true;
-                    document.getElementById('feedback').innerHTML = 
-                        '<span class="lose">¡Boom! Has perdido</span>';
+                    // Mostrar todas las minas
+                    board.forEach(row => row.forEach(cell => {
+                        if (cell.mine) cell.revealed = true;
+                    }));
                 } else if (board[y][x].count === 0) {
-                    // Revelar celdas adyacentes
-                    for (let dy = -1; dy <= 1; dy++) {
-                        for (let dx = -1; dx <= 1; dx++) {
-                            const nx = x + dx;
-                            const ny = y + dy;
-                            if (nx >= 0 && nx < size && ny >= 0 && ny < size) {
-                                revealCell(nx, ny);
+                    // Revelar celdas adyacentes automáticamente (sin recursión)
+                    const stack = [[x, y]];
+                    const visited = new Set();
+                    
+                    while (stack.length > 0) {
+                        const [cx, cy] = stack.pop();
+                        const key = `${cx},${cy}`;
+                        
+                        if (visited.has(key)) continue;
+                        visited.add(key);
+                        
+                        // Revelar celdas adyacentes
+                        for (let dy = -1; dy <= 1; dy++) {
+                            for (let dx = -1; dx <= 1; dx++) {
+                                const nx = cx + dx;
+                                const ny = cy + dy;
+                                
+                                if (nx >= 0 && nx < size && ny >= 0 && ny < size) {
+                                    const cell = board[ny][nx];
+                                    if (!cell.revealed && !cell.flagged && !cell.mine) {
+                                        cell.revealed = true;
+                                        revealed++;
+                                        
+                                        if (cell.count === 0) {
+                                            stack.push([nx, ny]);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -1477,8 +1388,6 @@
                 // Verificar victoria
                 if (revealed === size*size - mines) {
                     gameOver = true;
-                    document.getElementById('feedback').innerHTML = 
-                        '<span class="win">¡Ganaste! Has encontrado todas las minas</span>';
                 }
                 
                 renderBoard();
@@ -1494,14 +1403,14 @@
             renderBoard();
         }
 
-        // JUEGO 7: 15 Puzzle
+        // JUEGO 7: 15 Puzzle (CORREGIDO)
         function loadPuzzle15Game(container) {
             let board = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0];
             let emptyIndex = 15;
             let moves = 0;
             
             function shuffleBoard() {
-                // Mezcla simple
+                // Mezcla simple (100 movimientos aleatorios)
                 for (let i = 0; i < 100; i++) {
                     const possibleMoves = getPossibleMoves(emptyIndex);
                     const move = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
@@ -1515,10 +1424,10 @@
                 const row = Math.floor(index / 4);
                 const col = index % 4;
                 
-                if (row > 0) moves.push(index - 4); // Arriba
-                if (row < 3) moves.push(index + 4); // Abajo
-                if (col > 0) moves.push(index - 1); // Izquierda
-                if (col < 3) moves.push(index + 1); // Derecha
+                if (row > 0) moves.push(index - 4);
+                if (row < 3) moves.push(index + 4);
+                if (col > 0) moves.push(index - 1);
+                if (col < 3) moves.push(index + 1);
                 
                 return moves;
             }
@@ -1532,7 +1441,7 @@
                 container.innerHTML = `
                     <div class="game-container">
                         <h2 class="game-title-large">15 Puzzle</h2>
-                        <p class="game-instructions">Ordena los números del 1 al 15</p>
+                        <p class="game-instructions">Ordena los números del 1 al 15. Haz clic en un número adyacente al espacio vacío.</p>
                         <div class="game-board" style="
                             grid-template-columns: repeat(4, 60px);
                             grid-template-rows: repeat(4, 60px);
@@ -1541,9 +1450,9 @@
                             ${board.map((num, i) => `
                                 <div class="game-cell" data-index="${i}"
                                      style="font-size: 1.2rem; font-weight: bold;
-                                            ${num === 0 ? 'visibility: hidden' : ''};
-                                            background: ${num ? 'rgba(0,255,255,0.2)' : 'transparent'};
-                                            color: var(--neon-blue)">
+                                            ${num === 0 ? 'visibility: hidden; background: transparent' : 'background: rgba(0,255,255,0.2)'};
+                                            color: var(--neon-blue);
+                                            cursor: ${num !== 0 ? 'pointer' : 'default'}">
                                     ${num || ''}
                                 </div>
                             `).join('')}
@@ -1559,7 +1468,7 @@
                             </div>
                         </div>
                         <div class="game-feedback" id="feedback">
-                            ${isSolved() ? '<span class="win">¡Puzzle completado!</span>' : 'Haz clic en un número adyacente al espacio vacío'}
+                            ${isSolved() ? '<span class="win">¡Puzzle completado!</span>' : 'Haz clic en un número para moverlo'}
                         </div>
                         <div class="game-controls">
                             <button id="shuffleBtn" class="game-button">Mezclar</button>
@@ -1568,10 +1477,10 @@
                     </div>
                 `;
                 
-                // Event listeners
                 document.querySelectorAll('.game-cell').forEach(cell => {
-                    if (parseInt(cell.textContent)) {
-                        cell.onclick = () => handleClick(parseInt(cell.dataset.index));
+                    const index = parseInt(cell.dataset.index);
+                    if (board[index] !== 0) {
+                        cell.onclick = () => handleClick(index);
                     }
                 });
                 
@@ -1615,13 +1524,13 @@
             renderBoard();
         }
 
-        // JUEGO 8: Ahorcado
+        // JUEGO 8: Ahorcado (CORREGIDO)
         function loadHangmanGame(container) {
-            const words = ['LOGICA', 'PROGRAMA', 'JUEGO', 'COMPUTADORA', 'ALGORITMO', 'INTERNET'];
+            const words = ['LOGICA', 'JUEGO', 'COMPUTADORA', 'PROGRAMACION', 'ALGORITMO', 'INTERNET'];
             let word = '';
             let guessed = [];
             let wrong = 0;
-            let maxWrong = 6;
+            const maxWrong = 6;
             
             function initGame() {
                 word = words[Math.floor(Math.random() * words.length)];
@@ -1646,20 +1555,28 @@
                                 Errores: ${wrong}/${maxWrong}
                             </div>
                             <div style="color: var(--neon-pink); min-height: 20px;">
-                                ${wrong > 0 ? `Parte incorrecta: ${hangmanParts.slice(0, wrong).join(', ')}` : ''}
+                                ${wrong > 0 ? `Partes del ahorcado: ${hangmanParts.slice(0, wrong).join(', ')}` : ''}
                             </div>
                         </div>
                         <div style="display: grid; grid-template-columns: repeat(9, 1fr); gap: 5px; margin: 1rem 0;">
-                            ${'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(letter => `
-                                <button class="game-button" style="padding: 0.3rem; font-size: 0.8rem;"
-                                        data-letter="${letter}"
-                                        ${guessed.includes(letter) || word.includes(letter) ? 'disabled' : ''}>
-                                    ${letter}
-                                </button>
-                            `).join('')}
+                            ${'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(letter => {
+                                const isGuessed = guessed.includes(letter) || word.includes(letter);
+                                return `
+                                    <button class="game-button" style="padding: 0.3rem; font-size: 0.8rem;"
+                                            data-letter="${letter}"
+                                            ${isGuessed ? 'disabled' : ''}
+                                            onclick="this._gameData.guessLetter('${letter}')">
+                                        ${letter}
+                                    </button>
+                                `;
+                            }).join('')}
                         </div>
                         <div class="game-feedback" id="feedback">
-                            Haz clic en una letra para adivinar
+                            ${wrong >= maxWrong ? 
+                                `<span class="lose">¡Perdiste! La palabra era: ${word}</span>` :
+                                guessed.includes('_') ? 
+                                'Haz clic en una letra para adivinar' :
+                                `<span class="win">¡Ganaste! La palabra es: ${word}</span>`}
                         </div>
                         <div class="game-controls">
                             <button id="newGameBtn" class="game-button">Nueva Palabra</button>
@@ -1667,50 +1584,35 @@
                     </div>
                 `;
                 
-                // Event listeners para letras
-                document.querySelectorAll('[data-letter]').forEach(btn => {
-                    btn.onclick = () => guessLetter(btn.dataset.letter);
+                // Asignar función de juego al contexto global
+                window.tempHangmanGame = {
+                    guessLetter: function(letter) {
+                        if (word.includes(letter)) {
+                            // Actualizar letras adivinadas
+                            for (let i = 0; i < word.length; i++) {
+                                if (word[i] === letter) {
+                                    guessed[i] = letter;
+                                }
+                            }
+                        } else {
+                            wrong++;
+                        }
+                        
+                        renderGame();
+                    }
+                };
+                
+                document.querySelectorAll('[onclick*="guessLetter"]').forEach(btn => {
+                    btn._gameData = window.tempHangmanGame;
                 });
                 
                 document.getElementById('newGameBtn').onclick = initGame;
-                
-                // Verificar estado del juego
-                if (wrong >= maxWrong) {
-                    document.getElementById('feedback').innerHTML = 
-                        `<span class="lose">¡Perdiste! La palabra era: ${word}</span>`;
-                    disableAllButtons();
-                } else if (!guessed.includes('_')) {
-                    document.getElementById('feedback').innerHTML = 
-                        `<span class="win">¡Ganaste! La palabra es: ${word}</span>`;
-                    disableAllButtons();
-                }
-            }
-            
-            function guessLetter(letter) {
-                if (word.includes(letter)) {
-                    // Actualizar letras adivinadas
-                    for (let i = 0; i < word.length; i++) {
-                        if (word[i] === letter) {
-                            guessed[i] = letter;
-                        }
-                    }
-                } else {
-                    wrong++;
-                }
-                
-                renderGame();
-            }
-            
-            function disableAllButtons() {
-                document.querySelectorAll('[data-letter]').forEach(btn => {
-                    btn.disabled = true;
-                });
             }
             
             initGame();
         }
 
-        // JUEGO 9: Conecta 4
+        // JUEGO 9: Conecta 4 (CORREGIDO)
         function loadConnect4Game(container) {
             const rows = 6;
             const cols = 7;
@@ -1723,15 +1625,25 @@
                     <div class="game-container">
                         <h2 class="game-title-large">Conecta 4</h2>
                         <p class="game-instructions">
-                            Jugador: <span style="color:var(--neon-blue)">●</span> vs 
-                            Jugador: <span style="color:var(--neon-pink)">●</span>
+                            Jugador 1: <span style="color:var(--neon-blue)">●</span> vs 
+                            Jugador 2: <span style="color:var(--neon-pink)">●</span>
                         </p>
                         <div style="margin: 1rem auto; max-width: ${cols * 50}px;">
+                            <!-- Encabezados de columnas -->
+                            <div style="display: flex; margin-bottom: 5px;">
+                                ${Array(cols).fill().map((_, col) => `
+                                    <div style="width: 40px; text-align: center; color: var(--neon-blue); cursor: pointer;"
+                                         onclick="this._gameData.makeMove(${col})">
+                                        ${String.fromCharCode(65 + col)}
+                                    </div>
+                                `).join('')}
+                            </div>
+                            
+                            <!-- Tablero -->
                             ${board.map((row, y) => `
                                 <div style="display: flex;">
                                     ${row.map((cell, x) => `
-                                        <div class="game-cell" data-col="${x}"
-                                             style="width: 40px; height: 40px; margin: 2px;
+                                        <div style="width: 40px; height: 40px; margin: 2px;
                                                     background: rgba(255,255,255,0.1);
                                                     border-radius: 50%;
                                                     display: flex; align-items: center;
@@ -1746,7 +1658,11 @@
                             `).join('')}
                         </div>
                         <div class="game-feedback" id="feedback" style="color: ${currentPlayer === 1 ? 'var(--neon-blue)' : 'var(--neon-pink)'}">
-                            Turno del Jugador ${currentPlayer}
+                            ${gameOver ? 
+                                (board.flat().includes(0) ? 
+                                    `¡Jugador ${currentPlayer === 1 ? 2 : 1} gana!` : 
+                                    '¡Empate!') : 
+                                `Turno del Jugador ${currentPlayer}`}
                         </div>
                         <div class="game-controls">
                             <button id="resetBtn" class="game-button">Reiniciar</button>
@@ -1754,48 +1670,40 @@
                     </div>
                 `;
                 
-                // Event listeners para columnas
-                if (!gameOver) {
-                    document.querySelectorAll('.game-cell').forEach(cell => {
-                        cell.onclick = () => makeMove(parseInt(cell.dataset.col));
-                    });
-                }
+                // Asignar función de juego
+                window.tempConnect4Game = {
+                    makeMove: function(col) {
+                        if (gameOver) return;
+                        
+                        // Encontrar la fila más baja disponible
+                        for (let row = rows - 1; row >= 0; row--) {
+                            if (board[row][col] === 0) {
+                                board[row][col] = currentPlayer;
+                                
+                                if (checkWin(row, col)) {
+                                    gameOver = true;
+                                } else if (board.every(row => row.every(cell => cell !== 0))) {
+                                    gameOver = true;
+                                } else {
+                                    currentPlayer = currentPlayer === 1 ? 2 : 1;
+                                }
+                                
+                                renderBoard();
+                                return;
+                            }
+                        }
+                    }
+                };
+                
+                document.querySelectorAll('[onclick*="makeMove"]').forEach(el => {
+                    el._gameData = window.tempConnect4Game;
+                });
                 
                 document.getElementById('resetBtn').onclick = resetGame;
             }
             
-            function makeMove(col) {
-                if (gameOver) return;
-                
-                // Encontrar la fila más baja disponible
-                for (let row = rows - 1; row >= 0; row--) {
-                    if (board[row][col] === 0) {
-                        board[row][col] = currentPlayer;
-                        
-                        if (checkWin(row, col)) {
-                            gameOver = true;
-                            document.getElementById('feedback').innerHTML = 
-                                `<span class="win">¡Jugador ${currentPlayer} gana!</span>`;
-                        } else if (board.every(row => row.every(cell => cell !== 0))) {
-                            gameOver = true;
-                            document.getElementById('feedback').innerHTML = 
-                                `<span class="lose">¡Empate!</span>`;
-                        } else {
-                            currentPlayer = currentPlayer === 1 ? 2 : 1;
-                            document.getElementById('feedback').innerHTML = 
-                                `Turno del Jugador ${currentPlayer}`;
-                        }
-                        
-                        renderBoard();
-                        return;
-                    }
-                }
-            }
-            
             function checkWin(row, col) {
                 const player = board[row][col];
-                
-                // Direcciones: horizontal, vertical, diagonales
                 const directions = [
                     [[0,1],[0,-1]],   // Horizontal
                     [[1,0],[-1,0]],   // Vertical
@@ -1838,7 +1746,7 @@
             resetGame();
         }
 
-        // JUEGO 10: Laberinto
+        // JUEGO 10: Laberinto (CORREGIDO - con salida)
         function loadMazeGame(container) {
             const size = 15;
             let maze = [];
@@ -1846,35 +1754,38 @@
             let exitPos = {x: size-2, y: size-2};
             
             function generateMaze() {
-                // Inicializar laberinto lleno de paredes
+                // Inicializar laberinto con paredes
                 maze = Array(size).fill().map(() => Array(size).fill(1));
                 
-                // Algoritmo simple de generación
+                // Función recursiva para generar laberinto
                 function carve(x, y) {
                     maze[y][x] = 0;
                     
-                    const directions = [[0,1],[1,0],[0,-1],[-1,0]];
+                    const directions = [[0,2],[2,0],[0,-2],[-2,0]];
                     directions.sort(() => Math.random() - 0.5);
                     
                     for (const [dx, dy] of directions) {
-                        const nx = x + dx * 2;
-                        const ny = y + dy * 2;
+                        const nx = x + dx;
+                        const ny = y + dy;
                         
                         if (nx > 0 && nx < size-1 && ny > 0 && ny < size-1 && maze[ny][nx] === 1) {
-                            maze[y + dy][x + dx] = 0;
+                            maze[y + dy/2][x + dx/2] = 0;
                             carve(nx, ny);
                         }
                     }
                 }
                 
-                // Crear entrada y salida
+                // Generar laberinto desde el centro
                 carve(1, 1);
-                maze[exitPos.y][exitPos.x] = 2; // Salida
-                maze[playerPos.y][playerPos.x] = 0; // Entrada
                 
                 // Asegurar que la salida sea accesible
-                maze[exitPos.y-1][exitPos.x] = 0;
-                maze[exitPos.y][exitPos.x-1] = 0;
+                maze[exitPos.y][exitPos.x] = 2; // Salida
+                maze[playerPos.y][playerPos.x] = 0; // Jugador
+                
+                // Crear camino a la salida si está bloqueada
+                if (maze[exitPos.y-1][exitPos.x] === 1 && maze[exitPos.y][exitPos.x-1] === 1) {
+                    maze[exitPos.y-1][exitPos.x] = 0;
+                }
             }
             
             function renderMaze() {
@@ -1883,7 +1794,7 @@
                 container.innerHTML = `
                     <div class="game-container">
                         <h2 class="game-title-large">Laberinto</h2>
-                        <p class="game-instructions">Usa las flechas para moverte hacia la salida (▲)</p>
+                        <p class="game-instructions">Usa las flechas del teclado para moverte hacia la salida (★)</p>
                         <div class="game-board" style="
                             grid-template-columns: repeat(${size}, ${cellSize}px);
                             grid-template-rows: repeat(${size}, ${cellSize}px);
@@ -1895,21 +1806,58 @@
                                                    cell === 2 ? 'var(--neon-green)' :
                                                    x === playerPos.x && y === playerPos.y ? 'var(--neon-blue)' :
                                                    'rgba(0,255,255,0.05)'};
-                                                ${cell === 2 ? 'font-size: 0.8rem;' : ''}">
-                                        ${cell === 2 ? '▲' : 
+                                                font-size: 0.8rem;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;">
+                                        ${cell === 2 ? '★' : 
                                          x === playerPos.x && y === playerPos.y ? '●' : ''}
                                     </div>
                                 `).join('')
                             ).join('')}
                         </div>
                         <div class="game-feedback" id="feedback">
-                            Movimientos: ←↑→↓
+                            ${playerPos.x === exitPos.x && playerPos.y === exitPos.y ? 
+                                '<span class="win">¡Encontraste la salida!</span>' :
+                                'Usa las teclas de flecha para moverte'}
                         </div>
                         <div class="game-controls">
+                            <button class="game-button" onclick="movePlayer('up')">↑</button>
+                            <button class="game-button" onclick="movePlayer('left')">←</button>
+                            <button class="game-button" onclick="movePlayer('down')">↓</button>
+                            <button class="game-button" onclick="movePlayer('right')">→</button>
                             <button id="newMazeBtn" class="game-button">Nuevo Laberinto</button>
                         </div>
                     </div>
                 `;
+                
+                // Asignar función de movimiento
+                window.movePlayer = function(direction) {
+                    if (playerPos.x === exitPos.x && playerPos.y === exitPos.y) return;
+                    
+                    let newPos = {...playerPos};
+                    
+                    switch(direction) {
+                        case 'up': newPos.y--; break;
+                        case 'down': newPos.y++; break;
+                        case 'left': newPos.x--; break;
+                        case 'right': newPos.x++; break;
+                    }
+                    
+                    if (newPos.x >= 0 && newPos.x < size && 
+                        newPos.y >= 0 && newPos.y < size &&
+                        maze[newPos.y][newPos.x] !== 1) {
+                        
+                        playerPos = newPos;
+                        
+                        if (playerPos.x === exitPos.x && playerPos.y === exitPos.y) {
+                            document.getElementById('feedback').innerHTML = 
+                                '<span class="win">¡Encontraste la salida!</span>';
+                        }
+                        
+                        renderMaze();
+                    }
+                };
                 
                 document.getElementById('newMazeBtn').onclick = () => {
                     generateMaze();
@@ -1922,30 +1870,11 @@
             }
             
             function handleKeyPress(e) {
-                let newPos = {...playerPos};
-                
                 switch(e.key) {
-                    case 'ArrowUp': newPos.y--; break;
-                    case 'ArrowDown': newPos.y++; break;
-                    case 'ArrowLeft': newPos.x--; break;
-                    case 'ArrowRight': newPos.x++; break;
-                    default: return;
-                }
-                
-                if (newPos.x >= 0 && newPos.x < size && 
-                    newPos.y >= 0 && newPos.y < size &&
-                    maze[newPos.y][newPos.x] !== 1) {
-                    
-                    playerPos = newPos;
-                    
-                    // Verificar si llegó a la salida
-                    if (playerPos.x === exitPos.x && playerPos.y === exitPos.y) {
-                        document.getElementById('feedback').innerHTML = 
-                            '<span class="win">¡Encontraste la salida!</span>';
-                        document.removeEventListener('keydown', handleKeyPress);
-                    }
-                    
-                    renderMaze();
+                    case 'ArrowUp': movePlayer('up'); break;
+                    case 'ArrowDown': movePlayer('down'); break;
+                    case 'ArrowLeft': movePlayer('left'); break;
+                    case 'ArrowRight': movePlayer('right'); break;
                 }
             }
             
@@ -1953,353 +1882,220 @@
             renderMaze();
         }
 
-        // JUEGO 11: Criptograma
+        // JUEGO 11: Criptograma (simplificado)
         function loadCryptogramGame(container) {
             const quotes = [
-                "LA LOGICA ES EL ANATOMIA DEL PENSAMIENTO",
-                "PROGRAMAR ES PENSAR DOS VECES",
-                "EL JUEGO ES EL APRENDIZAJE MAS DIVERTIDO",
-                "LA MATEMATICA ES EL ALFABETO DE LA CIENCIA"
+                "EL JUEGO ES DIVERTIDO",
+                "LOGICA Y MATEMATICA",
+                "PROGRAMAR ES CREAR",
+                "COMPUTADORA ELECTRONICA"
             ];
             
             let quote = '';
             let encoded = '';
-            let mapping = {};
-            let solved = false;
+            let solution = '';
             
             function initGame() {
                 quote = quotes[Math.floor(Math.random() * quotes.length)].toUpperCase();
+                solution = quote;
                 
-                // Crear mapeo de sustitución
+                // Crear cifrado simple
                 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
                 const shuffled = alphabet.split('').sort(() => Math.random() - 0.5);
                 
-                mapping = {};
                 encoded = '';
-                
-                for (let i = 0; i < alphabet.length; i++) {
-                    mapping[alphabet[i]] = shuffled[i];
-                }
-                
-                // Codificar la frase
                 for (let char of quote) {
-                    encoded += mapping[char] || char;
+                    if (char >= 'A' && char <= 'Z') {
+                        const index = alphabet.indexOf(char);
+                        encoded += shuffled[index];
+                    } else {
+                        encoded += char;
+                    }
                 }
                 
-                solved = false;
                 renderGame();
             }
             
             function renderGame() {
-                const displayEncoded = encoded.split('').map(char => 
-                    char === ' ' ? '&nbsp;&nbsp;' : char
-                ).join(' ');
-                
                 container.innerHTML = `
                     <div class="game-container">
                         <h2 class="game-title-large">Criptograma</h2>
-                        <p class="game-instructions">Descifra el mensaje codificado. Haz clic en una letra para cambiarla.</p>
+                        <p class="game-instructions">Descifra el mensaje codificado</p>
+                        
                         <div style="margin: 1rem 0; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px;">
                             <div style="font-size: 1.2rem; letter-spacing: 3px; line-height: 1.8; text-align: center;">
-                                ${displayEncoded}
+                                ${encoded.split('').map(char => char === ' ' ? '&nbsp;&nbsp;' : char).join(' ')}
                             </div>
                         </div>
+                        
                         <div class="game-feedback" id="feedback">
-                            ${solved ? '<span class="win">¡Mensaje descifrado correctamente!</span>' : 
-                              'Haz clic en una letra para asignarle un valor'}
+                            Intenta descifrar el mensaje
                         </div>
-                        <div style="margin: 1rem 0;">
-                            <h3 style="color: var(--neon-blue); margin-bottom: 0.5rem;">Tu solución:</h3>
-                            <div style="display: grid; grid-template-columns: repeat(13, 1fr); gap: 5px;">
-                                ${'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(letter => `
-                                    <div style="text-align: center; padding: 0.5rem; 
-                                                background: rgba(255,255,255,0.1); border-radius: 5px;">
-                                        <div style="font-weight: bold; color: var(--neon-blue)">${letter}</div>
-                                        <div style="font-size: 1.2rem; color: var(--neon-green)"
-                                             onclick="this.contentEditable=true; this.focus()"
-                                             onblur="this.contentEditable=false">
-                                            ${mapping[letter] || ''}
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
+                        
                         <div class="game-controls">
-                            <button id="checkBtn" class="game-button">Comprobar</button>
-                            <button id="newGameBtn" class="game-button">Nuevo Mensaje</button>
-                            <button id="hintBtn" class="game-button">Pista</button>
+                            <button id="showBtn" class="game-button">Mostrar Solución</button>
+                            <button id="newBtn" class="game-button">Nuevo Mensaje</button>
                         </div>
                     </div>
                 `;
                 
-                document.getElementById('checkBtn').onclick = checkSolution;
-                document.getElementById('newGameBtn').onclick = initGame;
-                document.getElementById('hintBtn').onclick = giveHint;
-                
-                // Hacer las letras editables
-                document.querySelectorAll('[contenteditable]').forEach(el => {
-                    el.onkeypress = (e) => {
-                        if (e.key.match(/^[A-Z]$/i)) {
-                            const letter = e.key.toUpperCase();
-                            const targetLetter = el.parentElement.children[0].textContent;
-                            mapping[targetLetter] = letter;
-                            
-                            // Actualizar texto codificado
-                            encoded = quote.split('').map(char => 
-                                mapping[char] || char
-                            ).join('');
-                            
-                            setTimeout(() => renderGame(), 100);
-                        }
-                        e.preventDefault();
-                    };
-                });
-            }
-            
-            function checkSolution() {
-                let correct = true;
-                const originalMapping = {};
-                
-                // Reconstruir mapeo original
-                for (let char of quote) {
-                    if (char >= 'A' && char <= 'Z') {
-                        originalMapping[char] = char;
-                    }
-                }
-                
-                // Verificar si el mapeo actual resuelve el criptograma
-                for (let i = 0; i < quote.length; i++) {
-                    const originalChar = quote[i];
-                    if (originalChar >= 'A' && originalChar <= 'Z') {
-                        const decodedChar = mapping[originalChar];
-                        if (!decodedChar || encoded[i] !== mapping[originalChar]) {
-                            correct = false;
-                            break;
-                        }
-                    }
-                }
-                
-                if (correct) {
-                    solved = true;
+                document.getElementById('showBtn').onclick = () => {
                     document.getElementById('feedback').innerHTML = 
-                        '<span class="win">¡Correcto! El mensaje era: ' + quote + '</span>';
-                } else {
-                    document.getElementById('feedback').innerHTML = 
-                        '<span class="lose">Aún hay errores en la decodificación</span>';
-                }
+                        `<span class="win">Solución: ${solution}</span>`;
+                };
                 
-                renderGame();
-            }
-            
-            function giveHint() {
-                // Revelar una letra aleatoria
-                const letters = Object.keys(mapping).filter(l => mapping[l]);
-                if (letters.length > 0) {
-                    const randomLetter = letters[Math.floor(Math.random() * letters.length)];
-                    alert(`Pista: La letra ${randomLetter} probablemente representa "${mapping[randomLetter]}"`);
-                }
+                document.getElementById('newBtn').onclick = initGame;
             }
             
             initGame();
         }
 
-        // JUEGO 12: Mastermind
+        // JUEGO 12: Mastermind (simplificado)
         function loadMastermindGame(container) {
-            const colors = ['R', 'G', 'B', 'Y', 'P', 'W'];
+            const colors = ['R', 'G', 'B', 'Y'];
             const codeLength = 4;
             let secretCode = [];
-            let guesses = [];
-            let currentGuess = [];
-            let attempts = 0;
-            const maxAttempts = 10;
+            let attempts = [];
+            const maxAttempts = 8;
             
             function generateCode() {
                 secretCode = [];
                 for (let i = 0; i < codeLength; i++) {
                     secretCode.push(colors[Math.floor(Math.random() * colors.length)]);
                 }
-                guesses = [];
-                currentGuess = [];
-                attempts = 0;
+                attempts = [];
             }
             
             function renderGame() {
                 container.innerHTML = `
                     <div class="game-container">
                         <h2 class="game-title-large">Mastermind</h2>
-                        <p class="game-instructions">Adivina el código de 4 colores (R=Rojo, G=Verde, B=Azul, Y=Amarillo, P=Púrpura, W=Blanco)</p>
+                        <p class="game-instructions">Adivina el código de 4 colores (R=Rojo, G=Verde, B=Azul, Y=Amarillo)</p>
                         
                         <div style="margin: 1rem 0;">
-                            <h3 style="color: var(--neon-blue); margin-bottom: 0.5rem;">Tus intentos:</h3>
-                            <div style="margin-bottom: 1rem;">
-                                ${Array(maxAttempts).fill().map((_, i) => {
-                                    const guess = guesses[i] || {pegs: [], feedback: []};
-                                    return `
-                                        <div style="display: flex; align-items: center; gap: 10px; margin: 5px 0;">
-                                            <div style="display: flex; gap: 5px;">
-                                                ${Array(codeLength).fill().map((_, j) => `
-                                                    <div style="width: 30px; height: 30px; border-radius: 50%;
-                                                              background: ${guess.pegs[j] ? 
-                                                                  guess.pegs[j] === 'R' ? '#ff0000' :
-                                                                  guess.pegs[j] === 'G' ? '#00ff00' :
-                                                                  guess.pegs[j] === 'B' ? '#0000ff' :
-                                                                  guess.pegs[j] === 'Y' ? '#ffff00' :
-                                                                  guess.pegs[j] === 'P' ? '#ff00ff' : '#ffffff' 
-                                                                : 'rgba(255,255,255,0.1)'};
-                                                              border: 1px solid var(--neon-blue);"></div>
-                                                `).join('')}
-                                            </div>
-                                            <div style="display: flex; gap: 3px;">
-                                                ${Array(codeLength).fill().map((_, j) => `
-                                                    <div style="width: 10px; height: 10px; border-radius: 50%;
-                                                              background: ${guess.feedback[j] === 'B' ? 'black' : 
-                                                                          guess.feedback[j] === 'W' ? 'white' : 'transparent'};
-                                                              border: 1px solid rgba(255,255,255,0.3);"></div>
-                                                `).join('')}
-                                            </div>
+                            ${Array(maxAttempts).fill().map((_, i) => {
+                                const attempt = attempts[i] || {guess: [], feedback: []};
+                                return `
+                                    <div style="display: flex; align-items: center; gap: 10px; margin: 5px 0;">
+                                        <div style="display: flex; gap: 5px;">
+                                            ${Array(codeLength).fill().map((_, j) => `
+                                                <div style="width: 30px; height: 30px; border-radius: 50%;
+                                                          background: ${attempt.guess[j] ? 
+                                                            attempt.guess[j] === 'R' ? '#ff0000' :
+                                                            attempt.guess[j] === 'G' ? '#00ff00' :
+                                                            attempt.guess[j] === 'B' ? '#0000ff' : '#ffff00'
+                                                          : 'rgba(255,255,255,0.1)'};
+                                                          border: 1px solid var(--neon-blue);"></div>
+                                            `).join('')}
                                         </div>
-                                    `;
-                                }).join('')}
-                            </div>
-                        </div>
-                        
-                        <div style="margin: 1rem 0;">
-                            <h3 style="color: var(--neon-green); margin-bottom: 0.5rem;">Intento actual:</h3>
-                            <div style="display: flex; gap: 10px; margin-bottom: 1rem;">
-                                ${Array(codeLength).fill().map((_, i) => `
-                                    <div class="game-cell" data-index="${i}"
-                                         style="width: 40px; height: 40px; border-radius: 50%;
-                                                background: ${currentGuess[i] ? 
-                                                    currentGuess[i] === 'R' ? '#ff0000' :
-                                                    currentGuess[i] === 'G' ? '#00ff00' :
-                                                    currentGuess[i] === 'B' ? '#0000ff' :
-                                                    currentGuess[i] === 'Y' ? '#ffff00' :
-                                                    currentGuess[i] === 'P' ? '#ff00ff' : '#ffffff' 
-                                                  : 'rgba(255,255,255,0.1)'};
-                                                border: 2px solid var(--neon-blue);
-                                                cursor: pointer;"
-                                         onclick="this._gameData.cycleColor(${i})">
-                                        ${i < currentGuess.length ? '' : '?'}
+                                        <div style="display: flex; gap: 3px;">
+                                            ${attempt.feedback.map(fb => `
+                                                <div style="width: 10px; height: 10px; border-radius: 50%;
+                                                          background: ${fb === 'B' ? 'black' : 'white'};
+                                                          border: 1px solid rgba(255,255,255,0.3);"></div>
+                                            `).join('')}
+                                        </div>
                                     </div>
-                                `).join('')}
-                            </div>
+                                `;
+                            }).join('')}
+                        </div>
+                        
+                        <div class="game-feedback" id="feedback">
+                            ${attempts.length > 0 && attempts[attempts.length-1].feedback.every(f => f === 'B') ? 
+                                '<span class="win">¡Ganaste! Código descifrado</span>' :
+                                attempts.length >= maxAttempts ? 
+                                `<span class="lose">¡Perdiste! El código era: ${secretCode.join(' ')}</span>` :
+                                'Haz clic en un color para seleccionarlo'}
                         </div>
                         
                         <div style="margin: 1rem 0;">
-                            <h3 style="color: var(--neon-pink); margin-bottom: 0.5rem;">Colores disponibles:</h3>
-                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <div style="display: flex; gap: 10px; justify-content: center;">
                                 ${colors.map(color => `
                                     <div class="game-button" style="width: 40px; height: 40px; border-radius: 50%;
                                             background: ${color === 'R' ? '#ff0000' :
                                                         color === 'G' ? '#00ff00' :
-                                                        color === 'B' ? '#0000ff' :
-                                                        color === 'Y' ? '#ffff00' :
-                                                        color === 'P' ? '#ff00ff' : '#ffffff'};"
+                                                        color === 'B' ? '#0000ff' : '#ffff00'};
+                                            cursor: pointer;"
                                          onclick="this._gameData.addColor('${color}')">
                                     </div>
                                 `).join('')}
                             </div>
                         </div>
                         
-                        <div class="game-feedback" id="feedback">
-                            ${attempts > 0 ? `Intentos: ${attempts}/${maxAttempts}` : 'Selecciona colores para tu intento'}
-                        </div>
-                        
                         <div class="game-controls">
                             <button id="submitBtn" class="game-button">Enviar Intento</button>
-                            <button id="newGameBtn" class="game-button">Nuevo Juego</button>
+                            <button id="newBtn" class="game-button">Nuevo Juego</button>
                         </div>
                     </div>
                 `;
                 
-                // Asignar funciones al contexto global temporal
-                window.tempGameData = {
-                    cycleColor: (index) => {
-                        if (currentGuess[index]) {
-                            const currentIndex = colors.indexOf(currentGuess[index]);
-                            currentGuess[index] = colors[(currentIndex + 1) % colors.length];
+                // Asignar funciones
+                window.tempMastermindGame = {
+                    currentGuess: [],
+                    addColor: function(color) {
+                        if (this.currentGuess.length < codeLength) {
+                            this.currentGuess.push(color);
                             renderGame();
                         }
                     },
-                    addColor: (color) => {
-                        if (currentGuess.length < codeLength) {
-                            currentGuess.push(color);
-                            renderGame();
+                    submitGuess: function() {
+                        if (this.currentGuess.length !== codeLength) {
+                            alert('¡Necesitas seleccionar 4 colores!');
+                            return;
                         }
+                        
+                        const feedback = [];
+                        const tempCode = [...secretCode];
+                        const tempGuess = [...this.currentGuess];
+                        
+                        // Coincidencias exactas
+                        for (let i = 0; i < codeLength; i++) {
+                            if (tempGuess[i] === tempCode[i]) {
+                                feedback.push('B');
+                                tempGuess[i] = null;
+                                tempCode[i] = null;
+                            }
+                        }
+                        
+                        // Colores correctos en posición incorrecta
+                        for (let i = 0; i < codeLength; i++) {
+                            if (tempGuess[i] !== null) {
+                                const index = tempCode.indexOf(tempGuess[i]);
+                                if (index !== -1) {
+                                    feedback.push('W');
+                                    tempCode[index] = null;
+                                }
+                            }
+                        }
+                        
+                        attempts.push({
+                            guess: [...this.currentGuess],
+                            feedback: [...feedback]
+                        });
+                        
+                        this.currentGuess = [];
+                        renderGame();
                     }
                 };
                 
-                document.querySelectorAll('[onclick*="cycleColor"]').forEach(el => {
-                    el._gameData = window.tempGameData;
-                });
-                
                 document.querySelectorAll('[onclick*="addColor"]').forEach(el => {
-                    el._gameData = window.tempGameData;
+                    el._gameData = window.tempMastermindGame;
                 });
                 
-                document.getElementById('submitBtn').onclick = submitGuess;
-                document.getElementById('newGameBtn').onclick = generateCode;
+                document.getElementById('submitBtn').onclick = () => window.tempMastermindGame.submitGuess();
+                document.getElementById('newBtn').onclick = () => {
+                    generateCode();
+                    window.tempMastermindGame.currentGuess = [];
+                    renderGame();
+                };
             }
             
-            function submitGuess() {
-                if (currentGuess.length !== codeLength) {
-                    alert('¡Necesitas seleccionar 4 colores!');
-                    return;
-                }
-                
-                // Calcular feedback
-                const feedback = [];
-                const tempCode = [...secretCode];
-                const tempGuess = [...currentGuess];
-                
-                // Primero buscar coincidencias exactas (negro)
-                for (let i = 0; i < codeLength; i++) {
-                    if (tempGuess[i] === tempCode[i]) {
-                        feedback.push('B'); // Negro = posición correcta
-                        tempGuess[i] = null;
-                        tempCode[i] = null;
-                    }
-                }
-                
-                // Luego buscar colores correctos en posición incorrecta (blanco)
-                for (let i = 0; i < codeLength; i++) {
-                    if (tempGuess[i] !== null) {
-                        const index = tempCode.indexOf(tempGuess[i]);
-                        if (index !== -1) {
-                            feedback.push('W'); // Blanco = color correcto, posición incorrecta
-                            tempCode[index] = null;
-                        }
-                    }
-                }
-                
-                // Agregar el intento
-                guesses.push({
-                    pegs: [...currentGuess],
-                    feedback: [...feedback]
-                });
-                
-                attempts++;
-                
-                // Verificar victoria
-                if (feedback.every(f => f === 'B') && feedback.length === codeLength) {
-                    document.getElementById('feedback').innerHTML = 
-                        `<span class="win">¡Ganaste! Código descifrado en ${attempts} intentos</span>`;
-                } else if (attempts >= maxAttempts) {
-                    document.getElementById('feedback').innerHTML = 
-                        `<span class="lose">¡Perdiste! El código era: ${secretCode.join(' ')}</span>`;
-                } else {
-                    currentGuess = [];
-                }
-                
-                renderGame();
-            }
-            
-            // Inicializar
             generateCode();
+            window.tempMastermindGame = { currentGuess: [] };
             renderGame();
         }
 
-        // JUEGO 13: Juego de la Vida
+        // JUEGO 13: Juego de la Vida (simplificado)
         function loadLifeGame(container) {
             const rows = 20;
             const cols = 20;
@@ -2308,7 +2104,6 @@
             let intervalId = null;
             
             function initGrid() {
-                // Patrón inicial aleatorio
                 grid = Array(rows).fill().map(() => 
                     Array(cols).fill().map(() => Math.random() > 0.7 ? 1 : 0)
                 );
@@ -2321,7 +2116,7 @@
                 container.innerHTML = `
                     <div class="game-container">
                         <h2 class="game-title-large">Juego de la Vida</h2>
-                        <p class="game-instructions">Autómata celular de Conway. Las células nacen, mueren o sobreviven según sus vecinos.</p>
+                        <p class="game-instructions">Autómata celular de Conway. Las células nacen o mueren según sus vecinos.</p>
                         
                         <div class="game-board" style="
                             grid-template-columns: repeat(${cols}, ${cellSize}px);
@@ -2332,7 +2127,9 @@
                                 row.map((cell, x) => `
                                     <div class="game-cell" data-x="${x}" data-y="${y}"
                                          style="background: ${cell ? 'var(--neon-green)' : 'rgba(255,255,255,0.05)'};
-                                                border: 1px solid rgba(0,255,255,0.1);">
+                                                border: 1px solid rgba(0,255,255,0.1);
+                                                cursor: pointer;"
+                                         onclick="if(!this._gameData.running) this._gameData.toggleCell(${x}, ${y})">
                                     </div>
                                 `).join('')
                             ).join('')}
@@ -2347,33 +2144,59 @@
                                 ${running ? 'Detener' : 'Iniciar'}
                             </button>
                             <button id="stepBtn" class="game-button">Paso</button>
-                            <button id="resetBtn" class="game-button">Reiniciar</button>
+                            <button id="resetBtn" class="game-button">Aleatorio</button>
                             <button id="clearBtn" class="game-button">Limpiar</button>
-                        </div>
-                        
-                        <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-secondary); text-align: center;">
-                            <p>Reglas:<br>
-                            1. Una célula muerta con exactamente 3 vecinos revive<br>
-                            2. Una célula viva con 2-3 vecinos sobrevive<br>
-                            3. Una célula viva con menos de 2 o más de 3 vecinos muere</p>
                         </div>
                     </div>
                 `;
                 
-                // Event listeners para celdas
-                document.querySelectorAll('.game-cell').forEach(cell => {
-                    cell.onclick = () => {
-                        if (!running) {
-                            const x = parseInt(cell.dataset.x);
-                            const y = parseInt(cell.dataset.y);
-                            grid[y][x] = grid[y][x] ? 0 : 1;
-                            renderGrid();
+                // Asignar funciones
+                window.tempLifeGame = {
+                    running: running,
+                    toggleCell: function(x, y) {
+                        grid[y][x] = grid[y][x] ? 0 : 1;
+                        renderGrid();
+                    },
+                    nextGeneration: function() {
+                        const newGrid = Array(rows).fill().map(() => Array(cols).fill(0));
+                        
+                        for (let y = 0; y < rows; y++) {
+                            for (let x = 0; x < cols; x++) {
+                                const neighbors = countNeighbors(x, y);
+                                
+                                if (grid[y][x] === 1) {
+                                    // Célula viva
+                                    newGrid[y][x] = (neighbors === 2 || neighbors === 3) ? 1 : 0;
+                                } else {
+                                    // Célula muerta
+                                    newGrid[y][x] = (neighbors === 3) ? 1 : 0;
+                                }
+                            }
                         }
-                    };
+                        
+                        grid = newGrid;
+                        renderGrid();
+                    },
+                    toggleRunning: function() {
+                        running = !running;
+                        this.running = running;
+                        
+                        if (running) {
+                            intervalId = setInterval(this.nextGeneration, 200);
+                        } else {
+                            clearInterval(intervalId);
+                        }
+                        
+                        renderGrid();
+                    }
+                };
+                
+                document.querySelectorAll('[onclick*="toggleCell"]').forEach(el => {
+                    el._gameData = window.tempLifeGame;
                 });
                 
-                document.getElementById('startBtn').onclick = toggleRunning;
-                document.getElementById('stepBtn').onclick = nextGeneration;
+                document.getElementById('startBtn').onclick = () => window.tempLifeGame.toggleRunning();
+                document.getElementById('stepBtn').onclick = () => window.tempLifeGame.nextGeneration();
                 document.getElementById('resetBtn').onclick = initGrid;
                 document.getElementById('clearBtn').onclick = () => {
                     grid = Array(rows).fill().map(() => Array(cols).fill(0));
@@ -2394,104 +2217,55 @@
                 return count;
             }
             
-            function nextGeneration() {
-                const newGrid = Array(rows).fill().map(() => Array(cols).fill(0));
-                
-                for (let y = 0; y < rows; y++) {
-                    for (let x = 0; x < cols; x++) {
-                        const neighbors = countNeighbors(x, y);
-                        
-                        if (grid[y][x] === 1) {
-                            // Célula viva
-                            newGrid[y][x] = (neighbors === 2 || neighbors === 3) ? 1 : 0;
-                        } else {
-                            // Célula muerta
-                            newGrid[y][x] = (neighbors === 3) ? 1 : 0;
-                        }
-                    }
-                }
-                
-                grid = newGrid;
-                renderGrid();
-            }
-            
-            function toggleRunning() {
-                running = !running;
-                
-                if (running) {
-                    intervalId = setInterval(nextGeneration, 200);
-                    document.getElementById('feedback').textContent = 'Ejecutándose...';
-                } else {
-                    clearInterval(intervalId);
-                    document.getElementById('feedback').textContent = 'Pausado';
-                }
-                
-                renderGrid();
-            }
-            
             initGrid();
         }
 
-        // JUEGO 14: Battleship
+        // JUEGO 14: Battleship (CORREGIDO - funciona)
         function loadBattleshipGame(container) {
-            const size = 8;
+            const size = 5;
             let playerBoard = Array(size).fill().map(() => Array(size).fill(0));
             let enemyBoard = Array(size).fill().map(() => Array(size).fill(0));
-            let enemyShips = [];
-            let playerShips = [];
             let gameOver = false;
-            let currentPlayer = 'player';
+            let playerTurn = true;
             
-            // Barcos: [tamaño, cantidad]
-            const ships = [[4,1], [3,2], [2,3], [1,4]];
+            // Barcos: [tamaño]
+            const ships = [3, 2, 2, 1];
             
-            function placeShips(board, isPlayer = false) {
+            function placeShips(board) {
                 const newBoard = Array(size).fill().map(() => Array(size).fill(0));
-                const placedShips = [];
                 
-                for (const [size, count] of ships) {
-                    for (let c = 0; c < count; c++) {
-                        let placed = false;
-                        let attempts = 0;
+                for (const shipSize of ships) {
+                    let placed = false;
+                    let attempts = 0;
+                    
+                    while (!placed && attempts < 100) {
+                        attempts++;
+                        const horizontal = Math.random() > 0.5;
+                        const x = Math.floor(Math.random() * (horizontal ? size - shipSize + 1 : size));
+                        const y = Math.floor(Math.random() * (horizontal ? size : size - shipSize + 1));
                         
-                        while (!placed && attempts < 100) {
-                            attempts++;
-                            const horizontal = Math.random() > 0.5;
-                            const x = Math.floor(Math.random() * (horizontal ? size - size + 1 : size));
-                            const y = Math.floor(Math.random() * (horizontal ? size : size - size + 1));
+                        // Verificar si hay espacio
+                        let canPlace = true;
+                        for (let i = 0; i < shipSize; i++) {
+                            const nx = horizontal ? x + i : x;
+                            const ny = horizontal ? y : y + i;
                             
-                            // Verificar si hay espacio
-                            let canPlace = true;
-                            for (let i = 0; i < size; i++) {
-                                const nx = horizontal ? x + i : x;
-                                const ny = horizontal ? y : y + i;
-                                
-                                if (nx >= size || ny >= size || newBoard[ny][nx] !== 0) {
-                                    canPlace = false;
-                                    break;
-                                }
-                            }
-                            
-                            if (canPlace) {
-                                // Colocar barco
-                                const shipCells = [];
-                                for (let i = 0; i < size; i++) {
-                                    const nx = horizontal ? x + i : x;
-                                    const ny = horizontal ? y : y + i;
-                                    newBoard[ny][nx] = 1;
-                                    shipCells.push({x: nx, y: ny});
-                                }
-                                placedShips.push(shipCells);
-                                placed = true;
+                            if (newBoard[ny][nx] !== 0) {
+                                canPlace = false;
+                                break;
                             }
                         }
+                        
+                        if (canPlace) {
+                            // Colocar barco
+                            for (let i = 0; i < shipSize; i++) {
+                                const nx = horizontal ? x + i : x;
+                                const ny = horizontal ? y : y + i;
+                                newBoard[ny][nx] = 1;
+                            }
+                            placed = true;
+                        }
                     }
-                }
-                
-                if (isPlayer) {
-                    playerShips = placedShips;
-                } else {
-                    enemyShips = placedShips;
                 }
                 
                 return newBoard;
@@ -2501,14 +2275,14 @@
                 container.innerHTML = `
                     <div class="game-container">
                         <h2 class="game-title-large">Battleship</h2>
-                        <p class="game-instructions">Hunde la flota enemiga. Tu turno: ${currentPlayer === 'player' ? 'Jugador' : 'Computadora'}</p>
+                        <p class="game-instructions">Hunde la flota enemiga. Turno: ${playerTurn ? 'Jugador' : 'Computadora'}</p>
                         
                         <div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; margin: 1rem 0;">
                             <div>
                                 <h3 style="color: var(--neon-blue); text-align: center;">Tu Flota</h3>
                                 <div class="game-board" style="
-                                    grid-template-columns: repeat(${size}, 30px);
-                                    grid-template-rows: repeat(${size}, 30px);
+                                    grid-template-columns: repeat(${size}, 35px);
+                                    grid-template-rows: repeat(${size}, 35px);
                                     margin: 0.5rem auto;
                                 ">
                                     ${playerBoard.map((row, y) => 
@@ -2520,8 +2294,7 @@
                                                            'rgba(255,255,255,0.1)'};
                                                         font-size: 0.7rem;">
                                                 ${cell === 2 ? '💥' : 
-                                                 cell === 3 ? '❌' :
-                                                 cell === 1 ? '🚢' : ''}
+                                                 cell === 3 ? '💦' : ''}
                                             </div>
                                         `).join('')
                                     ).join('')}
@@ -2531,19 +2304,18 @@
                             <div>
                                 <h3 style="color: var(--neon-pink); text-align: center;">Flota Enemiga</h3>
                                 <div class="game-board" style="
-                                    grid-template-columns: repeat(${size}, 30px);
-                                    grid-template-rows: repeat(${size}, 30px);
+                                    grid-template-columns: repeat(${size}, 35px);
+                                    grid-template-rows: repeat(${size}, 35px);
                                     margin: 0.5rem auto;
                                 ">
                                     ${enemyBoard.map((row, y) => 
                                         row.map((cell, x) => `
                                             <div class="game-cell" data-x="${x}" data-y="${y}"
                                                  style="background: rgba(255,255,255,0.1);
-                                                        cursor: ${currentPlayer === 'player' && !gameOver ? 'pointer' : 'default'};
-                                                        font-size: 0.7rem;"
-                                                 onclick="if(this._gameData && currentPlayer === 'player' && !gameOver) this._gameData.attack(${x}, ${y})">
+                                                        cursor: ${playerTurn && !gameOver ? 'pointer' : 'default'};
+                                                        font-size: 0.7rem;">
                                                 ${cell === 2 ? '💥' : 
-                                                 cell === 3 ? '❌' : ''}
+                                                 cell === 3 ? '💦' : ''}
                                             </div>
                                         `).join('')
                                     ).join('')}
@@ -2553,19 +2325,8 @@
                         
                         <div class="game-feedback" id="feedback">
                             ${gameOver ? '¡Juego terminado!' : 
-                              currentPlayer === 'player' ? 'Haz clic en el tablero enemigo para atacar' : 
+                              playerTurn ? 'Haz clic en el tablero enemigo para atacar' : 
                               'Turno de la computadora...'}
-                        </div>
-                        
-                        <div class="game-stats">
-                            <div class="stat-box">
-                                <h3>Tus Barcos</h3>
-                                <p>${countAliveShips(playerShips)}/${playerShips.length}</p>
-                            </div>
-                            <div class="stat-box">
-                                <h3>Barcos Enemigos</h3>
-                                <p>${countAliveShips(enemyShips)}/${enemyShips.length}</p>
-                            </div>
                         </div>
                         
                         <div class="game-controls">
@@ -2574,119 +2335,93 @@
                     </div>
                 `;
                 
-                // Asignar funciones
-                window.tempGameData = {
-                    attack: (x, y) => {
-                        if (currentPlayer !== 'player' || gameOver || enemyBoard[y][x] >= 2) return;
-                        
-                        // Atacar
-                        if (enemyBoard[y][x] === 1) {
-                            enemyBoard[y][x] = 2; // Impacto
-                            document.getElementById('feedback').innerHTML = 
-                                '<span style="color:var(--neon-green)">¡Impacto!</span>';
+                // Event listeners para ataques del jugador
+                if (playerTurn && !gameOver) {
+                    document.querySelectorAll('[data-x]').forEach(cell => {
+                        cell.onclick = () => {
+                            const x = parseInt(cell.dataset.x);
+                            const y = parseInt(cell.dataset.y);
                             
-                            // Verificar si se hundió un barco
-                            if (checkShipSunk(enemyShips, enemyBoard)) {
+                            if (enemyBoard[y][x] === 0) { // Agua
+                                enemyBoard[y][x] = 3;
+                                playerTurn = false;
                                 document.getElementById('feedback').innerHTML = 
-                                    '<span style="color:var(--neon-green)">¡Barco hundido!</span>';
+                                    '<span style="color:var(--neon-blue)">¡Agua!</span>';
+                                setTimeout(computerTurn, 1000);
+                            } else if (enemyBoard[y][x] === 1) { // Barco
+                                enemyBoard[y][x] = 2;
+                                document.getElementById('feedback').innerHTML = 
+                                    '<span style="color:var(--neon-green)">¡Impacto!</span>';
+                                
+                                // Verificar si ganó el jugador
+                                if (checkWin(enemyBoard)) {
+                                    gameOver = true;
+                                    document.getElementById('feedback').innerHTML = 
+                                        '<span class="win">¡Ganaste! Has hundido toda la flota enemiga</span>';
+                                }
                             }
-                        } else {
-                            enemyBoard[y][x] = 3; // Agua
-                            document.getElementById('feedback').innerHTML = 
-                                '<span style="color:var(--neon-blue)">Agua</span>';
-                            currentPlayer = 'computer';
-                        }
-                        
-                        // Verificar victoria
-                        if (checkGameOver()) {
-                            gameOver = true;
-                            document.getElementById('feedback').innerHTML = 
-                                `<span class="win">¡${currentPlayer === 'player' ? 'Ganaste' : 'Perdiste'}!</span>`;
-                        } else if (currentPlayer === 'computer') {
-                            setTimeout(computerAttack, 1000);
-                        }
-                        
-                        renderBoards();
-                    }
-                };
-                
-                document.querySelectorAll('[onclick*="attack"]').forEach(el => {
-                    el._gameData = window.tempGameData;
-                });
+                            
+                            renderBoards();
+                        };
+                    });
+                }
                 
                 document.getElementById('newGameBtn').onclick = initGame;
             }
             
-            function computerAttack() {
+            function computerTurn() {
+                if (gameOver) return;
+                
+                // Ataque aleatorio de la computadora
                 let x, y;
                 do {
                     x = Math.floor(Math.random() * size);
                     y = Math.floor(Math.random() * size);
                 } while (playerBoard[y][x] >= 2);
                 
-                if (playerBoard[y][x] === 1) {
-                    playerBoard[y][x] = 2; // Impacto
-                    if (checkShipSunk(playerShips, playerBoard)) {
-                        // Barco hundido
-                    }
-                } else {
-                    playerBoard[y][x] = 3; // Agua
-                    currentPlayer = 'player';
-                }
-                
-                if (checkGameOver()) {
-                    gameOver = true;
+                if (playerBoard[y][x] === 0) { // Agua
+                    playerBoard[y][x] = 3;
+                    playerTurn = true;
                     document.getElementById('feedback').innerHTML = 
-                        '<span class="lose">¡La computadora ganó!</span>';
+                        '<span style="color:var(--neon-pink)">La computadora atacó: ¡Agua!</span>';
+                } else if (playerBoard[y][x] === 1) { // Barco
+                    playerBoard[y][x] = 2;
+                    document.getElementById('feedback').innerHTML = 
+                        '<span class="lose">La computadora atacó: ¡Impacto!</span>';
+                    
+                    // Verificar si ganó la computadora
+                    if (checkWin(playerBoard)) {
+                        gameOver = true;
+                        document.getElementById('feedback').innerHTML = 
+                            '<span class="lose">¡La computadora ganó! Ha hundido toda tu flota</span>';
+                    } else {
+                        setTimeout(computerTurn, 1000);
+                    }
                 }
                 
                 renderBoards();
             }
             
-            function countAliveShips(ships) {
-                return ships.filter(ship => 
-                    ship.some(cell => {
-                        const board = ship === playerShips[0] ? playerBoard : enemyBoard;
-                        return board[cell.y][cell.x] === 1;
-                    })
-                ).length;
-            }
-            
-            function checkShipSunk(ships, board) {
-                for (const ship of ships) {
-                    const alive = ship.some(cell => board[cell.y][cell.x] === 1);
-                    const hit = ship.every(cell => board[cell.y][cell.x] === 2);
-                    if (!alive && hit) return true;
-                }
-                return false;
-            }
-            
-            function checkGameOver() {
-                const playerAlive = playerShips.some(ship => 
-                    ship.some(cell => playerBoard[cell.y][cell.x] === 1)
-                );
-                const enemyAlive = enemyShips.some(ship => 
-                    ship.some(cell => enemyBoard[cell.y][cell.x] === 1)
-                );
-                return !playerAlive || !enemyAlive;
+            function checkWin(board) {
+                return !board.some(row => row.includes(1));
             }
             
             function initGame() {
-                playerBoard = placeShips(playerBoard, true);
-                enemyBoard = placeShips(enemyBoard, false);
+                playerBoard = placeShips();
+                enemyBoard = placeShips();
                 gameOver = false;
-                currentPlayer = 'player';
+                playerTurn = true;
                 renderBoards();
             }
             
             initGame();
         }
 
-        // JUEGO 15: Nonogramas
+        // JUEGO 15: Nonogramas (simplificado)
         function loadNonogramGame(container) {
             const size = 5;
-            let puzzle = [];
-            let solution = [];
+            let puzzle = Array(size).fill().map(() => Array(size).fill(0));
+            let solution = Array(size).fill().map(() => Array(size).fill(0));
             let playerGrid = Array(size).fill().map(() => Array(size).fill(0));
             
             function generatePuzzle() {
@@ -2696,17 +2431,11 @@
                 );
                 
                 // Generar pistas
-                puzzle = {
-                    rows: [],
-                    cols: []
-                };
-                
-                // Pistas para filas
-                for (let i = 0; i < size; i++) {
+                const rowClues = solution.map(row => {
                     const clues = [];
                     let count = 0;
-                    for (let j = 0; j < size; j++) {
-                        if (solution[i][j]) {
+                    for (let cell of row) {
+                        if (cell === 1) {
                             count++;
                         } else if (count > 0) {
                             clues.push(count);
@@ -2714,15 +2443,15 @@
                         }
                     }
                     if (count > 0) clues.push(count);
-                    puzzle.rows.push(clues.length ? clues : [0]);
-                }
+                    return clues.length ? clues : [0];
+                });
                 
-                // Pistas para columnas
+                const colClues = [];
                 for (let j = 0; j < size; j++) {
                     const clues = [];
                     let count = 0;
                     for (let i = 0; i < size; i++) {
-                        if (solution[i][j]) {
+                        if (solution[i][j] === 1) {
                             count++;
                         } else if (count > 0) {
                             clues.push(count);
@@ -2730,13 +2459,15 @@
                         }
                     }
                     if (count > 0) clues.push(count);
-                    puzzle.cols.push(clues.length ? clues : [0]);
+                    colClues.push(clues.length ? clues : [0]);
                 }
                 
                 playerGrid = Array(size).fill().map(() => Array(size).fill(0));
+                
+                renderGame(rowClues, colClues);
             }
             
-            function renderGame() {
+            function renderGame(rowClues, colClues) {
                 container.innerHTML = `
                     <div class="game-container">
                         <h2 class="game-title-large">Nonogramas</h2>
@@ -2747,8 +2478,8 @@
                                 <!-- Esquina vacía -->
                                 <div style="width: 60px; height: 60px;"></div>
                                 
-                                <!-- Encabezados de columnas -->
-                                ${puzzle.cols.map((clues, j) => `
+                                <!-- Pistas de columnas -->
+                                ${colClues.map(clues => `
                                     <div style="width: 40px; height: 60px; display: flex; flex-direction: column;
                                               align-items: center; justify-content: flex-end; padding-bottom: 5px;">
                                         ${clues.map(clue => `
@@ -2758,26 +2489,26 @@
                                 `).join('')}
                                 
                                 <!-- Filas -->
-                                ${puzzle.rows.map((clues, i) => `
+                                ${Array(size).fill().map((_, i) => `
                                     <div style="display: contents;">
                                         <!-- Pistas de fila -->
                                         <div style="width: 60px; height: 40px; display: flex; align-items: center;
                                                   justify-content: flex-end; padding-right: 10px;">
-                                            ${clues.map(clue => `
+                                            ${rowClues[i].map(clue => `
                                                 <div style="font-size: 0.8rem; color: var(--neon-blue); margin-left: 3px;">${clue}</div>
                                             `).join('')}
                                         </div>
                                         
-                                        <!-- Celdas de la fila -->
-                                        ${playerGrid[i].map((cell, j) => `
+                                        <!-- Celdas -->
+                                        ${Array(size).fill().map((_, j) => `
                                             <div class="game-cell" data-x="${j}" data-y="${i}"
                                                  style="width: 40px; height: 40px;
-                                                        background: ${cell === 1 ? 'var(--neon-blue)' : 
-                                                                     cell === 2 ? 'rgba(255,255,255,0.2)' : 
+                                                        background: ${playerGrid[i][j] === 1 ? 'var(--neon-blue)' : 
+                                                                     playerGrid[i][j] === 2 ? 'rgba(255,255,255,0.2)' : 
                                                                      'rgba(255,255,255,0.05)'};
                                                         border: 1px solid rgba(0,255,255,0.3);
-                                                        cursor: pointer;">
-                                                ${cell === 2 ? '❌' : ''}
+                                                        cursor: pointer;"
+                                                 onclick="this._gameData.handleClick(${i}, ${j}, event)">
                                             </div>
                                         `).join('')}
                                     </div>
@@ -2786,83 +2517,59 @@
                         </div>
                         
                         <div class="game-feedback" id="feedback">
-                            Clic: Rellenar | Clic derecho: Marcar ❌ | Doble clic: Limpiar
+                            Clic: Rellenar | Clic derecho: Marcar X
                         </div>
                         
                         <div class="game-controls">
                             <button id="checkBtn" class="game-button">Comprobar</button>
                             <button id="newBtn" class="game-button">Nuevo Nonograma</button>
-                            <button id="solveBtn" class="game-button">Mostrar Solución</button>
                         </div>
                     </div>
                 `;
                 
-                // Event listeners para celdas
-                document.querySelectorAll('.game-cell').forEach(cell => {
-                    const x = parseInt(cell.dataset.x);
-                    const y = parseInt(cell.dataset.y);
-                    
-                    cell.onclick = (e) => {
-                        if (e.detail === 2) {
-                            // Doble clic: limpiar
-                            playerGrid[y][x] = 0;
-                        } else {
-                            // Clic normal: rellenar
+                // Asignar funciones
+                window.tempNonogramGame = {
+                    handleClick: function(y, x, event) {
+                        if (event.button === 0 || !event.button) { // Clic izquierdo
                             playerGrid[y][x] = playerGrid[y][x] === 1 ? 0 : 1;
+                        } else if (event.button === 2) { // Clic derecho
+                            event.preventDefault();
+                            playerGrid[y][x] = playerGrid[y][x] === 2 ? 0 : 2;
                         }
-                        renderGame();
-                    };
-                    
-                    cell.oncontextmenu = (e) => {
-                        e.preventDefault();
-                        // Clic derecho: marcar como incorrecto
-                        playerGrid[y][x] = playerGrid[y][x] === 2 ? 0 : 2;
-                        renderGame();
-                        return false;
-                    };
+                        renderGame(rowClues, colClues);
+                    },
+                    checkSolution: function() {
+                        let correct = true;
+                        for (let i = 0; i < size; i++) {
+                            for (let j = 0; j < size; j++) {
+                                if ((solution[i][j] === 1 && playerGrid[i][j] !== 1) ||
+                                    (solution[i][j] === 0 && playerGrid[i][j] === 1)) {
+                                    correct = false;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        document.getElementById('feedback').innerHTML = correct ? 
+                            '<span class="win">¡Nonograma completado correctamente!</span>' :
+                            '<span class="lose">Aún hay errores</span>';
+                    }
+                };
+                
+                document.querySelectorAll('[onclick*="handleClick"]').forEach(el => {
+                    el._gameData = window.tempNonogramGame;
                 });
                 
-                document.getElementById('checkBtn').onclick = checkSolution;
-                document.getElementById('newBtn').onclick = () => {
-                    generatePuzzle();
-                    renderGame();
-                };
-                document.getElementById('solveBtn').onclick = showSolution;
-            }
-            
-            function checkSolution() {
-                let correct = true;
+                document.getElementById('checkBtn').onclick = () => window.tempNonogramGame.checkSolution();
+                document.getElementById('newBtn').onclick = generatePuzzle;
                 
-                for (let i = 0; i < size; i++) {
-                    for (let j = 0; j < size; j++) {
-                        if (playerGrid[i][j] === 1 && solution[i][j] !== 1) {
-                            correct = false;
-                            break;
-                        }
-                        if (solution[i][j] === 1 && playerGrid[i][j] !== 1) {
-                            correct = false;
-                            break;
-                        }
-                    }
-                    if (!correct) break;
-                }
-                
-                if (correct) {
-                    document.getElementById('feedback').innerHTML = 
-                        '<span class="win">¡Nonograma completado correctamente!</span>';
-                } else {
-                    document.getElementById('feedback').innerHTML = 
-                        '<span class="lose">Aún hay errores en la solución</span>';
-                }
-            }
-            
-            function showSolution() {
-                playerGrid = solution.map(row => [...row]);
-                renderGame();
+                // Prevenir menú contextual
+                document.querySelectorAll('.game-cell').forEach(cell => {
+                    cell.oncontextmenu = (e) => e.preventDefault();
+                });
             }
             
             generatePuzzle();
-            renderGame();
         }
 
         // ==================== FUNCIONES GLOBALES ====================
@@ -2872,7 +2579,7 @@
             state.currentGame = null;
             state.activeGameState = null;
             
-            // Limpiar event listeners de juegos
+            // Limpiar event listeners globales
             document.removeEventListener('keydown', handleKeyPress);
         }
 
@@ -2881,7 +2588,6 @@
             const icon = document.querySelector('#themeToggle i');
             
             if (state.darkMode) {
-                // Modo claro
                 root.style.setProperty('--dark-bg', '#f0f0ff');
                 root.style.setProperty('--card-bg', 'rgba(255, 255, 255, 0.95)');
                 root.style.setProperty('--text-primary', '#111122');
@@ -2890,7 +2596,6 @@
                 icon.className = 'fas fa-sun';
                 state.darkMode = false;
             } else {
-                // Modo oscuro
                 root.style.setProperty('--dark-bg', '#0a0a1a');
                 root.style.setProperty('--card-bg', 'rgba(16, 16, 32, 0.85)');
                 root.style.setProperty('--text-primary', '#ffffff');
@@ -2901,12 +2606,11 @@
             }
         }
 
-        // Función auxiliar para manejo de teclas
+        // Función auxiliar para teclado (usada en Laberinto)
         function handleKeyPress(e) {
-            // Usada en Laberinto
+            // Esta función se asigna dinámicamente en loadMazeGame
         }
 
-        // Hacer funciones accesibles globalmente
         window.returnToMain = returnToMain;
         
         // Optimizar redimensionamiento
@@ -2915,7 +2619,6 @@
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
                 if (state.currentGame) {
-                    // Recargar el juego actual para adaptarse al nuevo tamaño
                     loadGameContent(state.currentGame);
                 }
             }, 200);
