@@ -68,12 +68,12 @@
       const rx = .78 + mouse.y * .18;
       const ry = t * .00011 + mouse.x * .32;
       const dist = 26, fov = Math.min(W, H) * 1.05;
-      const cx = W / 2, cy = H * .62;
+      const cx = W / 2, cy = H * .88;
 
       const items = [];
       for (const n of nodes) {
         const d = Math.hypot(n.gx, n.gz);
-        const h = Math.sin(t * .0011 - d * .55) * 1.5 + 1.6;
+        const h = Math.sin(t * .0011 - d * .55) * 1.15 + 1.35;
         items.push({ n, h, d, p: { x: n.gx * 1.5, y: h * .5 - 4, z: n.gz * 1.5 } });
       }
       items.sort((a, b) => (b.p.z + b.p.x) - (a.p.z + a.p.x));
@@ -105,6 +105,14 @@
           ctx.lineWidth = .8; ctx.stroke();
         }
       }
+
+      // scrim para garantizar legibilidad del texto del hero
+      const sc = ctx.createLinearGradient(0, 0, 0, H);
+      sc.addColorStop(0, 'rgba(4,6,15,0.55)');
+      sc.addColorStop(.55, 'rgba(4,6,15,0.42)');
+      sc.addColorStop(.8, 'rgba(4,6,15,0.05)');
+      sc.addColorStop(1, 'rgba(4,6,15,0)');
+      ctx.fillStyle = sc; ctx.fillRect(0, 0, W, H);
 
       // viñeta
       const vg = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * .3, W / 2, H / 2, Math.max(W, H) * .75);

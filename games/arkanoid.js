@@ -526,6 +526,10 @@
 
     function updateHud() {
       container.querySelector('#aLevel').textContent = level;
+      const jp = container.querySelector('#aJump');
+      const jv = container.querySelector('#aJumpVal');
+      if (jp && +jp.value !== level) jp.value = level;
+      if (jv && jv.textContent !== String(level)) jv.textContent = level;
       container.querySelector('#aScore').textContent = score;
       container.querySelector('#aLives').textContent = lives;
     }

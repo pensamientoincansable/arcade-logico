@@ -580,6 +580,10 @@ body.gallery .game-title-large {
 .ark-stage {
   position: relative;
   height: min(76svh, 800px);
+  aspect-ratio: 4 / 5;
+  width: auto;
+  max-width: 100%;
+  margin: 0 auto;
   border-radius: 18px;
   overflow: hidden;
   border: 1px solid var(--line);

@@ -686,6 +686,20 @@
         cancelAnimationFrame(rafId);
         document.removeEventListener('keydown', onKey);
         ro.disconnect();
+      },
+      // Hook de diagnóstico (usado por las pruebas automatizadas)
+      _debug: {
+        fillRow(y, gap) {
+          for (let x = 0; x < COLS; x++) {
+            if (x === gap) continue;
+            grid[y][x] = { color: [120, 220, 255], seed: Math.random() * 6.28 };
+          }
+        },
+        completeRow(y) {
+          for (let x = 0; x < COLS; x++) grid[y][x] = { color: [120, 220, 255], seed: 0 };
+          checkLines();
+        },
+        stats() { return { shards: shards.length, sparks: sparks.length, flashes: flashes.length, lines, score }; }
       }
     };
   }
