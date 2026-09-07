@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcade Lógico - 15 Minijuegos Completos</title>
+    <title>ARCADE LÓGICO — Galería de 17 minijuegos</title>
     <meta name="description" content="15 juegos de lógica completos: Sudoku, Tres en Raya, Busca Minas, Memoria, Torres de Hanoi y más">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/arcade-ui.css">
     <style>
         :root {
             --dark-bg: #0a0a1a;
@@ -458,24 +459,75 @@
         .hidden { display: none !important; }
     </style>
 </head>
-<body>
+<body class="gallery">
     <div id="gridLines"></div>
     <div id="neonDots"></div>
     
     <div id="mainPage" class="page">
-        <div class="container">
-            <header class="header">
-                <h1 class="logo">ARCADE LÓGICO</h1>
-                <p class="subtitle">15 Minijuegos de Lógica - Ejercita tu Mente</p>
-                <button id="themeToggle" class="theme-toggle">
-                    <i class="fas fa-moon"></i> Tema
-                </button>
-            </header>
-            
-            <main>
-                <div id="gamesGrid" class="games-grid"></div>
-            </main>
-        </div>
+        <section class="hero">
+            <canvas id="heroCanvas"></canvas>
+            <div class="hero-inner">
+                <div class="hero-kicker">Insert coin — Arcade lógico</div>
+                <h1>ARCADE <span class="accent">LÓGICO</span></h1>
+                <p class="hero-sub">Diecisiete minijuegos para la mente y los reflejos, renderizados en el navegador.
+                Sin instalar nada, sin registro: abre el enlace y juega en el móvil o en el escritorio.</p>
+                <div class="hero-meta">
+                    <span>17 juegos</span><span>Canvas 3D propio</span><span>Táctil + teclado</span><span>100% offline</span>
+                </div>
+            </div>
+            <div class="scroll-hint">SCROLL<i></i></div>
+        </section>
+
+        <section class="showcase">
+            <article class="feature">
+                <div class="feature-body">
+                    <div class="feature-label">GAME 16 <b>· CRISTAL 3D</b></div>
+                    <h2>TUTRIS<small>Tetris de cristal templado</small></h2>
+                    <p>Piezas de vidrio translúcido que caen en un pozo con profundidad real: refracción, reflejos
+                    especulares y aristas iluminadas. Al completar una línea el cristal estalla en astillas
+                    tridimensionales que rebotan y se apagan. Puedes cargar una imagen de tu dispositivo como fondo a
+                    pantalla completa, con el contraste rebajado para que la interfaz siga leyéndose.</p>
+                    <div class="spec">
+                        <div><span class="k">Motor</span><span class="v">Canvas 3D propio</span></div>
+                        <div><span class="k">Modo</span><span class="v">1 jugador · infinito</span></div>
+                        <div><span class="k">Extras</span><span class="v">Fondo personalizado</span></div>
+                    </div>
+                    <button class="cta" data-launch="16">Jugar <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <div class="feature-visual"><canvas data-preview="tutris"></canvas></div>
+            </article>
+
+            <article class="feature">
+                <div class="feature-body">
+                    <div class="feature-label">GAME 17 <b>· ACCIÓN</b></div>
+                    <h2>NEONOID<small>Arkanoid con 30 escenarios y jefes</small></h2>
+                    <p>Treinta escenarios encadenados, ocho potenciadores que caen al romper ciertos bloques —
+                    multibola, láser, pala ancha, imán, perforación— y, cada cinco niveles, un jefe formado por
+                    enjambres de bloques que orbitan, reptan y atacan como si tuvieran vida propia.</p>
+                    <div class="spec">
+                        <div><span class="k">Escenarios</span><span class="v">30 + 6 jefes</span></div>
+                        <div><span class="k">Potenciadores</span><span class="v">8 tipos</span></div>
+                        <div><span class="k">Control</span><span class="v">Ratón · táctil · teclado</span></div>
+                    </div>
+                    <button class="cta" data-launch="17">Jugar <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <div class="feature-visual"><canvas data-preview="ark"></canvas></div>
+            </article>
+        </section>
+
+        <section class="catalog">
+            <div class="section-head">
+                <div class="eyebrow">Catálogo completo</div>
+                <h2>Todos los juegos</h2>
+                <p>Lógica, memoria, deducción y reflejos. Elige uno y empieza.</p>
+            </div>
+            <div id="gamesGrid" class="games-grid"></div>
+            <div style="text-align:center;margin-top:2.5rem">
+                <button id="themeToggle" class="glass-btn"><i class="fas fa-moon"></i> Tema</button>
+            </div>
+        </section>
+
+        <footer class="site-footer">Arcade Lógico — hecho con Canvas y mucho neón</footer>
     </div>
     
     <div id="gamePage" class="page">
@@ -526,7 +578,9 @@
             { id: 12, title: "Mastermind", difficulty: "medium", description: "Adivina combinaciones de colores", icon: "fa-user-secret" },
             { id: 13, title: "Juego de la Vida", difficulty: "medium", description: "Simula el autómata celular de Conway", icon: "fa-seedling" },
             { id: 14, title: "Battleship", difficulty: "medium", description: "Hunde la flota enemiga", icon: "fa-ship" },
-            { id: 15, title: "Nonogramas", difficulty: "hard", description: "Resuelve rompecabezas lógicos", icon: "fa-border-style" }
+            { id: 15, title: "Nonogramas", difficulty: "hard", description: "Resuelve rompecabezas lógicos", icon: "fa-border-style" },
+            { id: 16, title: "Tutris", difficulty: "medium", description: "Tetris 3D de cristal translúcido que estalla en astillas. Fondo personalizable.", icon: "fa-cubes", featured: true },
+            { id: 17, title: "Neonoid", difficulty: "hard", description: "Arkanoid con 30 escenarios, potenciadores y un jefe vivo cada 5 niveles.", icon: "fa-meteor", featured: true }
         ];
 
         // ==================== INICIALIZACIÓN ====================
@@ -567,9 +621,10 @@
 
         function loadGamesGrid() {
             domCache.gamesGrid.innerHTML = games.map(game => `
-                <div class="game-card" data-game-id="${game.id}">
+                <div class="game-card ${game.featured ? 'card-featured' : ''}" data-game-id="${game.id}">
+                    ${game.featured ? '<span class="badge-new">NUEVO</span>' : ''}
                     <div class="game-header">
-                        <div class="game-number">${game.id}</div>
+                        <div class="game-number">${String(game.id).padStart(2,'0')}</div>
                         <h3 class="game-title">${game.title}</h3>
                     </div>
                     <p class="game-desc">${game.description}</p>
@@ -636,10 +691,14 @@
             12: loadMastermindGame,
             13: loadLifeGame,
             14: loadBattleshipGame,
-            15: loadNonogramGame
+            15: loadNonogramGame,
+            16: (c) => window.loadTutrisGame(c),
+            17: (c) => window.loadArkanoidGame(c)
         };
 
         function loadGameContent(game) {
+            if (window.__tutris && window.__tutris.destroy) { window.__tutris.destroy(); window.__tutris = null; }
+            if (window.__ark && window.__ark.destroy) { window.__ark.destroy(); window.__ark = null; }
             domCache.gameContent.innerHTML = '';
             const loader = gameLoaders[game.id];
             if (loader) {
@@ -2578,6 +2637,10 @@
             domCache.gamePage.style.display = 'none';
             state.currentGame = null;
             state.activeGameState = null;
+            if (window.__tutris && window.__tutris.destroy) { window.__tutris.destroy(); window.__tutris = null; }
+            if (window.__ark && window.__ark.destroy) { window.__ark.destroy(); window.__ark = null; }
+            domCache.gameContent.innerHTML = '';
+            window.scrollTo(0, 0);
             
             // Limpiar event listeners globales
             document.removeEventListener('keydown', handleKeyPress);
@@ -2612,17 +2675,21 @@
         }
 
         window.returnToMain = returnToMain;
+        window.launchGame = launchGame;
         
         // Optimizar redimensionamiento
         let resizeTimeout;
         window.addEventListener('resize', function() {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
-                if (state.currentGame) {
+                if (state.currentGame && state.currentGame.id < 16) {
                     loadGameContent(state.currentGame);
                 }
             }, 200);
         });
     </script>
+    <script src="games/tutris.js"></script>
+    <script src="games/arkanoid.js"></script>
+    <script src="assets/gallery.js"></script>
 </body>
 </html>
